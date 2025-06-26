@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>高血壓管理視覺化指南</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Noto Sans TC', sans-serif;
+            background-color: #f8fafc; 
+        }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 500px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 300px;
+            max-height: 400px;
+        }
+        @media (min-width: 768px) {
+            .chart-container {
+                height: 350px;
+            }
+        }
+        .flowchart-node {
+            border: 2px solid #0077B6;
+            background-color: #CAF0F8;
+            color: #03045E;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            text-align: center;
+            flex-grow: 1;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .flowchart-connector {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem 0;
+            color: #415A77;
+        }
+         .flowchart-connector::after {
+            content: '▼';
+            font-size: 1.5rem;
+        }
+    </style>
+</head>
+<body class="bg-[#F0F8FF] text-[#0D1B2A]">
+
+    <div class="container mx-auto p-4 md:p-8">
+
+        <header class="text-center mb-12">
+            <h1 class="text-4xl md:text-5xl font-bold text-[#03045E] mb-2">高血壓管理視覺化指南</h1>
+            <p class="text-lg text-[#0077B6]">基於2022年台灣高血壓治療指引</p>
+        </header>
+
+        <main class="space-y-12">
+
+            <section id="definition" class="text-center bg-white p-8 rounded-xl shadow-lg">
+                <h2 class="text-3xl font-bold text-[#03045E] mb-4">第一站：重新認識高血壓</h2>
+                <p class="max-w-3xl mx-auto text-[#415A77] mb-8">2022年的指引帶來了重大變革，將高血壓的診斷標準下修，強調早期風險管理。這不僅是數字的改變，更是臨床思維的轉變，從治療疾病進階到主動管理長期的心血管健康。</p>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+                    <div class="bg-gradient-to-br from-[#0077B6] to-[#00B4D8] text-white p-8 rounded-lg shadow-2xl">
+                        <p class="text-2xl font-semibold mb-2">新的診斷標準</p>
+                        <p class="text-7xl font-bold">≥ 130/80</p>
+                        <p class="text-xl">mmHg</p>
+                        <p class="mt-4 text-gray-200">只要收縮壓或舒張壓任一項達到此數值，即定義為高血壓，此標準適用於所有成年人。</p>
+                    </div>
+                    <div>
+                         <div class="chart-container h-80 md:h-96">
+                            <canvas id="bpClassificationChart"></canvas>
+                        </div>
+                        <p class="mt-4 text-sm text-[#415A77]">上圖展示了新的血壓分類標準。過去被視為「正常血壓偏高」的族群，現在被歸類為第一期高血壓，提示需要更早介入生活型態調整。</p>
+                    </div>
+                </div>
+            </section>
+            
+            <section id="measurement" class="bg-white p-8 rounded-xl shadow-lg">
+                <h2 class="text-3xl font-bold text-center text-[#03045E] mb-4">第二站：精準量測的黃金準則</h2>
+                 <p class="max-w-3xl mx-auto text-center text-[#415A77] mb-8">指引強調「居家血壓監測」(HBPM) 的重要性，因為它能反映您在日常生活中的真實血壓狀況，避免「白袍高血壓」的干擾。請務必遵循「722」原則來確保數據的準確性。</p>
+                <div class="flex flex-col md:flex-row justify-center items-center md:items-start gap-4 md:gap-0 bg-[#CAF0F8] p-6 rounded-lg">
+                    <div class="text-center p-4">
+                        <p class="text-6xl font-bold text-[#0077B6]">7️⃣</p>
+                        <h3 class="text-xl font-bold mt-2 text-[#03045E]">連續7天</h3>
+                        <p class="text-[#415A77]">建議連續量測一週。</p>
+                    </div>
+                    <div class="text-4xl text-[#0077B6] font-bold hidden md:flex items-center mx-4 pt-8">→</div>
+                     <div class="text-4xl text-[#0077B6] font-bold md:hidden flex items-center my-2">↓</div>
+                    <div class="text-center p-4">
+                        <p class="text-6xl font-bold text-[#0077B6]">2️⃣</p>
+                        <h3 class="text-xl font-bold mt-2 text-[#03045E]">每天2回</h3>
+                        <p class="text-[#415A77]">早上(起床後)與晚上(睡前)。</p>
+                    </div>
+                     <div class="text-4xl text-[#0077B6] font-bold hidden md:flex items-center mx-4 pt-8">→</div>
+                     <div class="text-4xl text-[#0077B6] font-bold md:hidden flex items-center my-2">↓</div>
+                    <div class="text-center p-4">
+                        <p class="text-6xl font-bold text-[#0077B6]">2️⃣</p>
+                        <h3 class="text-xl font-bold mt-2 text-[#03045E]">每回2次</h3>
+                        <p class="text-[#415A77]">間隔1分鐘，再取平均值。</p>
+                    </div>
+                </div>
+                 <p class="mt-6 text-center text-sm text-[#415A77]">量測前30分鐘應避免咖啡、菸、酒及運動，並在安靜環境下靜坐5分鐘。選擇經認證的上臂式血壓計，並確保壓脈帶尺寸合適。</p>
+            </section>
+            
+            <section id="lifestyle" class="bg-white p-8 rounded-xl shadow-lg">
+                <h2 class="text-3xl font-bold text-center text-[#03045E] mb-4">第三站：生活型態就是最強效的處方</h2>
+                <p class="max-w-3xl mx-auto text-center text-[#415A77] mb-8">無論是否需要藥物，S-ABCDE生活型態調整都是控制高血壓的基石。這些改變不僅是輔助，其本身就具有強大的降壓效果，是每位患者都應努力實踐的目標。</p>
+                <div class="chart-container h-96 md:h-[500px] max-w-4xl">
+                    <canvas id="lifestyleImpactChart"></canvas>
+                </div>
+                 <p class="mt-4 text-center text-sm text-[#415A77]">此圖表顯示各項生活型態調整對降低收縮壓的預期最大效果。結合多種調整，其總體效果非常可觀，甚至可能超過單一藥物。</p>
+            </section>
+
+            <section id="treatment-decision" class="bg-white p-8 rounded-xl shadow-lg">
+                <h2 class="text-3xl font-bold text-center text-[#03045E] mb-4">第四站：何時啟動藥物治療？</h2>
+                <p class="max-w-3xl mx-auto text-center text-[#415A77] mb-8">開始藥物治療的決定，不僅看血壓數值，更重要的是評估您的整體心血管風險。這是一個個人化的決策過程，體現了「治療病人，而非僅治療數字」的現代醫學理念。</p>
+                <div class="w-full max-w-lg mx-auto">
+                    <div class="flowchart-node">
+                        <strong>第一步：居家血壓 ≥ 130/80 mmHg</strong>
+                    </div>
+                    <div class="flowchart-connector"></div>
+                    <div class="flowchart-node">
+                       <strong>第二步：評估心血管風險</strong>
+                       <p class="text-sm">(如：心血管病史、糖尿病、慢性腎病、抽菸等)</p>
+                    </div>
+                     <div class="flowchart-connector"></div>
+                    <div class="flex flex-col md:flex-row gap-4">
+                        <div class="flex flex-col items-center flex-1">
+                            <div class="flowchart-node w-full bg-[#ffcdd2]">
+                                <strong>高風險族群</strong>
+                                <p class="text-sm">(有心血管疾病或≥3個風險因子)</p>
+                            </div>
+                            <div class="flowchart-connector"></div>
+                             <div class="flowchart-node w-full bg-[#C8E6C9]">
+                                <strong>立即開始藥物治療 + 生活調整</strong>
+                            </div>
+                        </div>
+                        <div class="flex flex-col items-center flex-1">
+                             <div class="flowchart-node w-full">
+                                <strong>低風險族群</strong>
+                                <p class="text-sm">(<3個風險因子)</p>
+                            </div>
+                            <div class="flowchart-connector"></div>
+                             <div class="flowchart-node w-full">
+                                <strong>先進行3-6個月密集生活調整</strong>
+                                <div class="flowchart-connector"></div>
+                                <p>若血壓仍 ≥ 140/90 mmHg</p>
+                                <div class="flowchart-connector"></div>
+                                 <div class="flowchart-node w-full bg-[#C8E6C9]">
+                                    <strong>開始藥物治療</strong>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                 <p class="mt-8 text-center text-sm text-[#415A77]">這個流程圖簡化了臨床決策路徑。您的醫師會根據您的具體情況，制定最適合您的治療計畫。健保給付常規藥物是基於醫師的專業診斷，而非單純的血壓門檻。</p>
+            </section>
+            
+            <section id="medication" class="bg-white p-8 rounded-xl shadow-lg">
+                <h2 class="text-3xl font-bold text-center text-[#03045E] mb-8">第五站：認識您的藥物工具箱</h2>
+                 <p class="max-w-3xl mx-auto text-center text-[#415A77] mb-8">高血壓藥物有多種類型，各有其特點、常見副作用與注意事項。醫師會根據您的共病症（如糖尿病、心臟病）和個人狀況，選擇最適合的藥物或藥物組合，以達最大療效與最小副作用。</p>
+                <div class="overflow-x-auto">
+                    <table class="w-full min-w-[600px] text-left border-collapse">
+                        <thead>
+                            <tr class="bg-[#0077B6] text-white">
+                                <th class="p-3 border border-[#90E0EF]">藥物類別 (簡稱)</th>
+                                <th class="p-3 border border-[#90E0EF]">常見副作用</th>
+                                <th class="p-3 border border-[#90E0EF]">關鍵禁忌/注意事項</th>
+                            </tr>
+                        </thead>
+                        <tbody class="bg-white">
+                            <tr class="border-b">
+                                <td class="p-3 border border-[#90E0EF]"><strong>A: ACEi/ARB</strong><br>(腎臟保護)</td>
+                                <td class="p-3 border border-[#90E0EF]">乾咳 (ACEi)、頭暈、血鉀升高</td>
+                                <td class="p-3 border border-[#90E0EF]"><strong>懷孕</strong>、雙側腎動脈狹窄</td>
+                            </tr>
+                            <tr class="border-b">
+                                <td class="p-3 border border-[#90E0EF]"><strong>C: CCB</strong><br>(鈣離子通道阻斷劑)</td>
+                                <td class="p-3 border border-[#90E0EF]"><strong>腳踝水腫</strong>、頭痛、臉部潮紅</td>
+                                <td class="p-3 border border-[#90E0EF]">避免與葡萄柚併用</td>
+                            </tr>
+                            <tr class="border-b">
+                                <td class="p-3 border border-[#90E0EF]"><strong>D: 利尿劑</strong><br>(Thiazide)</td>
+                                <td class="p-3 border border-[#90E0EF]">頻尿、低血鉀、影響尿酸/血糖</td>
+                                <td class="p-3 border border-[#90E0EF]">痛風患者慎用，建議早上服用</td>
+                            </tr>
+                            <tr>
+                                <td class="p-3 border border-[#90E0EF]"><strong>B: β-blocker</strong><br>(乙型阻斷劑)</td>
+                                <td class="p-3 border border-[#90E0EF]">疲倦、心跳過慢、手腳冰冷</td>
+                                <td class="p-3 border border-[#90E0EF]"><strong>氣喘</strong>、不可驟然停藥、可能遮蔽低血糖症狀</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="mt-6 bg-[#CAF0F8] p-4 rounded-lg">
+                    <h4 class="font-bold text-[#03045E]">治療策略重點：</h4>
+                    <ul class="list-disc list-inside text-[#415A77] mt-2 space-y-1">
+                        <li><strong>初始合併治療：</strong>若血壓比目標高出20/10 mmHg，建議直接用兩種藥物組合開始。</li>
+                        <li><strong>單顆複方製劑 (SPC)：</strong>優先選擇，一天一顆，簡化服藥、提高規律性。</li>
+                        <li><strong>優選組合：</strong>A+C 或 A+D 是最常見且有效的組合。</li>
+                        <li><strong>升階治療：</strong>若雙藥無效，下一步常是 A+C+D 的三藥組合。</li>
+                    </ul>
+                </div>
+            </section>
+            
+            <section id="de-escalation" class="bg-white p-8 rounded-xl shadow-lg">
+                <h2 class="text-3xl font-bold text-center text-[#03045E] mb-4">終點站：減藥或停藥的可能性</h2>
+                <p class="max-w-3xl mx-auto text-center text-[#415A77] mb-8">「藥要吃一輩子嗎？」是許多人的疑問。雖然多數人需要長期治療，但在特定情況下，經過醫師嚴格評估，減藥是可能的。這是一個需要醫病雙方共同努力才能達成的結果。</p>
+                <div class="space-y-4">
+                    <div class="bg-gray-100 p-4 rounded-lg">
+                        <h4 class="font-bold text-[#0077B6]">誰可能考慮減藥？</h4>
+                        <ul class="list-decimal list-inside text-[#415A77] mt-2">
+                             <li>因其他疾病導致的「續發性高血壓」，且根本原因已解決者。</li>
+                             <li>透過生活型態調整，成功減重並讓血壓長期穩定在理想範圍者。</li>
+                             <li>服藥期間，血壓持續穩定地低於 110 mmHg 者。</li>
+                        </ul>
+                    </div>
+                     <div class="bg-red-100 p-4 rounded-lg">
+                        <h4 class="font-bold text-red-700">⚠️ 安全減藥流程：絕對禁止自行停藥！</h4>
+                        <ol class="list-decimal list-inside text-red-800 mt-2">
+                            <li><strong>與醫師討論：</strong>這是第一步，也是最重要的一步。</li>
+                            <li><strong>漸進式減量：</strong>醫師會指導您將藥物劑量減半或調整頻率。</li>
+                            <li><strong>強化監測：</strong>減藥後的前兩個月，必須每日量測血壓並記錄。</li>
+                            <li><strong>定期回診：</strong>讓醫師評估數據，若血壓回升，需立即恢復原劑量。</li>
+                        </ol>
+                         <p class="mt-2 text-sm text-red-700"><strong>警告：</strong>突然停藥可能引發「反彈性高血壓」，大幅增加中風或心肌梗塞風險。</p>
+                    </div>
+                </div>
+            </section>
+
+        </main>
+
+        <footer class="text-center mt-12 pt-8 border-t border-gray-300">
+            <p class="text-sm text-gray-500">此資訊圖表旨在提供衛教資訊，不能取代專業醫療建議。</p>
+            <p class="text-sm text-gray-500">所有資訊均基於2022年台灣心臟病學會與台灣高血壓學會發布之高血壓治療指引。</p>
+        </footer>
+
+    </div>
+
+    <script>
+        const brilliantBlues = {
+            dark: '#03045E',
+            midDark: '#0077B6',
+            midLight: '#00B4D8',
+            light: '#90E0EF',
+            pale: '#CAF0F8'
+        };
+
+        const chartTooltipOptions = {
+            plugins: {
+                tooltip: {
+                    callbacks: {
+                        title: function(tooltipItems) {
+                            const item = tooltipItems[0];
+                            let label = item.chart.data.labels[item.dataIndex];
+                            if (Array.isArray(label)) {
+                                return label.join(' ');
+                            } else {
+                                return label;
+                            }
+                        }
+                    }
+                }
+            }
+        };
+
+        function wrapLabel(label, maxLength = 16) {
+            if (label.length <= maxLength) {
+                return label;
+            }
+            const words = label.split(' ');
+            const lines = [];
+            let currentLine = '';
+            words.forEach(word => {
+                if ((currentLine + ' ' + word).trim().length > maxLength) {
+                    lines.push(currentLine.trim());
+                    currentLine = word;
+                } else {
+                    currentLine = (currentLine + ' ' + word).trim();
+                }
+            });
+            if (currentLine) {
+                lines.push(currentLine.trim());
+            }
+            return lines;
+        }
+
+        const bpClassificationCtx = document.getElementById('bpClassificationChart').getContext('2d');
+        new Chart(bpClassificationCtx, {
+            type: 'doughnut',
+            data: {
+                labels: ['正常血壓 (<120/80)', '血壓偏高 (120-129/<80)', ['第一期高血壓', '(130-139/80-89)'], ['第二期高血壓', '(≥140/90)']],
+                datasets: [{
+                    label: '血壓分類',
+                    data: [35, 20, 30, 15], 
+                    backgroundColor: [
+                        brilliantBlues.midLight,
+                        brilliantBlues.light,
+                        '#ffc107',
+                        '#dc3545'
+                    ],
+                    borderColor: '#ffffff',
+                    borderWidth: 3
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                    },
+                    tooltip: chartTooltipOptions.plugins.tooltip
+                }
+            }
+        });
+        
+        const lifestyleImpactCtx = document.getElementById('lifestyleImpactChart').getContext('2d');
+        const lifestyleLabels = [
+            wrapLabel('飲食調整 (得舒飲食)'),
+            wrapLabel('限制鈉鹽攝取 (<6克/日)'),
+            wrapLabel('規律運動 (每週150分鐘)'),
+            wrapLabel('限制酒精攝取'),
+            wrapLabel('減輕體重 (每公斤)')
+        ];
+        new Chart(lifestyleImpactCtx, {
+            type: 'bar',
+            data: {
+                labels: lifestyleLabels,
+                datasets: [{
+                    label: '預期收縮壓降低幅度 (mmHg)',
+                    data: [12, 8, 7, 4, 1],
+                    backgroundColor: [
+                        brilliantBlues.midDark,
+                        brilliantBlues.midLight,
+                        brilliantBlues.light,
+                        brilliantBlues.pale,
+                        '#778DA9'
+                    ],
+                    borderRadius: 5,
+                    barThickness: 30,
+                }]
+            },
+            options: {
+                indexAxis: 'y',
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    x: {
+                        beginAtZero: true,
+                        title: {
+                            display: true,
+                            text: '收縮壓降低幅度 (mmHg)'
+                        }
+                    }
+                },
+                plugins: {
+                    legend: {
+                        display: false
+                    },
+                    tooltip: chartTooltipOptions.plugins.tooltip
+                }
+            }
+        });
+    </script>
+</body>
+</html>
