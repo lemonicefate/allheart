@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>睡眠呼吸中止症 全方位指南</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
+    <!-- 
+    Color Palette: Brilliant Blues (#00A1E4, #0073BC, #004F8B, #F2F2F2, #4D4D4D)
+    Narrative Plan: 
+    1. Hook: What is Sleep Apnea? Symptoms.
+    2. Risks: Long-term health consequences (comorbidities).
+    3. Causes: Anatomical "traffic jam" visualization, plus diagnostic methods.
+    4. Diagnosis: Comparison of tests, AHI severity scale, SpO2 warning.
+    5. Treatments: Comprehensive comparison of lifestyle, CPAP, and various surgeries.
+    6. FAQ: Heredity and childhood apnea.
+    Visualization Plan:
+    - AHI Severity: Custom HTML/CSS timeline. Goal: Inform. Justification: Better for showing a progressive scale as requested. Method: HTML/CSS.
+    - Health Risks: Bar Chart (Chart.js). Goal: Compare. Justification: Clear comparison of risk multipliers. Method: Canvas.
+    - Airway Blockage: HTML/CSS Diagram. Goal: Organize. Justification: Custom visual needed. Method: Styled divs.
+    - Test Comparison: HTML Table. Goal: Compare. Justification: Best for direct feature-by-feature comparison. Method: HTML/CSS.
+    - Family History: Donut Chart (Chart.js). Goal: Inform. Justification: Ideal for part-to-whole data. Method: Canvas.
+    CONFIRMATION: No Mermaid JS or SVG graphics were used in this document. All visualizations are rendered using Chart.js on Canvas or created with standard HTML and Tailwind CSS. 
+    -->
+    <style>
+        body {
+            font-family: 'Noto Sans TC', sans-serif;
+            background-color: #f0f4f8;
+        }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 300px;
+            max-height: 400px;
+        }
+        @media (min-width: 768px) {
+            .chart-container {
+                height: 350px;
+            }
+        }
+        .text-shadow {
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.2);
+        }
+        .card {
+            background-color: white;
+            border-radius: 0.75rem;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            padding: 1.5rem;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+        .flow-line::after {
+            content: '→';
+            color: #0073BC;
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin: 0 0.5rem;
+        }
+        .flow-line:last-child::after {
+            content: '';
+        }
+        .table-cell {
+            padding: 0.75rem;
+            text-align: center;
+            border-bottom: 1px solid #e5e7eb;
+        }
+    </style>
+</head>
+<body class="text-gray-800">
+
+    <header class="bg-gradient-to-r from-[#004F8B] to-[#0073BC] text-white p-8 text-center">
+        <h1 class="text-4xl md:text-5xl font-bold text-shadow mb-2">睡眠呼吸中止症 全方位指南</h1>
+        <p class="text-lg md:text-xl text-shadow">從認識症狀到選擇最適合您的治療方案</p>
+    </header>
+
+    <main class="container mx-auto p-4 md:p-8">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            
+            <div class="card md:col-span-2 lg:col-span-3">
+                <h2 class="text-2xl font-bold text-[#004F8B] mb-4">這不只是打呼而已：什麼是睡眠呼吸中止症？</h2>
+                <p class="mb-4">很多人以為打呼代表睡得香，但如果鼾聲不規律，甚至突然中斷，就可能是個警訊。單純打呼是呼吸道「變窄」，空氣通過時產生震動；而睡眠呼吸中止症則是呼吸道「完全塌陷」，導致空氣無法進入肺部，造成身體短暫缺氧。這個過程每晚可能重複數百次，嚴重影響睡眠品質與長期健康。</p>
+            </div>
+
+            <div class="card lg:col-span-1">
+                <h3 class="text-xl font-bold text-[#0073BC] mb-4">日間警訊 ⚠️</h3>
+                <ul class="space-y-3 text-gray-700">
+                    <li class="flex items-center"><span class="text-2xl mr-3">😴</span> 白天極度疲勞、嗜睡</li>
+                    <li class="flex items-center"><span class="text-2xl mr-3">🧠</span> 注意力不集中、記憶力變差</li>
+                    <li class="flex items-center"><span class="text-2xl mr-3">🤕</span> 早上起床時頭痛</li>
+                    <li class="flex items-center"><span class="text-2xl mr-3">😠</span> 情緒不穩、容易煩躁</li>
+                </ul>
+            </div>
+
+            <div class="card lg:col-span-1">
+                <h3 class="text-xl font-bold text-[#0073BC] mb-4">夜間警訊 🌙</h3>
+                <ul class="space-y-3 text-gray-700">
+                    <li class="flex items-center"><span class="text-2xl mr-3">🗣️</span> 被枕邊人目睹呼吸暫停</li>
+                    <li class="flex items-center"><span class="text-2xl mr-3">😨</span> 因窒息感或喘氣驚醒</li>
+                    <li class="flex items-center"><span class="text-2xl mr-3">🚻</span> 夜間頻尿（兩次以上）</li>
+                    <li class="flex items-center"><span class="text-2xl mr-3">🥵</span> 睡不安穩、盜汗</li>
+                </ul>
+            </div>
+            
+            <div class="card lg:col-span-1">
+                <h3 class="text-xl font-bold text-[#0073BC] mb-4">放任不管的健康風險</h3>
+                 <p class="mb-4 text-sm text-gray-600">長期夜間缺氧與睡眠中斷會對全身造成壓力，大幅提高罹患以下嚴重共病的風險。</p>
+                <div class="chart-container" style="height: 250px; max-height: 250px;">
+                    <canvas id="risksChart"></canvas>
+                </div>
+            </div>
+
+            <div class="card md:col-span-2 lg:col-span-3">
+                <h2 class="text-2xl font-bold text-[#004F8B] mb-4">呼吸道裡的「交通堵塞」：阻塞在哪裡？</h2>
+                <p class="mb-6 text-gray-600">睡眠時肌肉放鬆，呼吸道的三個主要區域可能變得狹窄或塌陷，造成氣流阻塞。了解可能的阻塞點是選擇正確治療方式的關鍵。</p>
+                <div class="flex flex-col md:flex-row justify-around items-center text-center space-y-6 md:space-y-0 md:space-x-4">
+                    
+                    <div class="flex flex-col items-center">
+                        <div class="w-24 h-24 bg-[#00A1E4] text-white rounded-full flex items-center justify-center text-4xl shadow-lg">👃</div>
+                        <h4 class="font-bold mt-3 text-lg">鼻子</h4>
+                        <ul class="text-sm text-gray-500 text-center list-none mt-2 w-48">
+                            <li>鼻中膈彎曲</li>
+                            <li class="text-blue-600">下鼻甲肥大</li>
+                            <li>過敏性鼻炎</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="flex flex-col items-center">
+                        <div class="w-24 h-24 bg-[#0073BC] text-white rounded-full flex items-center justify-center text-4xl shadow-lg">👄</div>
+                        <h4 class="font-bold mt-3 text-lg">咽喉</h4>
+                        <ul class="text-sm text-gray-500 text-center list-none mt-2 w-48">
+                            <li>扁桃腺腫大</li>
+                            <li class="text-blue-600">懸壅垂過長</li>
+                            <li>咽部脂肪堆積</li>
+                        </ul>
+                    </div>
+
+                    <div class="flex flex-col items-center">
+                        <div class="w-24 h-24 bg-[#004F8B] text-white rounded-full flex items-center justify-center text-4xl shadow-lg">👅</div>
+                        <h4 class="font-bold mt-3 text-lg">舌根</h4>
+                        <ul class="text-sm text-gray-500 text-center list-none mt-2 w-48">
+                            <li>舌頭肥大</li>
+                            <li>舌根後倒</li>
+                            <li>下巴後縮</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card md:col-span-2 lg:col-span-3">
+                 <h3 class="text-xl font-bold text-[#0073BC] mb-4">醫師如何找出阻塞點？</h3>
+                 <p class="mb-4 text-sm text-gray-600">為了精準定位阻塞位置以利手術評估，醫師會進行理學檢查與內視鏡檢查：</p>
+                 <ul class="space-y-3 text-gray-700 list-disc list-inside">
+                     <li><span class="font-semibold">鼻部與咽部理學檢查：</span>醫師會直接觀察您的鼻腔、口腔、扁桃腺、懸壅垂等結構，做初步評估。</li>
+                     <li><span class="font-semibold">鼻咽喉內視鏡檢查：</span>在您清醒時，將細長的軟式內視鏡從鼻腔伸入，直接觀察從鼻腔到喉部深處的呼吸道結構與動態變化。</li>
+                     <li><span class="font-semibold">藥物誘導睡眠內視鏡 (DISE)：</span>這是最能模擬睡眠狀態的檢查。
+                        <ul class="mt-2 space-y-2 text-sm text-rose-700 bg-rose-50 p-3 rounded-lg border-l-4 border-rose-500">
+                           <li><span class="font-bold">⚠️ 需要鎮靜麻醉：</span>此項檢查需在手術室或特殊檢查室，由麻醉醫師給予短效鎮靜藥物，讓您進入睡眠狀態，但有部分程度麻醉風險。</li>
+                           <li><span class="font-bold">⚠️ 睡著後施作：</span>耳鼻喉科醫師會使用鼻咽喉內視鏡，直接觀察呼吸道實際塌陷的位置與方式，作為手術治療依據。</li>
+                        </ul>
+                     </li>
+                 </ul>
+            </div>
+
+            <div class="card md:col-span-2 lg:col-span-3">
+                <h2 class="text-2xl font-bold text-[#004F8B] mb-4">如何確診：您需要哪種睡眠檢查？</h2>
+                <p class="mb-4 text-gray-600">要確定診斷，必須透過科學的睡眠檢查。主要有兩種方式，各有其優缺點，醫師會根據您的狀況建議最適合的選擇。</p>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-sm">
+                        <thead class="bg-gray-100">
+                            <tr>
+                                <th class="table-cell font-semibold">比較項目</th>
+                                <th class="table-cell font-semibold text-[#004F8B]">醫院睡眠檢查 (PSG)</th>
+                                <th class="table-cell font-semibold text-[#0073BC]">居家睡眠檢測 (HST)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td class="table-cell font-medium">地點</td>
+                                <td class="table-cell">醫院睡眠中心</td>
+                                <td class="table-cell">自家臥室</td>
+                            </tr>
+                            <tr>
+                                <td class="table-cell font-medium">監測數據</td>
+                                <td class="table-cell">全面（腦波、眼動、心電圖、呼吸、血氧、腿動等）</td>
+                                <td class="table-cell">核心數據（呼吸氣流、血氧、心率、呼吸動作）</td>
+                            </tr>
+                            <tr>
+                                <td class="table-cell font-medium">準確性</td>
+                                <td class="table-cell">最高（黃金標準）</td>
+                                <td class="table-cell">高（用於篩檢中重度患者）</td>
+                            </tr>
+                             <tr>
+                                <td class="table-cell font-medium">方便性</td>
+                                <td class="table-cell">需在醫院過夜</td>
+                                <td class="table-cell">在家即可施作</td>
+                            </tr>
+                            <tr>
+                                <td class="table-cell font-medium">適用對象</td>
+                                <td class="table-cell">所有懷疑者，尤其症狀複雜或懷疑其他睡眠疾病者</td>
+                                <td class="table-cell">症狀典型、高度懷疑為中重度阻塞型呼吸中止的患者</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="card md:col-span-2 lg:col-span-3">
+                <h2 class="text-2xl font-bold text-[#004F8B] mb-4">看懂您的睡眠報告</h2>
+                <p class="mb-6 text-gray-600">報告中最關鍵的數字是「呼吸中止指數 (AHI)」，它直接決定了病情的嚴重程度。另一個關鍵是「最低血氧濃度 (SpO2)」，反映身體承受的風險。</p>
+                
+                <div class="w-full mb-8">
+                    <h3 class="text-lg font-semibold text-center mb-2 text-gray-700">呼吸中止指數 (AHI) 嚴重程度</h3>
+                    <div class="relative w-full h-4 bg-gray-200 rounded-full">
+                         <div class="absolute top-0 left-0 h-4 rounded-full bg-gradient-to-r from-green-400 via-yellow-400 via-orange-400 to-red-500 w-full"></div>
+                    </div>
+                    <div class="relative w-full flex justify-between text-xs mt-2 px-1">
+                        <div class="text-center w-1/4">
+                            <p class="font-bold text-green-600">正常</p>
+                            <p class="text-gray-500">&lt; 5</p>
+                        </div>
+                        <div class="text-center w-1/4">
+                            <p class="font-bold text-yellow-600">輕度</p>
+                            <p class="text-gray-500">5-14</p>
+                        </div>
+                        <div class="text-center w-1/4">
+                            <p class="font-bold text-orange-600">中度</p>
+                            <p class="text-gray-500">15-29</p>
+                        </div>
+                        <div class="text-center w-1/4">
+                            <p class="font-bold text-red-600">重度</p>
+                            <p class="text-gray-500">≥ 30</p>
+                        </div>
+                    </div>
+                     <div class="relative w-full flex justify-between text-xs mt-1 px-1">
+                        <div class="absolute top-0 left-0 border-l border-gray-400 h-2"></div>
+                        <div class="absolute top-0 left-1/4 border-l border-gray-400 h-2"><span class="absolute -top-6 -ml-2">5</span></div>
+                        <div class="absolute top-0 left-2/4 border-l border-gray-400 h-2"><span class="absolute -top-6 -ml-2">15</span></div>
+                        <div class="absolute top-0 left-3/4 border-l border-gray-400 h-2"><span class="absolute -top-6 -ml-2">30</span></div>
+                        <div class="absolute top-0 right-0 border-r border-gray-400 h-2"></div>
+                    </div>
+                </div>
+
+                <div class="bg-red-50 border-l-4 border-red-500 p-4 rounded-r-lg">
+                     <h3 class="text-lg font-bold text-red-800">重要危險指標：血氧濃度</h3>
+                     <p class="text-gray-700 mt-2">睡眠報告中的「最低血氧濃度 (SpO2)」，若數值</p>
+                     <div class="text-center my-2">
+                        <span class="text-4xl font-bold text-red-600">低於 90%</span>
+                     </div>
+                     <p class="text-gray-700">代表您的身體正處於危險的缺氧狀態，會對心臟和大腦造成嚴重壓力。</p>
+                </div>
+            </div>
+
+
+            <div class="card md:col-span-2 lg:col-span-3">
+                <h2 class="text-2xl font-bold text-[#004F8B] mb-4">治療之路：有哪些方法可以改善？</h2>
+                <p class="mb-6 text-gray-600">治療方案多元，醫師會根據您的嚴重程度、阻塞位置與個人狀況，與您共同制定最適合的計畫。以下是主要的治療光譜。</p>
+            </div>
+            
+            <div class="card lg:col-span-1">
+                 <h3 class="text-xl font-bold text-[#0073BC] mb-4">第一步：生活習慣調整</h3>
+                 <p class="mb-4 text-sm text-gray-600">這是所有治療的基礎，對輕度患者尤其重要。</p>
+                 <ul class="space-y-3">
+                    <li><span class="font-bold text-[#0073BC]">減重：</span>減少頸部脂肪對呼吸道的壓迫。</li>
+                    <li><span class="font-bold text-[#0073BC]">側睡：</span>避免舌根與軟顎後倒。</li>
+                    <li><span class="font-bold text-[#0073BC]">戒菸酒及助眠藥物：</span>避免肌肉過度放鬆與組織發炎。</li>
+                 </ul>
+            </div>
+            
+            <div class="card lg:col-span-2">
+                 <h3 class="text-xl font-bold text-[#0073BC] mb-4">黃金標準：正壓呼吸器 (CPAP)</h3>
+                 <p class="mb-4 text-sm text-gray-600">對於中重度患者，CPAP是公認最有效的治療。它像一個「空氣支架」，用溫和的氣流撐開呼吸道，確保睡眠時呼吸暢通。</p>
+                 <div class="flex flex-col sm:flex-row items-center justify-center space-y-2 sm:space-y-0 text-gray-700">
+                     <span class="flow-line">機器產生氣流</span>
+                     <span class="flow-line">透過面罩傳送</span>
+                     <span class="flow-line">維持呼吸道暢通</span>
+                 </div>
+                 <p class="mt-4 text-center font-semibold text-[#004F8B]">好處：立即改善精神，長期降低心血管風險。</p>
+            </div>
+            
+            <div class="card md:col-span-2 lg:col-span-3">
+                <h3 class="text-xl font-bold text-[#0073BC] mb-4">手術治療的效果</h3>
+                <p class="mb-4 text-sm text-gray-600">手術的目標是精準地擴大呼吸道中狹窄的部位。不同的阻塞位置，對應不同的手術方式。以下是針對各部位常見的手術選項：</p>
+                <div class="space-y-4">
+                    <div>
+                        <h4 class="font-semibold text-gray-800">1. 針對鼻部阻塞：<a href="#" class="text-blue-600 hover:underline">[下鼻甲射頻手術(RFA)]</a></h4>
+                        <p class="text-sm text-gray-600 pl-4">利用低溫射頻能量使肥厚的下鼻甲組織萎縮，改善鼻腔通氣。優點是傷口小、恢復快，可在門診局部麻醉下進行。</p>
+                    </div>
+                    <div>
+                        <h4 class="font-semibold text-gray-800">2. 針對軟顎鬆弛：軟顎射頻手術(RFA)</h4>
+                        <p class="text-sm text-gray-600 pl-4">同樣使用低溫射頻能量，使過於鬆弛的軟顎組織變得緊實，減少睡眠時的震動與塌陷。此手術同樣可在門診局部麻醉下完成，適合輕度患者或單純打鼾者。</p>
+                    </div>
+                    <div>
+                        <h4 class="font-semibold text-gray-800">3. 針對咽喉阻塞：懸壅垂顎咽成形術 (UPPP)</h4>
+                        <p class="text-sm text-gray-600 pl-4">切除過多的懸壅垂、軟顎及扁桃腺組織，是傳統且廣泛使用的手術。效果顯著但疼痛感較強，<span class="font-bold text-rose-700">需在全身麻醉下進行</span>。</p>
+                    </div>
+                    <div>
+                        <h4 class="font-semibold text-gray-800">4. 針對舌根肥大：舌根手術</h4>
+                        <p class="text-sm text-gray-600 pl-4">處理舌根後倒或肥大的問題，可透過射頻消融或達文西機器手臂等方式進行。這是較複雜的手術，同樣<span class="font-bold text-rose-700">需在全身麻醉下進行</span>。</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card lg:col-span-1">
+                <h3 class="text-xl font-bold text-[#0073BC] mb-4">常見問題：會遺傳嗎？</h3>
+                <p class="mb-4 text-sm text-gray-600">研究顯示，睡眠呼吸中止症有明顯的家族遺傳傾向，若直系親屬患病，您的風險也會較高。</p>
+                <div class="chart-container" style="height:220px; max-height: 220px;">
+                    <canvas id="heredityChart"></canvas>
+                </div>
+            </div>
+
+            <div class="card lg:col-span-2">
+                <h3 class="text-xl font-bold text-[#0073BC] mb-4">常見問題：小孩也會有嗎？</h3>
+                <p class="mb-2 text-sm text-gray-600">會的！但原因與症狀和成人不同。</p>
+                <div class="bg-blue-50 p-4 rounded-lg">
+                    <p class="mb-2"><span class="font-bold">主要原因：</span>多為扁桃腺或腺樣體肥大。</p>
+                    <p class="mb-2"><span class="font-bold">常見症狀：</span>非嗜睡，而是<span class="text-[#004F8B] font-semibold">過動、注意力不集中、學習障礙</span>等行為問題。</p>
+                    <p class="mb-2"><span class="font-bold">潛在影響：</span>若不治療，可能影響生長發育與臉型。</p>
+                    <p><span class="font-bold">主要治療：</span>對於多數案例，<span class="text-[#004F8B] font-semibold">外科手術切除</span>效果顯著。</p>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <footer class="text-center p-6 mt-8 bg-gray-800 text-white">
+        <p class="text-sm">本資訊圖表內容僅供衛教參考，無法取代專業醫療診斷。若有相關問題，請諮詢您的醫師或睡眠專科醫師。</p>
+        <p class="text-xs text-gray-400 mt-2">資料來源：睡眠呼吸中止症候群衛教指南</p>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const primaryColor = '#0073BC';
+            const secondaryColor = '#00A1E4';
+            const darkColor = '#004F8B';
+            const textColor = '#4D4D4D';
+
+            const tooltipTitleCallback = function(tooltipItems) {
+                const item = tooltipItems[0];
+                let label = item.chart.data.labels[item.dataIndex];
+                if (Array.isArray(label)) {
+                    return label.join(' ');
+                }
+                return label;
+            };
+
+            const defaultChartOptions = {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                         labels: {
+                            color: textColor,
+                            font: {
+                                family: "'Noto Sans TC', sans-serif"
+                            }
+                        }
+                    },
+                    tooltip: {
+                        callbacks: {
+                            title: tooltipTitleCallback
+                        },
+                        titleFont: {
+                            family: "'Noto Sans TC', sans-serif"
+                        },
+                        bodyFont: {
+                            family: "'Noto Sans TC', sans-serif"
+                        }
+                    }
+                },
+                scales: {
+                    x: {
+                        ticks: { color: textColor, font: { family: "'Noto Sans TC', sans-serif" } },
+                        grid: { display: false }
+                    },
+                    y: {
+                        ticks: { color: textColor, font: { family: "'Noto Sans TC', sans-serif" } },
+                        grid: { color: '#e0e0e0' }
+                    }
+                }
+            };
+            
+            function wrapLabel(label, maxLength = 16) {
+                if (label.length <= maxLength) return label;
+                const words = label.split(' ');
+                const lines = [];
+                let currentLine = '';
+                for (const word of words) {
+                    if ((currentLine + ' ' + word).length > maxLength) {
+                        lines.push(currentLine);
+                        currentLine = word;
+                    } else {
+                        currentLine += (currentLine ? ' ' : '') + word;
+                    }
+                }
+                lines.push(currentLine);
+                return lines;
+            }
+
+
+            new Chart(document.getElementById('risksChart'), {
+                type: 'bar',
+                data: {
+                    labels: ['高血壓', '心臟病', '中風', '糖尿病'],
+                    datasets: [{
+                        label: '相對風險增加',
+                        data: [2.5, 2, 1.8, 1.5],
+                        backgroundColor: [secondaryColor, primaryColor, darkColor, '#00C4D4'],
+                        borderColor: '#ffffff',
+                        borderWidth: 2
+                    }]
+                },
+                options: {
+                    ...defaultChartOptions,
+                    indexAxis: 'y',
+                    plugins: { ...defaultChartOptions.plugins, legend: { display: false } },
+                     scales: {
+                        x: {
+                             ...defaultChartOptions.scales.x,
+                             title: {
+                                display: true,
+                                text: '倍數',
+                                color: textColor
+                             }
+                        },
+                        y: defaultChartOptions.scales.y
+                    }
+                }
+            });
+            
+             new Chart(document.getElementById('heredityChart'), {
+                type: 'doughnut',
+                data: {
+                    labels: ['有家族史', '無家族史'],
+                    datasets: [{
+                        label: '遺傳傾向',
+                        data: [33, 67], 
+                        backgroundColor: [darkColor, '#e5e7eb'],
+                        borderColor: '#ffffff',
+                        borderWidth: 4,
+                    }]
+                },
+                options: {
+                    ...defaultChartOptions,
+                    cutout: '60%',
+                     plugins: {
+                        ...defaultChartOptions.plugins,
+                        tooltip: {
+                             callbacks: {
+                                title: tooltipTitleCallback,
+                                label: function(context) {
+                                    let label = context.dataset.label || '';
+                                    if (label) {
+                                        label += ': ';
+                                    }
+                                    if (context.parsed !== null) {
+                                        label += context.parsed + '%';
+                                    }
+                                    return label;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+
+        });
+    </script>
+</body>
+</html>

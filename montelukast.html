@@ -1,0 +1,531 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>資訊圖表：深入剖析猛健樂 (Mounjaro) 的市場影響力</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Noto Sans TC', sans-serif;
+            background-color: #f0f4f8;
+        }
+        .chart-container {
+            position: relative;
+            margin: auto;
+            height: 45vh;
+            width: 100%;
+            max-width: 600px;
+        }
+        .flow-arrow {
+            font-size: 2rem;
+            color: #003f5c;
+            line-height: 1;
+        }
+        .card {
+            background-color: white;
+            border-radius: 0.75rem;
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+            padding: 1.5rem;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -2px rgb(0 0 0 / 0.1);
+        }
+        .stat-number {
+            font-size: 4rem;
+            font-weight: 700;
+            color: #ff7c43;
+            line-height: 1.1;
+        }
+        .gradient-text {
+            background: linear-gradient(90deg, #ff7c43, #f95d6a);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .emoji-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            justify-content: center;
+        }
+        .emoji-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            width: 80px;
+        }
+        .emoji {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+            filter: grayscale(10%);
+        }
+        .emoji-label {
+            font-size: 0.85rem;
+            color: #4a5568;
+            line-height: 1.2;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800">
+
+    <div class="container mx-auto p-4 md:p-8">
+
+        <header class="text-center mb-12">
+            <h1 class="text-4xl md:text-5xl font-bold text-gray-800 mb-2">肥胖治療的新里程碑</h1>
+            <h2 class="text-2xl md:text-3xl font-semibold gradient-text">深入剖析猛健樂 (Mounjaro) </h2>
+            <p class="max-w-3xl mx-auto mt-4 text-gray-600">本資訊圖表綜合分析了猛健樂 (Tirzepatide) 作為一種創新的雙重GIP/GLP-1受體激動劑，如何在體重管理領域帶來革命性變革，並基於臨床數據探討其療效、安全性與市場定位。</p>
+        </header>
+
+        <main class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+
+            <div class="card lg:col-span-3">
+                <h3 class="text-2xl font-bold text-center text-[#003f5c] mb-4">肥胖：一場全球性的健康挑戰</h3>
+                <p class="text-center text-gray-600 mb-6 max-w-4xl mx-auto">肥胖不僅是體重問題，更是一種複雜的慢性疾病，與第二型糖尿病、心血管疾病等多種共病症密切相關。猛健樂的出現，為應對這一全球流行病提供了強而有力的藥物治療新選擇。</p>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8 text-center mb-8">
+                    <div class="bg-blue-50 p-6 rounded-lg">
+                        <p class="text-lg text-[#2f4b7c] font-semibold mb-2">目標族群 (FDA 核准)</p>
+                        <p class="text-3xl font-bold text-[#665191]">BMI ≥ 30</p>
+                        <p class="text-gray-500 my-2">或</p>
+                        <p class="text-3xl font-bold text-[#665191]">BMI ≥ 27</p>
+                        <p class="text-gray-500 text-sm mt-1">+ 至少一種體重相關共病症</p>
+                    </div>
+                    <div class="bg-orange-50 p-6 rounded-lg">
+                        <p class="text-lg text-[#d45087] font-semibold mb-2">驚人的減重潛力</p>
+                        <p class="text-gray-600">在為期72週的臨床試驗中，使用最高劑量 (15mg) 的患者</p>
+                        <p class="stat-number mt-2">22.5%</p>
+                        <p class="text-xl font-bold text-[#f95d6a]">平均體重降幅</p>
+                    </div>
+                </div>
+
+                <div class="bg-gray-100 p-6 rounded-lg shadow-inner mt-8">
+                    <h4 class="text-xl font-bold text-[#003f5c] mb-4 text-center">BMI 計算器</h4>
+                    <p class="text-gray-600 text-center mb-4">輸入您的身高和體重，檢查是否符合猛健樂的目標族群標準。</p>
+                    <div class="flex flex-col md:flex-row items-center justify-center space-y-4 md:space-y-0 md:space-x-4">
+                        <div class="w-full md:w-1/3">
+                            <label for="heightInput" class="block text-sm font-medium text-gray-700 mb-1">身高 (公分):</label>
+                            <input type="number" id="heightInput" placeholder="例如: 170" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
+                        </div>
+                        <div class="w-full md:w-1/3">
+                            <label for="weightInput" class="block text-sm font-medium text-gray-700 mb-1">體重 (公斤):</label>
+                            <input type="number" id="weightInput" placeholder="例如: 70" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
+                        </div>
+                        <div class="md:w-1/4 flex justify-center items-end h-full mt-4 md:mt-0">
+                            <button id="calculateBmiButton" class="w-full bg-[#003f5c] text-white py-2 px-4 rounded-md hover:bg-[#2f4b7c] focus:outline-none focus:ring-2 focus:ring-[#003f5c] focus:ring-offset-2">計算 BMI</button>
+                        </div>
+                    </div>
+                    <div id="bmiResult" class="mt-6 p-4 rounded-lg text-center font-semibold text-lg" style="min-height: 50px;">
+                    </div>
+                </div>
+            </div>
+
+            <div class="card lg:col-span-2">
+                <h3 class="text-2xl font-bold text-[#003f5c] mb-4">正面交鋒：療效優越性分析</h3>
+                 <p class="text-gray-600 mb-4">在關鍵的 SURMOUNT-5 頭對頭臨床試驗中，猛健樂在各項減重指標上均顯著優於其主要競爭對手司美格魯肽 (Semaglutide)。這突顯了其雙重作用機制的卓越療效。</p>
+                <div class="chart-container">
+                    <canvas id="comparisonChart"></canvas>
+                </div>
+                 <p class="text-xs text-center text-gray-500 mt-4">數據來源：SURMOUNT-5 臨床試驗，72週數據。</p>
+            </div>
+
+            <div class="card">
+                <h3 class="text-2xl font-bold text-[#003f5c] mb-4">體重達標里程碑</h3>
+                 <p class="text-gray-600 mb-4">更高比例的使用者能達到具有臨床意義的體重減輕閾值。近半數使用者在72週內減重超過20%，這是生活方式干預難以企及的成就。</p>
+                <div class="chart-container" style="height: 40vh;">
+                    <canvas id="milestoneChart"></canvas>
+                </div>
+                 <p class="text-xs text-center text-gray-500 mt-4">數據來源：SURMOUNT-5 臨床試驗 (猛健樂組)。</p>
+            </div>
+
+            <div class="card lg:col-span-3">
+                <h3 class="text-2xl font-bold text-[#003f5c] mb-4 text-center">患者的治療旅程：劑量調整流程</h3>
+                <p class="text-gray-600 mb-6 text-center max-w-4xl mx-auto">為最大化耐受性並降低副作用，猛健樂採用循序漸進的劑量調整策略。此流程旨在讓身體逐步適應藥物，是確保患者長期依從性的關鍵。請參考以下流程圖。</p>
+                <div class="flex justify-center items-center">
+                    <img src="image/mounjaro_course.jpg" alt="Mounjaro 劑量調整流程圖" class="w-full max-w-5xl h-auto rounded-lg shadow-md block">
+                </div>
+            </div>
+
+            <!-- New Section: Mounjaro Pen Appearance and Usage -->
+            <div class="card lg:col-span-3">
+                <h3 class="text-2xl font-bold text-[#003f5c] mb-4 text-center">針劑外觀與注射筆使用指南</h3>
+                <p class="text-gray-600 mb-6 text-center max-w-4xl mx-auto">猛健樂採用預充式注射筆設計，方便患者自行施打。了解針劑和注射筆的注意事項及正確施打方法，對於安全有效用藥至關重要。</p>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+                    <div class="flex justify-center md:justify-start">
+                        <img src="image/mounjaro_pen.jpg" alt="猛健樂注射筆外觀" class="w-full max-w-sm h-auto rounded-lg shadow-md">
+                    </div>
+                    <div>
+                        <h4 class="font-bold text-xl text-[#2f4b7c] mb-2">注射筆注意事項</h4>
+                        <ul class="list-disc list-inside text-gray-700 space-y-1 mb-4">
+                            <li>針劑應透明澄清，無顆粒或變色，若有異常請勿使用。</li>
+                            <li>儲存於冰箱 (2°C-8°C)，避光保存。室溫 (最高30°C) 可儲存最長21天，但一旦離開冷藏後不可再放回冰箱。</li>
+                            <li>切勿搖晃注射筆，避免藥液變質。</li>
+                            <li>注射筆為單次使用設計，切勿重複使用或與他人共用，以防感染。</li>
+                        </ul>
+
+                        <h4 class="font-bold text-xl text-[#2f4b7c] mb-2">簡易施打方法</h4>
+                        <ol class="list-decimal list-inside text-gray-700 space-y-1">
+                            <li>**準備：** 從冰箱取出注射筆，讓其達到室溫。檢查藥液外觀是否正常。</li>
+                            <li>**選擇部位：** 選擇腹部、大腿或上臂進行皮下注射，每週更換不同部位施打。</li>
+                            <li>**清潔：** 用酒精棉片清潔選定的注射部位，待其自然乾燥。</li>
+                            <li>**注射：** 按照注射筆說明，將筆頭貼緊皮膚並按下注射按鈕，等待藥液完全注入（通常有聲音提示或指示窗變化）。</li>
+                            <li>**移除：** 完全移除注射筆後，安全丟棄使用過的注射筆及針頭。</li>
+                        </ol>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card lg:col-span-3">
+                 <h3 class="text-2xl font-bold text-center text-[#003f5c] mb-4">全方位評估 (SWOT 分析)</h3>
+                 <p class="text-center text-gray-600 mb-6 max-w-4xl mx-auto">綜合評估猛健樂在市場中的優勢、劣勢、機會與威脅，有助於全面理解其戰略地位和未來發展潛力。</p>
+                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="border-l-4 border-green-500 p-4 bg-green-50 rounded-r-lg">
+                        <h4 class="font-bold text-xl text-green-800 mb-2">優勢 (Strengths)</h4>
+                        <ul class="list-disc list-inside text-gray-700 space-y-1">
+                            <li>獨特的 GIP/GLP-1 雙重作用機制</li>
+                            <li>臨床證實優於競品的減重療效</li>
+                            <li>顯著改善心血管代謝指標</li>
+                            <li>每週一次給藥，提高便利性</li>
+                        </ul>
+                    </div>
+                     <div class="border-l-4 border-red-500 p-4 bg-red-50 rounded-r-lg">
+                        <h4 class="font-bold text-xl text-red-800 mb-2">劣勢 (Weaknesses)</h4>
+                        <ul class="list-disc list-inside text-gray-700 space-y-1">
+                            <li>常見的胃腸道副作用 (噁心、腹瀉)</li>
+                            <li>需皮下注射，非口服藥物</li>
+                            <li>藥物成本高昂，影響可及性</li>
+                            <li>需要嚴格的劑量調整以確保耐受性</li>
+                        </ul>
+                    </div>
+                     <div class="border-l-4 border-blue-500 p-4 bg-blue-50 rounded-r-lg">
+                        <h4 class="font-bold text-xl text-blue-800 mb-2">機會 (Opportunities)</h4>
+                        <ul class="list-disc list-inside text-gray-700 space-y-1">
+                            <li>龐大且持續增長的全球肥胖市場</li>
+                            <li>擴展至其他適應症的潛力 (如CKD, MMO)</li>
+                            <li>提高大眾對肥胖作為慢性病的認知</li>
+                            <li>開發更便利的給藥方式 (如口服)</li>
+                        </ul>
+                    </div>
+                     <div class="border-l-4 border-yellow-500 p-4 bg-yellow-50 rounded-r-lg">
+                        <h4 class="font-bold text-xl text-yellow-800 mb-2">威脅 (Threats)</h4>
+                        <ul class="list-disc list-inside text-gray-700 space-y-1">
+                            <li>來自其他 GLP-1 藥物及新療法的激烈競爭</li>
+                            <li>甲狀腺C細胞腫瘤的黑框警告</li>
+                            <li>保險給付政策的限制與不確定性</li>
+                            <li>潛在的長期未知副作用</li>
+                        </ul>
+                    </div>
+                 </div>
+            </div>
+
+            <div class="card lg:col-span-1">
+                <h3 class="text-2xl font-bold text-[#003f5c] mb-4">安全性與副作用</h3>
+                 <p class="text-gray-600 mb-4">雖然療效顯著，但了解潛在的副作用至關重要。絕大多數為輕至中度的胃腸道反應，且通常隨時間緩解。嚴重不良事件較為罕見，但需警惕。</p>
+                <div class="flex flex-col space-y-4">
+                    <div class="bg-yellow-50 p-4 rounded-lg">
+                        <h4 class="font-bold text-lg text-yellow-800 mb-2">常見副作用 (多為輕中度)</h4>
+                        <div class="emoji-list">
+                            <div class="emoji-item">
+                                <span class="emoji">🤢</span>
+                                <span class="emoji-label">噁心</span>
+                            </div>
+                            <div class="emoji-item">
+                                <span class="emoji">🚽</span>
+                                <span class="emoji-label">腹瀉</span>
+                            </div>
+                            <div class="emoji-item">
+                                <span class="emoji">🤮</span>
+                                <span class="emoji-label">嘔吐</span>
+                            </div>
+                            <div class="emoji-item">
+                                <span class="emoji">💩</span>
+                                <span class="emoji-label">便秘</span>
+                            </div>
+                            <div class="emoji-item">
+                                <span class="emoji">😖</span>
+                                <span class="emoji-label">腹痛</span>
+                            </div>
+                            <div class="emoji-item">
+                                <span class="emoji">📉</span>
+                                <span class="emoji-label">食慾下降</span>
+                            </div>
+                             <div class="emoji-item">
+                                <span class="emoji">😴</span>
+                                <span class="emoji-label">疲勞</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bg-red-50 p-4 rounded-lg">
+                        <h4 class="font-bold text-lg text-red-800 mb-2">罕見但嚴重副作用 (需警惕)</h4>
+                        <div class="emoji-list">
+                            <div class="emoji-item">
+                                <span class="emoji">⚠️</span>
+                                <span class="emoji-label">甲狀腺癌風險</span>
+                            </div>
+                            <div class="emoji-item">
+                                <span class="emoji">🔥</span>
+                                <span class="emoji-label">胰臟炎</span>
+                            </div>
+                            <div class="emoji-item">
+                                <span class="emoji">😖</span>
+                                <span class="emoji-label">膽囊問題</span>
+                            </div>
+                            <div class="emoji-item">
+                                <span class="emoji">💧</span>
+                                <span class="emoji-label">腎損傷</span>
+                            </div>
+                            <div class="emoji-item">
+                                <span class="emoji">🩸</span>
+                                <span class="emoji-label">低血糖</span>
+                            </div>
+                            <div class="emoji-item">
+                                <span class="emoji">🚨</span>
+                                <span class="emoji-label">嚴重過敏</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <p class="text-xs text-center text-gray-500 mt-4">此處列出的副作用為常見報告或需特別警惕者，非精確發生率比例。</p>
+            </div>
+
+            <div class="card lg:col-span-2">
+                <h3 class="text-2xl font-bold text-[#003f5c] mb-4">關鍵禁忌症與注意事項</h3>
+                <p class="text-gray-600 mb-4">安全是治療的首要考量。猛健樂並非適用於所有人。處方前必須進行全面的病史評估，以排除禁忌症並識別高風險族群。</p>
+                 <div class="space-y-4">
+                     <div class="p-4 bg-red-100 border-l-4 border-red-600 text-red-800 rounded-r-md">
+                        <h4 class="font-bold">絕對禁忌症</h4>
+                        <ul class="list-disc list-inside text-sm mt-1 space-y-1">
+                            <li>有甲狀腺髓樣癌 (MTC) 個人或家族史。</li>
+                            <li>患有第2型多發性內分泌腫瘤症候群 (MEN 2) 的患者。</li>
+                            <li>對猛健樂或其任何成分有嚴重過敏反應史。</li>
+                        </ul>
+                    </div>
+                     <div class="p-4 bg-yellow-100 border-l-4 border-yellow-600 text-yellow-800 rounded-r-md">
+                        <h4 class="font-bold">重要注意事項</h4>
+                        <ul class="list-disc list-inside text-sm mt-1 space-y-1">
+                            <li>有胰臟炎病史者需謹慎使用。</li>
+                            <li>可能延遲胃排空，影響口服藥物吸收 (如避孕藥)。</li>
+                            <li>與胰島素或促胰島素分泌藥物併用，會增加低血糖風險。</li>
+                            <li>懷孕、計畫懷孕或哺乳期間不建議使用。</li>
+                            <li>嚴重腎功能不全或胃腸道疾病患者需謹慎。</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <footer class="text-center mt-12 pt-8 border-t border-gray-200">
+            <p class="text-sm text-gray-500">此資訊圖表基於公開的臨床試驗數據和藥物資訊匯總而成，僅供參考，不能取代專業醫療建議。</p>
+            <p class="text-sm text-gray-500">在考慮任何治療方案前，請務必諮詢您的醫師或合格的醫療專業人員。</p>
+        </footer>
+
+    </div>
+
+    <script>
+        const brilliantBlues = {
+            darkBlue: '#003f5c',
+            midBlue: '#2f4b7c',
+            purple: '#665191',
+            magenta: '#a05195',
+            pink: '#d45087',
+            coral: '#f95d6a',
+            orange: '#ff7c43',
+            yellow: '#ffa600',
+        };
+
+        const wrapLabel = (label, maxLength = 16) => {
+            if (label.length <= maxLength) {
+                return label;
+            }
+            const words = label.split(' ');
+            const lines = [];
+            let currentLine = '';
+            words.forEach(word => {
+                if ((currentLine + ' ' + word).length > maxLength) {
+                    lines.push(currentLine);
+                    currentLine = word;
+                } else {
+                    currentLine = (currentLine ? currentLine + ' ' : '') + word;
+                }
+            });
+            lines.push(currentLine);
+            return lines;
+        };
+
+        const tooltipTitleCallback = (tooltipItems) => {
+            const item = tooltipItems[0];
+            let label = item.chart.data.labels[item.dataIndex];
+            if (Array.isArray(label)) {
+                return label.join(' ');
+            } else {
+                return label;
+            }
+        };
+
+        const defaultChartOptions = {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    position: 'bottom',
+                    labels: {
+                        font: {
+                            family: "'Noto Sans TC', sans-serif",
+                            size: 12
+                        }
+                    }
+                },
+                tooltip: {
+                    callbacks: {
+                        title: tooltipTitleCallback
+                    },
+                    titleFont: {
+                        family: "'Noto Sans TC', sans-serif"
+                    },
+                    bodyFont: {
+                       family: "'Noto Sans TC', sans-serif"
+                    }
+                }
+            },
+            scales: {
+                x: {
+                    ticks: {
+                        font: { family: "'Noto Sans TC', sans-serif" }
+                    },
+                    grid: { display: false }
+                },
+                y: {
+                   ticks: {
+                        font: { family: "'Noto Sans TC', sans-serif" }
+                    },
+                     grid: { color: '#e5e7eb' }
+                }
+            }
+        };
+
+        document.addEventListener('DOMContentLoaded', function () {
+            const comparisonCtx = document.getElementById('comparisonChart');
+            if(comparisonCtx) {
+                new Chart(comparisonCtx, {
+                    type: 'bar',
+                    data: {
+                        labels: [wrapLabel('平均體重減輕 %'), wrapLabel('腰圍減少 (cm)')],
+                        datasets: [
+                            {
+                                label: '猛健樂 (Tirzepatide)',
+                                data: [20.2, 18.4],
+                                backgroundColor: brilliantBlues.orange,
+                                borderColor: brilliantBlues.orange,
+                                borderWidth: 1,
+                                borderRadius: 4
+                            },
+                            {
+                                label: '司美格魯肽 (Semaglutide)',
+                                data: [13.7, 13.0],
+                                backgroundColor: brilliantBlues.midBlue,
+                                borderColor: brilliantBlues.midBlue,
+                                borderWidth: 1,
+                                borderRadius: 4
+                            }
+                        ]
+                    },
+                    options: {
+                        ...defaultChartOptions,
+                        scales: {
+                            y: {
+                                ...defaultChartOptions.scales.y,
+                                title: {
+                                    display: true,
+                                    text: '數值'
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+
+            const milestoneCtx = document.getElementById('milestoneChart');
+            if (milestoneCtx) {
+                new Chart(milestoneCtx, {
+                    type: 'doughnut',
+                    data: {
+                        labels: [
+                            wrapLabel('體重減輕 ≥ 20%'),
+                            wrapLabel('體重減輕 15-20%'),
+                            wrapLabel('體重減輕 < 15%')
+                        ],
+                        datasets: [{
+                            label: '患者比例',
+                            data: [50, 14.6, 35.4],
+                            backgroundColor: [
+                                brilliantBlues.orange,
+                                brilliantBlues.coral,
+                                brilliantBlues.midBlue,
+                            ],
+                            borderColor: '#ffffff',
+                            borderWidth: 2
+                        }]
+                    },
+                    options: {
+                        ...defaultChartOptions,
+                        cutout: '60%',
+                        plugins: {
+                            ...defaultChartOptions.plugins,
+                            title: {
+                                display: false,
+                            }
+                        },
+                        scales: {
+                           x: { display: false },
+                           y: { display: false }
+                        }
+                    }
+                });
+            }
+
+            const calculateBmiButton = document.getElementById('calculateBmiButton');
+            const heightInput = document.getElementById('heightInput');
+            const weightInput = document.getElementById('weightInput');
+            const bmiResult = document.getElementById('bmiResult');
+
+            if (calculateBmiButton && heightInput && weightInput && bmiResult) {
+                calculateBmiButton.addEventListener('click', function() {
+                    const heightCm = parseFloat(heightInput.value);
+                    const weightKg = parseFloat(weightInput.value);
+
+                    if (isNaN(heightCm) || isNaN(weightKg) || heightCm <= 0 || weightKg <= 0) {
+                        bmiResult.innerHTML = '<span class="text-red-600">請輸入有效的身高和體重！</span>';
+                        bmiResult.className = 'mt-6 p-4 rounded-lg text-center font-semibold text-lg bg-red-50 border border-red-200';
+                        return;
+                    }
+
+                    const heightM = heightCm / 100;
+                    const bmi = (weightKg / (heightM * heightM)).toFixed(2);
+
+                    let message = `您的 BMI 是：<span class="text-blue-700">${bmi}</span><br>`;
+                    let bgColorClass = 'bg-blue-50 text-blue-800';
+
+                    if (bmi >= 30) {
+                        message += '<span class="text-green-700">您符合肥胖症 (BMI ≥ 30) 的目標族群標準。</span>';
+                        bgColorClass = 'bg-green-50 text-green-800';
+                    } else if (bmi >= 27) {
+                        message += '<span class="text-yellow-700">您符合過重 (BMI ≥ 27) 的目標族群標準，若有至少一種體重相關共病症則符合標準。</span>';
+                        bgColorClass = 'bg-yellow-50 text-yellow-800';
+                    } else {
+                        message += '<span class="text-gray-700">目前 BMI 不符合猛健樂在體重管理方面的目標族群標準。</span>';
+                        bgColorClass = 'bg-gray-50 text-gray-800';
+                    }
+
+                    bmiResult.innerHTML = message;
+                    bmiResult.className = `mt-6 p-4 rounded-lg text-center font-semibold text-lg ${bgColorClass} border border-gray-200`;
+                });
+            }
+        });
+    </script>
+</body>
+</html>

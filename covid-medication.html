@@ -1,0 +1,727 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>台灣COVID-19抗病毒藥物指引資訊圖表</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Noto Sans TC', 'Inter', sans-serif;
+            background-color: #F0F4F8; /* Light gray-blue background */
+        }
+        /* Chosen palette: Energetic & Playful (#FF7F50 Coral, #FFD700 Gold, #20B2AA LightSeaGreen, #9370DB MediumPurple, #FF69B4 HotPink) */
+        /* Primary: #20B2AA (Teal), Secondary: #9370DB (Purple), Accent: #FF7F50 (Coral) */
+        .text-primary { color: #20B2AA; }
+        .bg-primary { background-color: #20B2AA; }
+        .border-primary { border-color: #20B2AA; }
+
+        .text-secondary { color: #9370DB; }
+        .bg-secondary { background-color: #9370DB; }
+        .border-secondary { border-color: #9370DB; }
+
+        .text-accent { color: #FF7F50; }
+        .bg-accent { background-color: #FF7F50; }
+        .border-accent { border-color: #FF7F50; }
+
+        .text-highlight { color: #FFD700; } /* Gold for highlighting numbers or key facts */
+        .bg-highlight { background-color: #FFD700; }
+
+        .section-title {
+            font-size: 1.75rem; /* 28px */
+            font-weight: 700;
+            margin-bottom: 1.5rem; /* 24px */
+            text-align: center;
+            color: #1A202C; /* Darker text for titles */
+        }
+        .card {
+            background-color: white;
+            border-radius: 0.75rem; /* 12px */
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            padding: 1.5rem; /* 24px */
+            margin-bottom: 1.5rem; /* 24px */
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 500px; /* Adjusted for better fit in cards */
+            margin-left: auto;
+            margin-right: auto;
+            height: 280px; /* Base height */
+            max-height: 320px;
+        }
+        @media (min-width: 768px) {
+            .chart-container {
+                height: 300px;
+            }
+        }
+        .icon-style {
+            font-size: 1.5rem; /* 24px */
+            margin-right: 0.5rem; /* 8px */
+        }
+        .flowchart-step {
+            border: 2px solid #9370DB; /* Purple border */
+            padding: 1rem;
+            border-radius: 0.5rem;
+            text-align: center;
+            background-color: #F3EFFF; /* Light purple background */
+            min-height: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-grow: 1;
+        }
+        .table-header {
+            background-color: #20B2AA; /* Teal */
+            color: white;
+            font-weight: 600;
+        }
+        .table-cell {
+            padding: 0.75rem;
+            border: 1px solid #E2E8F0; /* Light gray border */
+            text-align: left;
+        }
+        .risk-factor-item {
+            background-color: #E6FFFA; /* Very light teal */
+            border-left: 4px solid #20B2AA; /* Teal border */
+            padding: 0.75rem;
+            margin-bottom: 0.5rem;
+            border-radius: 0.25rem;
+        }
+        .symptom-item {
+            background-color: #FFF9E6; /* Light yellow for symptoms */
+            border-left: 4px solid #FFD700; /* Gold border for symptoms */
+            padding: 0.75rem;
+            margin-bottom: 0.75rem;
+            border-radius: 0.25rem;
+            display: flex;
+            align-items: center;
+        }
+        .symptom-icon {
+            margin-right: 0.75rem;
+            color: #FF7F50; /* Coral icon color */
+            font-size: 1.25rem;
+        }
+        .nav-button {
+            background-color: #9370DB; /* Purple */
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            transition: background-color 0.3s ease;
+        }
+        .nav-button:hover {
+            background-color: #7B68EE; /* Lighter Purple */
+        }
+        .sticky-nav {
+            position: sticky;
+            top: 0;
+            background-color: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
+            z-index: 50;
+            padding: 0.75rem 0;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        details > summary {
+            list-style: none; 
+        }
+        details > summary::-webkit-details-marker {
+            display: none; 
+        }
+        details > summary::marker {
+            display: none; 
+        }
+        details > summary {
+            position: relative;
+            padding-left: 1.5rem; 
+        }
+        details > summary::before {
+            content: '▶'; 
+            position: absolute;
+            left: 0;
+            top: 50%;
+            transform: translateY(-50%) rotate(0deg);
+            transition: transform 0.2s ease-in-out;
+            font-size: 0.8em;
+        }
+        details[open] > summary::before {
+            transform: translateY(-50%) rotate(90deg); 
+        }
+        .drug-interaction-table th, .drug-interaction-table td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+            font-size: 0.875rem;
+        }
+        .drug-interaction-table th {
+            background-color: #f2f2f2;
+        }
+        .institution-list li {
+            padding: 0.5rem 0;
+            border-bottom: 1px dashed #eee;
+        }
+        .institution-list li:last-child {
+            border-bottom: none;
+        }
+        .image-load-error-container {
+            display: flex; /* Use flex to center content */
+            justify-content: center;
+            align-items: center;
+            min-height: 200px; /* Minimum height for the container */
+            background-color: #f9f9f9; /* Light background for the area */
+            border: 1px dashed #cccccc; /* Dashed border */
+            border-radius: 0.5rem; /* Corresponds to rounded-lg */
+            padding: 1rem;
+        }
+        .image-load-error {
+            color: #555555; /* Dark gray for alt text */
+            font-style: italic;
+            text-align: center;
+            max-width: 100%; /* Ensure alt text doesn't overflow container */
+            padding: 1rem;
+            line-height: 1.5;
+        }
+        .image-load-error-container.error-state::before {
+            content: attr(data-alt-text); /* Display the alt text using a data attribute on parent */
+            color: #555555;
+            font-style: italic;
+            text-align: center;
+        }
+
+         /* Infographic Plan: Header -> Golden Window (5 days) -> Risk Factors -> Severity Stages -> Oral Antivirals (Paxlovid, Molnupiravir, Ensitrelvir cards with key info) -> Hospital Antiviral (Remdesivir card) -> Contraindications Table -> Drug Interactions (Paxlovid 3-step flow, resources, NEW detailed interactions as image link) -> NEW Taichung Institutions List (as link) -> NEW Severe Symptoms Section -> Key Reminders -> Footer. */
+         /* Chosen palette: Energetic & Playful (#FF7F50 Coral, #FFD700 Gold, #20B2AA LightSeaGreen, #9370DB MediumPurple, #FF69B4 HotPink) */
+         /* Visualization Choices: Big Number (HTML/CSS for 5-day window), Risk Factor List (HTML/CSS divs + Unicode icons), Severity Stages (HTML/CSS stepped diagram), Drug Efficacy (Chart.js Donut/Bar - Canvas), Drug Info Cards (HTML/CSS), Contraindications Table (HTML table), DDI Flowchart (HTML/CSS divs), DDI Details (image link), Institutions (link), Severe Symptoms (HTML/CSS lists with icons). No SVG or Mermaid JS will be used. */
+         /* No Mermaid JS was used. No SVG graphics were used. All charts are Chart.js on Canvas. Diagrams are HTML/CSS. */
+    </style>
+</head>
+<body class="antialiased text-gray-800">
+
+    <nav class="sticky-nav hidden md:block">
+        <div class="container mx-auto px-4">
+            <div class="flex justify-center space-x-4">
+                <a href="#severe-symptoms" class="nav-button">重症警示</a>
+                <a href="#timing" class="nav-button">治療時機</a>
+                <a href="#risk-factors" class="nav-button">風險因子</a>
+                <a href="#oral-drugs" class="nav-button">口服藥物</a>
+                <a href="#contraindications-table" class="nav-button">禁忌速查</a>
+                <a href="#ddi" class="nav-button">藥物交互作用</a>
+                <a href="#taichung-pharmacies" class="nav-button">臺中領藥機構</a>
+            </div>
+        </div>
+    </nav>
+
+    <header class="bg-gradient-to-r from-primary to-secondary py-12 sm:py-16 text-center">
+        <div class="container mx-auto px-4">
+            <h1 class="text-3xl sm:text-4xl md:text-5xl font-bold mb-4 text-slate-900">台灣COVID-19抗病毒藥物使用指引摘要</h1>
+            <p class="text-lg sm:text-xl max-w-3xl mx-auto text-slate-800">提供台灣現行COVID-19確診個案抗病毒藥物治療時機與禁忌症的重點摘要，協助快速了解相關指引。所有資訊應以台灣CDC最新公告為準。</p>
+        </div>
+    </header>
+
+    <main class="container mx-auto p-4 md:p-8">
+
+        <section id="severe-symptoms" class="my-12">
+            <h2 class="section-title text-primary">成人與兒童COVID-19重症警示症狀</h2>
+            <p class="text-center text-gray-600 mb-8 text-sm">以下資訊由衛生福利部疾病管制署提供 (2025.05 製)。若出現相關症狀，請立即就醫。</p>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="card">
+                    <h3 class="text-xl font-bold text-secondary mb-4">成人重症警示症狀 (8大警訊)</h3>
+                    <ul class="space-y-3">
+                        <li class="symptom-item"><span class="symptom-icon">⚠️</span>喘或呼吸困難</li>
+                        <li class="symptom-item"><span class="symptom-icon">⚠️</span>皮膚、嘴唇或指甲床發青</li>
+                        <li class="symptom-item"><span class="symptom-icon">⚠️</span>無法進食、喝水或服藥</li>
+                        <li class="symptom-item"><span class="symptom-icon">⚠️</span>過去24小時無尿或尿量顯著減少</li>
+                        <li class="symptom-item"><span class="symptom-icon">⚠️</span>無發燒之情形下心跳 > 100次/分鐘</li>
+                        <li class="symptom-item"><span class="symptom-icon">⚠️</span>持續胸痛或胸悶</li>
+                        <li class="symptom-item"><span class="symptom-icon">⚠️</span>意識不清</li>
+                        <li class="symptom-item"><span class="symptom-icon">⚠️</span>收縮壓 &lt; 90mmHg</li>
+                    </ul>
+                    <p class="mt-4 text-red-600 font-semibold">☆ 有以上症狀請務必立刻就醫</p>
+                </div>
+                <div class="card">
+                    <h3 class="text-xl font-bold text-secondary mb-4">兒童重症警示徵象</h3>
+                    <div class="mb-6">
+                        <h4 class="font-semibold text-lg text-accent mb-2">請儘速就醫：</h4>
+                        <ul class="space-y-3">
+                            <li class="symptom-item"><span class="symptom-icon">💨</span>發燒超過48小時，或高燒超過39度合併發冷/冒冷汗</li>
+                            <li class="symptom-item"><span class="symptom-icon">📉</span>退燒後持續活動力不佳</li>
+                            <li class="symptom-item"><span class="symptom-icon">😫</span>退燒後持續呼吸急促/喘/胸悶胸痛</li>
+                            <li class="symptom-item"><span class="symptom-icon">🤢</span>持續性嘔吐/頭痛或腹痛</li>
+                            <li class="symptom-item"><span class="symptom-icon">💧</span>超過12小時未進食或解尿</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h4 class="font-semibold text-lg text-red-700 mb-2">❗ 請立即送醫治療：</h4>
+                        <ul class="space-y-3">
+                            <li class="symptom-item"><span class="symptom-icon">痙</span>抽搐、肌躍型抽搐</li>
+                            <li class="symptom-item"><span class="symptom-icon">🚶</span>步態不穩</li>
+                            <li class="symptom-item"><span class="symptom-icon">🧠</span>意識不佳或持續昏睡</li>
+                            <li class="symptom-item"><span class="symptom-icon">😮</span>呼吸困難或有胸凹現象</li>
+                            <li class="symptom-item"><span class="symptom-icon">👄</span>唇色發白或發紫</li>
+                            <li class="symptom-item"><span class="symptom-icon">📉</span>血氧飽和度低於94%</li>
+                            <li class="symptom-item"><span class="symptom-icon">🧊</span>肢體冰冷合併皮膚斑駁、冒冷汗</li>
+                            <li class="symptom-item"><span class="symptom-icon">🌡️</span>體溫大於41度</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="timing" class="my-12">
+            <h2 class="section-title text-primary">黃金治療期：把握關鍵5天</h2>
+            <div class="card text-center">
+                <p class="text-xl mb-4">對於符合條件的COVID-19確診個案，口服抗病毒藥物（如Paxlovid、Molnupiravir）的療效與起始治療時間密切相關。</p>
+                <div class="bg-accent text-white p-8 rounded-lg inline-block shadow-xl">
+                    <div class="text-6xl font-bold">5天內</div>
+                    <p class="text-2xl mt-2">發病起算</p>
+                </div>
+                <p class="mt-6 text-gray-700 text-lg">在病毒量達到高峰前介入，於發病5天內開始使用口服抗病毒藥物，能最大程度阻止病情惡化，降低重症風險。</p>
+            </div>
+        </section>
+
+        <section id="risk-factors" class="my-12">
+            <h2 class="section-title text-secondary">誰符合資格？重症風險因子</h2>
+            <div class="card">
+                <p class="text-lg mb-6">即使是輕中症COVID-19確診個案，若具備以下任一「重症風險因子」，即可能符合口服抗病毒藥物的使用條件。臨床醫師會依據完整病史進行評估。</p>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    <div class="risk-factor-item">👴 <span class="font-semibold">年齡 ≥ 65 歲</span></div>
+                    <div class="risk-factor-item">🍬 <span class="font-semibold">糖尿病</span></div>
+                    <div class="risk-factor-item">⚕️ <span class="font-semibold">慢性腎病變</span></div>
+                    <div class="risk-factor-item">❤️ <span class="font-semibold">心血管疾病</span> (不含高血壓)</div>
+                    <div class="risk-factor-item">🩺 <span class="font-semibold">慢性肺病</span></div>
+                    <div class="risk-factor-item">🎗️ <span class="font-semibold">癌症</span></div>
+                    <div class="risk-factor-item">⚖️ <span class="font-semibold">BMI ≥ 30</span></div>
+                    <div class="risk-factor-item">🤰 <span class="font-semibold">懷孕</span> (或產後六週內)</div>
+                    <div class="risk-factor-item">🛡️ <span class="font-semibold">免疫功能低下相關疾病/治療</span></div>
+                    <div class="risk-factor-item">🌿 <span class="font-semibold">慢性肝病</span></div>
+                    <div class="risk-factor-item">♿ <span class="font-semibold">失能</span></div>
+                    <div class="risk-factor-item">🧠 <span class="font-semibold">精神疾病/失智症</span></div>
+                    <div class="risk-factor-item">💨 <span class="font-semibold">吸菸</span> (需合併其他風險因子)</div>
+                    <div class="risk-factor-item">😮‍💨 <span class="font-semibold">氣喘</span></div>
+                </div>
+                <p class="mt-4 text-sm text-gray-600">註：此列表為常見風險因子，詳細定義請參考台灣CDC最新指引。</p>
+            </div>
+        </section>
+
+        <section id="severity" class="my-12">
+            <h2 class="section-title text-primary">COVID-19 疾病如何分級？</h2>
+            <div class="card">
+                <p class="text-lg mb-6">疾病的嚴重程度是影響治療選擇（尤其是住院用藥）的重要因素。以下為簡化分級：</p>
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-4 items-stretch">
+                    <div class="border border-gray-300 p-4 rounded-lg bg-green-50 text-center">
+                        <h3 class="font-semibold text-green-700 text-xl mb-2">輕症</h3>
+                        <p class="text-sm">類感冒症狀，無肺炎或缺氧。</p>
+                    </div>
+                    <div class="border border-gray-300 p-4 rounded-lg bg-yellow-50 text-center">
+                        <h3 class="font-semibold text-yellow-700 text-xl mb-2">中症/肺炎</h3>
+                        <p class="text-sm">有肺炎現象，但血氧 (SpO<sub>2</sub>) &gt; 94%。</p>
+                    </div>
+                    <div class="border border-gray-300 p-4 rounded-lg bg-orange-50 text-center">
+                        <h3 class="font-semibold text-orange-700 text-xl mb-2">嚴重肺炎</h3>
+                        <p class="text-sm">血氧 (SpO<sub>2</sub>) ≤ 94%, 或呼吸急促等。</p>
+                    </div>
+                    <div class="border border-gray-300 p-4 rounded-lg bg-red-50 text-center">
+                        <h3 class="font-semibold text-red-700 text-xl mb-2">危重症</h3>
+                        <p class="text-sm">急性呼吸窘迫、敗血症等多重器官衰竭。</p>
+                    </div>
+                </div>
+                 <p class="mt-6 text-gray-700">此分級有助於判斷是否需要住院以及選擇如瑞德西韋 (Remdesivir) 等特定藥物。</p>
+            </div>
+        </section>
+
+        <section id="oral-drugs" class="my-12">
+            <h2 class="section-title text-secondary">主要口服抗病毒藥物</h2>
+            <p class="text-center text-lg mb-8">以下介紹台灣目前主要的COVID-19口服抗病毒藥物，適用於發病5日內、無需氧氣治療且具重症風險因子的輕中症個案。</p>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div class="card">
+                    <h3 class="text-2xl font-bold text-accent mb-3">Paxlovid (倍拉維)</h3>
+                    <p class="text-sm text-gray-600 mb-3">Nirmatrelvir/Ritonavir</p>
+                    <p class="mb-4"><strong>定位：</strong>無禁忌證下，常為優先選擇。</p>
+                    <div class="mb-4">
+                        <h4 class="font-semibold mb-1">主要適用：</h4>
+                        <ul class="list-disc list-inside text-sm space-y-1">
+                            <li>12歲以上 (體重≥40公斤)</li>
+                            <li>對目前流行變異株仍具療效</li>
+                        </ul>
+                    </div>
+                    <div class="mb-4">
+                        <h4 class="font-semibold mb-1 text-red-600">重要禁忌/注意：</h4>
+                        <ul class="list-disc list-inside text-sm space-y-1">
+                            <li><span class="text-red-500 font-bold">重度腎功能不全 (eGFR &lt; 30)：禁用</span></li>
+                            <li>中度腎功能不全：需調整劑量</li>
+                            <li><span class="text-red-500 font-bold">重度肝功能不全 (Child-Pugh C)：禁用</span></li>
+                            <li>懷孕：醫師評估效益與風險後可使用</li>
+                            <li>哺乳：建議中斷</li>
+                            <li><span class="text-red-500 font-bold">藥物交互作用眾多且顯著 (因含Ritonavir)</span></li>
+                        </ul>
+                    </div>
+                    <div class="chart-container mt-4">
+                        <canvas id="paxlovidEffectivenessChart"></canvas>
+                    </div>
+                    <p class="text-xs text-gray-500 mt-2 text-center">圖表示意：降低住院/死亡風險效力</p>
+                </div>
+
+                <div class="card">
+                    <h3 class="text-2xl font-bold text-accent mb-3">Molnupiravir (默沙東莫納皮拉韋)</h3>
+                    <p class="text-sm text-gray-600 mb-3">Lagevrio</p>
+                    <p class="mb-4"><strong>定位：</strong>當Paxlovid等首選藥物不適用時的替代選擇。</p>
+                     <div class="mb-4">
+                        <h4 class="font-semibold mb-1">主要適用：</h4>
+                        <ul class="list-disc list-inside text-sm space-y-1">
+                            <li>18歲以上成人</li>
+                            <li>藥物交互作用較少</li>
+                            <li>肝腎功能不全者通常無需調整劑量</li>
+                        </ul>
+                    </div>
+                    <div class="mb-4">
+                        <h4 class="font-semibold mb-1 text-red-600">重要禁忌/注意：</h4>
+                        <ul class="list-disc list-inside text-sm space-y-1">
+                            <li><span class="text-red-500 font-bold">懷孕：不建議使用</span> (具生育能力女性需避孕)</li>
+                            <li><span class="text-red-500 font-bold">哺乳：不建議</span> (治療期間及停藥後4天內)</li>
+                            <li><span class="text-red-500 font-bold">未滿18歲：未核准</span> (可能影響骨骼發育)</li>
+                        </ul>
+                    </div>
+                     <div class="chart-container mt-4">
+                        <canvas id="molnupiravirEffectivenessChart"></canvas>
+                    </div>
+                    <p class="text-xs text-gray-500 mt-2 text-center">圖表示意：降低住院/死亡風險效力</p>
+                </div>
+
+                <div class="card">
+                    <h3 class="text-2xl font-bold text-accent mb-3">Ensitrelvir (鹽野義舒活韋)</h3>
+                    <p class="text-sm text-gray-600 mb-3">Xocova</p>
+                    <p class="mb-4"><strong>定位：</strong>新的口服3CL蛋白酶抑制劑選擇。</p>
+                     <div class="mb-4">
+                        <h4 class="font-semibold mb-1">主要適用：</h4>
+                        <ul class="list-disc list-inside text-sm space-y-1">
+                            <li>12歲以上兒童及成人</li>
+                        </ul>
+                    </div>
+                    <div class="mb-4">
+                        <h4 class="font-semibold mb-1 text-red-600">重要禁忌/注意：</h4>
+                        <ul class="list-disc list-inside text-sm space-y-1">
+                            <li><span class="text-red-500 font-bold">懷孕與哺乳：禁用</span></li>
+                            <li><span class="text-red-500 font-bold">藥物交互作用顯著</span> (強效CYP3A抑制劑，類似Paxlovid)</li>
+                            <li>腎/肝功能限制：詳細指引待官方更新，但可能有類似Paxlovid的考量</li>
+                        </ul>
+                    </div>
+                    <p class="mt-4 text-sm text-gray-700">此藥物為較新的選擇，臨床醫師會依最新資訊與病患狀況評估適用性，特別是其與Paxlovid在交互作用及特定族群使用的比較。</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="hospital-drugs" class="my-12">
+            <h2 class="section-title text-primary">住院主要用藥：瑞德西韋</h2>
+            <div class="grid grid-cols-1 md:grid-cols-1 gap-6 items-center"> 
+                <div class="card">
+                    <h3 class="text-2xl font-bold text-accent mb-3">Remdesivir (瑞德西韋)</h3>
+                    <p class="text-sm text-gray-600 mb-3">Veklury</p>
+                    <p class="mb-4"><strong>定位：</strong>主要用於已住院且病情較嚴重之患者（如需氧氣治療、呼吸器或葉克膜）。</p>
+                     <div class="mb-4">
+                        <h4 class="font-semibold mb-1">給藥途徑：</h4>
+                        <p class="text-sm">靜脈輸注</p>
+                    </div>
+                    <div class="mb-4">
+                        <h4 class="font-semibold mb-1 text-red-600">重要禁忌/注意：</h4>
+                        <ul class="list-disc list-inside text-sm space-y-1">
+                            <li><span class="text-red-500 font-bold">腎功能不全 (eGFR &lt; 30)：不建議使用</span></li>
+                            <li>肝功能：需監測，ALT顯著上升或有肝炎應考慮停藥</li>
+                            <li>懷孕/哺乳：醫師評估效益與風險</li>
+                            <li>可能發生輸注相關反應</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+             <p class="text-center text-sm text-gray-600 mt-2">瑞德西韋的給藥與監測通常在住院環境下進行。</p>
+        </section>
+
+        <section id="contraindications-table" class="my-12">
+            <h2 class="section-title text-secondary">藥物禁忌重點速查表</h2>
+            <div class="card overflow-x-auto">
+                <p class="text-lg mb-4">下表彙整主要抗病毒藥物在台灣現行指引下的關鍵禁忌證與使用限制，協助快速參考。詳細資訊仍須查閱各藥品仿單及最新官方指引。</p>
+                <table class="min-w-full divide-y divide-gray-200">
+                    <thead class="table-header">
+                        <tr>
+                            <th class="table-cell">特性／藥物</th>
+                            <th class="table-cell">Paxlovid</th>
+                            <th class="table-cell">Molnupiravir</th>
+                            <th class="table-cell">Remdesivir</th>
+                            <th class="table-cell">Ensitrelvir</th>
+                        </tr>
+                    </thead>
+                    <tbody class="bg-white divide-y divide-gray-200">
+                        <tr>
+                            <td class="table-cell font-semibold">主要適用</td>
+                            <td class="table-cell">輕中症，門診，高風險，發病5日內</td>
+                            <td class="table-cell">輕中症，門診，高風險 (若Paxlovid不適用)，發病5日內</td>
+                            <td class="table-cell">住院，重症 (如需氧氣)</td>
+                            <td class="table-cell">輕中症，門診 (推測)</td>
+                        </tr>
+                        <tr>
+                            <td class="table-cell font-semibold">腎功能不全</td>
+                            <td class="table-cell"><span class="text-red-600">eGFR &lt;30: 禁用</span>. 30 - &lt;60: 調劑量</td>
+                            <td class="table-cell">無需調整</td>
+                            <td class="table-cell"><span class="text-red-600">eGFR &lt;30: 不建議</span></td>
+                            <td class="table-cell">資訊有限，可能有類似Paxlovid限制</td>
+                        </tr>
+                        <tr>
+                            <td class="table-cell font-semibold">肝功能不全</td>
+                            <td class="table-cell"><span class="text-red-600">Child-Pugh C: 禁用</span></td>
+                            <td class="table-cell">無需調整</td>
+                            <td class="table-cell">監測肝功能</td>
+                            <td class="table-cell">資訊有限</td>
+                        </tr>
+                        <tr>
+                            <td class="table-cell font-semibold">懷孕</td>
+                            <td class="table-cell">醫師評估後可使用</td>
+                            <td class="table-cell"><span class="text-red-600">不建議</span></td>
+                            <td class="table-cell">醫師評估</td>
+                            <td class="table-cell"><span class="text-red-600">禁用</span></td>
+                        </tr>
+                        <tr>
+                            <td class="table-cell font-semibold">哺乳</td>
+                            <td class="table-cell">建議中斷</td>
+                            <td class="table-cell"><span class="text-red-600">不建議</span> (治療期及停藥後4天)</td>
+                            <td class="table-cell">醫師評估</td>
+                            <td class="table-cell"><span class="text-red-600">禁用</span></td>
+                        </tr>
+                        <tr>
+                            <td class="table-cell font-semibold">年齡限制</td>
+                            <td class="table-cell">≥12歲 &amp; ≥40kg</td>
+                            <td class="table-cell"><span class="text-red-600">&lt;18歲: 未核准</span></td>
+                            <td class="table-cell">依兒科劑量</td>
+                            <td class="table-cell">≥12歲</td>
+                        </tr>
+                        <tr>
+                            <td class="table-cell font-semibold">主要藥物交互作用</td>
+                            <td class="table-cell"><span class="text-red-600">眾多且顯著</span> (強效CYP3A4抑制劑)</td>
+                            <td class="table-cell">臨床顯著交互作用較少</td>
+                            <td class="table-cell">潛在交互作用需注意</td>
+                            <td class="table-cell"><span class="text-red-600">顯著</span> (強效CYP3A抑制劑)</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <section id="ddi" class="my-12">
+            <h2 class="section-title text-primary">注意！藥物交互作用 (DDI)</h2>
+            <div class="card">
+                <p class="text-lg mb-6">在處方抗病毒藥物前，執行全面的藥物交互作用檢視至關重要，特別是針對Paxlovid及Ensitrelvir。醫療人員應詳細詢問病患完整用藥史。</p>
+                
+                <h3 class="text-xl font-semibold text-accent mb-4">Paxlovid 藥物交互作用管理三步驟：</h3>
+                <div class="flex flex-col md:flex-row md:space-x-4 space-y-4 md:space-y-0 items-stretch mb-6">
+                    <div class="flowchart-step">1. 識別「警示藥物」<br>(如特定抗癲癇/心律不整藥)</div>
+                    <div class="flowchart-step">2. 評估併用藥物是否可「暫停」<br>(如Statin類降血脂藥)</div>
+                    <div class="flowchart-step">3. 處理不可停用藥物<br>(換藥/調劑量/加強監測)</div>
+                </div>
+                 <p class="text-md mb-6">此流程有助於醫師判斷是否適合使用Paxlovid，或需考慮替代藥物。例如，某些降血脂藥物(Statin)可在Paxlovid療程期間暫停，療程結束後再恢復。</p>
+
+                <h3 class="text-xl font-semibold text-accent mb-2">藥物交互作用查詢資源：</h3>
+                <ul class="list-disc list-inside space-y-1 text-gray-700 mb-6">
+                    <li>英國利物浦大學COVID-19藥物交互作用查詢網站</li>
+                    <li>台灣健保署「健保資訊網雲端系統」之輔助功能</li>
+                    <li>各藥品官方仿單 (藥品說明書)</li>
+                </ul>
+
+                <h3 class="text-xl font-semibold text-accent mb-4">Paxlovid 詳細藥物交互作用資訊：</h3>
+                <p class="mb-4 text-sm text-gray-600">以下圖片提供Paxlovid常見藥物交互作用彙整，詳情請務必參閱完整官方文件或諮詢專業醫療人員。</p>
+                <div class="image-load-error-container rounded-lg shadow-md">
+                    <img src="https://wwwfs.vghks.gov.tw/Download.ashx?u=LzAwMS9WZ2hrc1VwbG9hZEZpbGVzLzI4OC9ja2ZpbGUvNGQ2ZjM5ODItMmEyNy00MTUzLWI0OWYtNjVjZDEyZWE1MGU5QDEwMjR4NzY4LnBuZw%3d%3d&n=5oqX55eF5q%2bS6Jel5ZOBUGF4bG92aWQg56K65a6aIOS6jOS%2fri5wbmc%3dl" 
+                         alt="Paxlovid藥物交互作用資訊圖" 
+                         class="rounded-lg shadow-md max-w-full h-auto" 
+                         onerror="this.alt='Paxlovid藥物交互作用資訊圖 (圖片無法載入，請確認網路連線或圖片來源)'; this.classList.add('image-load-error'); this.removeAttribute('src'); this.parentNode.setAttribute('data-alt-text', this.alt); this.parentNode.classList.add('error-state'); this.style.display='none';">
+                </div>
+            </div>
+        </section>
+        
+        <section id="taichung-pharmacies" class="my-12">
+            <h2 class="section-title text-accent">臺中市COVID-19口服抗病毒藥物合約機構</h2>
+            <div class="card">
+                <p class="text-lg mb-6">有關臺中市可獲取COVID-19口服抗病毒藥物的合約醫療機構及藥局名單，請參考臺中市政府衛生局提供的最新資訊。建議前往前先致電確認藥物庫存及服務時間。</p>
+                <div class="text-center">
+                    <a href="https://www.health.taichung.gov.tw/media/1238036/114%E5%B9%B4%E8%87%BA%E4%B8%AD%E5%B8%82covid-19%E5%8F%A3%E6%9C%8D%E6%8A%97%E7%97%85%E6%AF%92%E8%97%A5%E7%89%A9%E5%90%88%E7%B4%84%E6%A9%9F%E6%A7%8B%E5%90%8D%E5%96%AE.pdf" target="_blank" rel="noopener noreferrer" class="inline-block bg-accent text-white font-semibold py-3 px-6 rounded-lg hover:bg-opacity-80 transition-colors">
+                        點此查閱：臺中市COVID-19口服抗病毒藥物合約機構名單 (PDF)
+                    </a>
+                </div>
+                <p class="mt-4 text-sm text-gray-600">資料來源：臺中市政府衛生局 (更新時間請參考連結內文件)</p>
+            </div>
+        </section>
+
+        <section id="reminders" class="my-12">
+            <h2 class="section-title text-secondary">重要提醒</h2>
+            <div class="card bg-primary text-slate-900">
+                <div class="flex items-center mb-4">
+                    <span class="icon-style">💡</span>
+                    <p class="text-lg">臨床指引提供治療框架，但最終治療決策有賴於醫療人員對個案的<strong>全面性臨床評估</strong>，權衡效益與風險。</p>
+                </div>
+                <div class="flex items-center mb-4">
+                    <span class="icon-style">🗣️</span>
+                    <p class="text-lg">與病患或其家屬進行<strong>充分溝通並取得知情同意</strong>，是治療過程中不可或缺的一環。</p>
+                </div>
+                <div class="flex items-center">
+                    <span class="icon-style">🔄</span>
+                    <p class="text-lg">COVID-19相關研究與治療建議持續更新，請隨時參考<strong>台灣CDC發布之最新版指引</strong>及官方公告。</p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="bg-gray-800 text-gray-300 py-8 text-center">
+        <div class="container mx-auto px-4">
+            <p class="mb-2">本資訊圖表內容係基於「台灣現行COVID-19確診個案抗病毒藥物治療時機與禁忌證指引」文件（截至2024年資料）摘要整理，僅供參考，不構成任何醫療建議。</p>
+            <p>所有醫療決策應諮詢專業醫療人員，並以台灣衛生福利部疾病管制署最新公告為準。</p>
+            <p class="mt-4 text-sm">&copy; <span id="currentYear"></span> COVID-19指引資訊圖表. </p>
+        </div>
+    </footer>
+
+    <script>
+        document.getElementById('currentYear').textContent = new Date().getFullYear();
+
+        const labelWrapper = (label, maxLength = 16) => {
+            if (typeof label !== 'string') return label;
+            if (label.length <= maxLength) return label;
+
+            const words = label.split(' ');
+            const lines = [];
+            let currentLine = '';
+            for (const word of words) {
+                if ((currentLine + word).length > maxLength && currentLine.length > 0) {
+                    lines.push(currentLine.trim());
+                    currentLine = word + ' ';
+                } else {
+                    currentLine += word + ' ';
+                }
+            }
+            lines.push(currentLine.trim());
+            return lines;
+        };
+        
+        const tooltipTitleCallback = (tooltipItems) => {
+            const item = tooltipItems[0];
+            let label = item.chart.data.labels[item.dataIndex];
+            if (Array.isArray(label)) {
+              return label.join(' ');
+            }
+            return label;
+        };
+
+        const commonChartOptions = {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    position: 'bottom',
+                    labels: {
+                        font: { size: 12, family: "'Noto Sans TC', sans-serif" },
+                        padding: 15,
+                    }
+                },
+                tooltip: {
+                    callbacks: {
+                        title: tooltipTitleCallback,
+                        label: function(context) {
+                            let label = context.dataset.label || '';
+                            if (label) {
+                                label += ': ';
+                            }
+                            if (context.parsed.y !== null) {
+                                label += context.parsed.y + '%';
+                            }
+                            return label;
+                        }
+                    },
+                    bodyFont: { family: "'Noto Sans TC', sans-serif" },
+                    titleFont: { family: "'Noto Sans TC', sans-serif" }
+                }
+            }
+        };
+
+        // Paxlovid Effectiveness Chart (Example Data)
+        const paxlovidEffectivenessCtx = document.getElementById('paxlovidEffectivenessChart').getContext('2d');
+        new Chart(paxlovidEffectivenessCtx, {
+            type: 'doughnut',
+            data: {
+                labels: [labelWrapper('降低住院/死亡風險'), labelWrapper('剩餘風險')],
+                datasets: [{
+                    label: 'Paxlovid 效力',
+                    data: [88, 12], // Example: 88% reduction
+                    backgroundColor: ['#20B2AA', '#FFD700'], // Teal, Gold
+                    borderColor: ['#FFFFFF'],
+                    borderWidth: 2
+                }]
+            },
+            options: {
+                ...commonChartOptions,
+                cutout: '60%',
+                 plugins: {
+                    ...commonChartOptions.plugins,
+                    title: {
+                        display: true,
+                        text: 'Paxlovid 臨床效益示意',
+                        font: { size: 14, family: "'Noto Sans TC', sans-serif", weight: 'bold' },
+                        color: '#1A202C',
+                        padding: { top: 5, bottom: 5 }
+                    }
+                }
+            }
+        });
+
+        // Molnupiravir Effectiveness Chart (Example Data)
+        const molnupiravirEffectivenessCtx = document.getElementById('molnupiravirEffectivenessChart').getContext('2d');
+        new Chart(molnupiravirEffectivenessCtx, {
+            type: 'doughnut',
+            data: {
+                labels: [labelWrapper('降低住院/死亡風險'), labelWrapper('剩餘風險')],
+                datasets: [{
+                    label: 'Molnupiravir 效力',
+                    data: [30, 70], // Example: 30% reduction
+                    backgroundColor: ['#FF7F50', '#FFD700'], // Coral, Gold
+                    borderColor: ['#FFFFFF'],
+                    borderWidth: 2
+                }]
+            },
+            options: {
+                ...commonChartOptions,
+                cutout: '60%',
+                plugins: {
+                    ...commonChartOptions.plugins,
+                     title: {
+                        display: true,
+                        text: 'Molnupiravir 臨床效益示意',
+                        font: { size: 14, family: "'Noto Sans TC', sans-serif", weight: 'bold' },
+                        color: '#1A202C',
+                        padding: { top: 5, bottom: 5 }
+                    }
+                }
+            }
+        });
+
+        // Smooth scroll for navigation links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const targetId = this.getAttribute('href');
+                const targetElement = document.querySelector(targetId);
+                if (targetElement) {
+                    const navHeight = document.querySelector('.sticky-nav')?.offsetHeight || 0;
+                    const elementPosition = targetElement.getBoundingClientRect().top;
+                    const offsetPosition = elementPosition + window.pageYOffset - navHeight - 20; 
+
+                    window.scrollTo({
+                        top: offsetPosition,
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+
+    </script>
+</body>
+</html>

@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>懷孕期間甲狀腺亢進管理</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Noto Sans TC', sans-serif;
+            background-color: #F0F9FF; /* Light Blue Background */
+        }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 300px;
+            max-height: 350px;
+        }
+        @media (min-width: 768px) {
+            .chart-container {
+                height: 350px;
+                max-height: 400px;
+            }
+        }
+        .section-title {
+            color: #073B4C; /* Dark Blue */
+            border-bottom: 3px solid #118AB2; /* Cerulean Blue */
+            padding-bottom: 8px;
+            margin-bottom: 20px;
+        }
+        .card {
+            background-color: white;
+            border-radius: 12px;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            padding: 24px;
+            margin-bottom: 24px;
+        }
+        .highlight-stat {
+            color: #FF6B6B; /* Coral Red */
+            font-weight: 700;
+        }
+        .accent-color-1 { color: #FF6B6B; } /* Coral Red */
+        .accent-color-2 { color: #FFD166; } /* Sunny Yellow */
+        .accent-color-3 { color: #06D6A0; } /* Turquoise Green */
+        .accent-color-4 { color: #118AB2; } /* Cerulean Blue */
+        .text-dark { color: #073B4C; } /* Dark Blue */
+
+        .timeline {
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            margin: 20px 0;
+        }
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 20px;
+            top: 0;
+            bottom: 0;
+            width: 4px;
+            background: #FFD166; /* Sunny Yellow */
+            border-radius: 2px;
+        }
+        .timeline-item {
+            margin-bottom: 20px;
+            position: relative;
+            padding-left: 50px;
+        }
+        .timeline-dot {
+            position: absolute;
+            left: 10px;
+            top: 0px;
+            height: 20px;
+            width: 20px;
+            background: #FF6B6B; /* Coral Red */
+            border-radius: 50%;
+            border: 3px solid white;
+            box-shadow: 0 0 0 3px #FF6B6B;
+        }
+        .timeline-content {
+            background: #f9fafb;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+        .flowchart-step {
+            background-color: #E0F2FE; /* Lighter blue for steps */
+            border: 2px solid #118AB2; /* Cerulean Blue */
+            color: #073B4C; /* Dark Blue */
+            padding: 12px;
+            border-radius: 8px;
+            text-align: center;
+            margin-bottom: 12px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+        .flowchart-arrow {
+            font-size: 24px;
+            color: #118AB2; /* Cerulean Blue */
+            text-align: center;
+            margin: 0px 0;
+        }
+        .info-block {
+            padding: 16px;
+            border-radius: 8px;
+            height: 100%; /* Ensure blocks in a row have same height */
+        }
+    </style>
+</head>
+<body class="text-dark">
+    <div class="container mx-auto p-4 md:p-8 max-w-5xl">
+
+        <header class="text-center mb-12">
+            <h1 class="text-4xl md:text-5xl font-bold accent-color-4">懷孕期間甲狀腺亢進管理</h1>
+            <p class="text-lg md:text-xl mt-2">重要藥物資訊、監測與治療目標</p>
+        </header>
+
+        <section id="intro" class="card">
+            <h2 class="text-2xl md:text-3xl font-bold section-title">🤰 懷孕與甲狀腺亢進：您需要知道的</h2>
+            <p class="mb-4">甲狀腺功能亢進（甲亢）是指甲狀腺過度活躍，產生過量甲狀腺素。在懷孕期間，最常見的甲亢病因是葛瑞夫茲氏病。妥善控制甲亢對母親和胎兒的健康至關重要。</p>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div class="bg-red-50 p-4 rounded-lg border border-red-200">
+                    <h3 class="text-lg font-semibold accent-color-1">⚠️ 對母親的潛在風險</h3>
+                    <ul class="list-disc list-inside mt-2 text-sm">
+                        <li>自然流產、早產</li>
+                        <li>子癇前症</li>
+                        <li>心臟衰竭、甲狀腺風暴</li>
+                    </ul>
+                </div>
+                <div class="bg-yellow-50 p-4 rounded-lg border border-yellow-200">
+                    <h3 class="text-lg font-semibold accent-color-2">👶 對胎兒的潛在風險</h3>
+                    <ul class="list-disc list-inside mt-2 text-sm">
+                        <li>宮內生長遲滯</li>
+                        <li>胎兒/新生兒甲狀腺功能異常</li>
+                        <li>潛在發育問題</li>
+                    </ul>
+                </div>
+            </div>
+            <p class="mt-4 font-semibold accent-color-3">透過審慎醫療照護，絕大多數患有甲亢的孕婦都能順利懷孕並誕下健康的寶寶。</p>
+        </section>
+
+        <section id="ptu_drug" class="card">
+            <h2 class="text-2xl md:text-3xl font-bold section-title">💊 您的藥物：僕樂彼 (Propylthiouracil/PTU)</h2>
+            <p class="mb-4">「僕樂彼」(PTU) 是一種抗甲狀腺藥物，能抑制甲狀腺素的合成。在懷孕初期，PTU 通常是治療甲亢的首選藥物。</p>
+            <div class="bg-blue-50 p-4 rounded-lg border border-blue-200">
+                <h3 class="text-lg font-semibold accent-color-4">為何在懷孕初期選擇 PTU？</h3>
+                <p class="mt-2 text-sm">懷孕首三個月是胎兒器官形成的關鍵期。另一種藥物 Methimazole (MMI) 在此期間使用可能與較嚴重的先天畸形風險有關。選擇 PTU 是為了在此敏感階段降低此類風險。治療目標是在控制母體甲亢的同時，最大限度減少對胎兒的藥物暴露。</p>
+            </div>
+        </section>
+
+        <section id="ptu_dosage" class="card">
+            <h2 class="text-2xl md:text-3xl font-bold section-title">⚖️ 藥物劑量與用法</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="info-block bg-red-50 border border-red-200">
+                    <h3 class="text-xl font-semibold mb-3 accent-color-1">僕樂彼 (PTU) 劑量 <span class="text-sm font-normal">(懷孕初期首選)</span></h3>
+                    <p class="text-3xl font-bold highlight-stat mb-1">50-150 <span class="text-lg">mg</span></p>
+                    <p class="text-sm mb-2">通常<strong class="accent-color-1">每日三次</strong>（每8小時一次）。</p>
+                    <p class="text-xs mb-3">劑量會依病情嚴重程度及監測結果調整。</p>
+                    <p class="text-sm font-semibold accent-color-3 mt-auto">核心原則：</p>
+                    <p class="text-xs">使用最低有效劑量控制病情。</p>
+                </div>
+
+                <div class="info-block bg-blue-50 border border-blue-200">
+                    <h3 class="text-xl font-semibold mb-3 accent-color-4">Methimazole (MMI) <span class="text-sm font-normal">(若中後期轉換)</span></h3>
+                    <p class="text-xs mb-2">通常在第一孕期結束後（約12-16週），醫師可能考慮轉換藥物。</p>
+                    <details class="text-xs mb-3">
+                        <summary class="cursor-pointer text-blue-600 hover:text-blue-800">點此查看轉換理由</summary>
+                        <ul class="list-disc list-inside mt-1 pl-4 bg-white p-2 rounded shadow">
+                            <li>降低母親因長期使用 PTU 可能引發的肝臟損傷風險。</li>
+                            <li>此時胎兒器官發育關鍵期已大致完成。</li>
+                        </ul>
+                    </details>
+                    <p class="text-sm font-semibold">MMI 起始劑量：</p>
+                    <p class="text-3xl font-bold text-blue-700 mb-1">5-20 <span class="text-lg">mg</span></p>
+                    <p class="text-sm mb-2">通常<strong class="accent-color-4">每日一次</strong>。</p>
+                    <p class="text-xs font-semibold">劑量換算參考：</p>
+                    <p class="text-xs">MMI 10 mg ≈ PTU 100-150 mg。</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="monitoring" class="card">
+            <h2 class="text-2xl md:text-3xl font-bold section-title">🩺 重要監測：追蹤您的健康</h2>
+            <p class="mb-6">規律且全面的監測對確保母體甲狀腺功能穩定及保障胎兒健康至關重要。</p>
+            
+            <h3 class="text-xl font-semibold mb-3 accent-color-1">母體血液檢查時程</h3>
+            <div class="timeline">
+                <div class="timeline-item">
+                    <div class="timeline-dot"></div>
+                    <div class="timeline-content">
+                        <h4 class="font-semibold text-md">Free T4 & TSH (甲狀腺功能)</h4>
+                        <p class="text-xs">開始/調整藥物後：<strong class="accent-color-1">每 2-4 週</strong>監測。</p>
+                        <p class="text-xs">病情穩定後：<strong class="accent-color-1">每 4-6 週</strong>監測。</p>
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-dot" style="background-color: #FFD166;"></div>
+                    <div class="timeline-content">
+                        <h4 class="font-semibold text-md">LFTs (肝功能檢查 - 使用PTU期間)</h4>
+                        <p class="text-xs">治療前：基線檢查。</p>
+                        <p class="text-xs">使用PTU期間：建議<strong class="accent-color-2">每 3-4 週</strong>檢查，或首6個月內監測。</p>
+                    </div>
+                </div>
+                 <div class="timeline-item">
+                    <div class="timeline-dot" style="background-color: #06D6A0;"></div>
+                    <div class="timeline-content">
+                        <h4 class="font-semibold text-md">CBC (全血球計數)</h4>
+                        <p class="text-xs">治療前：基線檢查。</p>
+                        <p class="text-xs">若出現發燒、喉嚨痛等感染跡象：<strong class="accent-color-3">立即檢查</strong>。</p>
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-dot" style="background-color: #118AB2;"></div>
+                    <div class="timeline-content">
+                        <h4 class="font-semibold text-md">TRAb (促甲狀腺素受體抗體)</h4>
+                        <p class="text-xs">葛瑞夫茲氏病患者：懷孕早期檢測。</p>
+                        <p class="text-xs">若初檢升高：於<strong class="accent-color-4">18-22週</strong>複檢；若仍高，於<strong class="accent-color-4">30-34週</strong>再檢。</p>
+                    </div>
+                </div>
+            </div>
+             <p class="mt-6 text-sm"> <span class="font-semibold">胎兒監測：</span>主要透過超音波進行，尤其在母體TRAb水平過高或甲狀腺控制不佳時。</p>
+        </section>
+
+        <section id="treatment_goals" class="card">
+            <h2 class="text-2xl md:text-3xl font-bold section-title">🎯 治療目標：我們追求的平衡</h2>
+            <p class="mb-6">治療目標是將母體甲狀腺素維持在安全範圍，確保胎兒健康發育，同時避免過度治療。</p>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="text-center p-4 bg-green-50 rounded-lg border border-green-200">
+                    <h3 class="text-xl font-semibold mb-2 accent-color-3">Free T4 (游離四碘甲狀腺素)</h3>
+                    <p class="text-sm">目標：維持在非懷孕婦女正常參考範圍的<strong class="highlight-stat">上限</strong>，或懷孕期特定參考範圍的<strong class="highlight-stat">上限三分之一</strong>區間內。</p>
+                    <div class="mt-3 w-full bg-gray-200 rounded-full h-6">
+                        <div class="bg-green-400 h-6 rounded-full flex items-center justify-center text-white text-xs" style="width: 85%">目標區間高值</div>
+                    </div>
+                    <p class="text-xs mt-1">此目標有助於胎兒腦部發育。</p>
+                </div>
+                <div class="text-center p-4 bg-purple-50 rounded-lg border border-purple-200">
+                     <h3 class="text-xl font-semibold mb-2" style="color: #8B5CF6;">TSH (促甲狀腺素)</h3>
+                    <p class="text-sm">需使用<strong style="color: #8B5CF6;" class="font-bold">懷孕期特定參考範圍</strong>：</p>
+                    <ul class="text-xs list-none mt-1 space-y-1">
+                        <li>第一孕期：約 <strong style="color: #8B5CF6;">0.1-2.5</strong> mIU/L</li>
+                        <li>第二孕期：約 <strong style="color: #8B5CF6;">0.2-3.0</strong> mIU/L</li>
+                        <li>第三孕期：約 <strong style="color: #8B5CF6;">0.3-3.0</strong> mIU/L</li>
+                    </ul>
+                    <p class="text-xs mt-1">治療初期TSH可能仍偏低，主要關注Free T4。TSH回升表示控制良好。</p>
+                </div>
+            </div>
+            <div class="mt-4 chart-container h-auto md:h-[300px]">
+                 <canvas id="targetRangesChart"></canvas>
+            </div>
+            <p class="text-xs text-center mt-2">示意圖：甲狀腺素於懷孕期間的理想控制範圍（非實際數據）</p>
+        </section>
+
+        <section id="side_effects" class="card">
+            <h2 class="text-2xl md:text-3xl font-bold section-title">⚠️ 注意事項與副作用</h2>
+            <p class="mb-4">雖然藥物有助控制病情，但也需留意潛在副作用。了解何時應立即聯繫醫療人員非常重要。</p>
+            <div class="bg-red-50 p-6 rounded-lg border border-red-300">
+                <h3 class="text-xl font-semibold accent-color-1 mb-3">🚨 何時應立即聯繫醫療人員？</h3>
+                <ul class="space-y-2">
+                    <li class="flex items-start">
+                        <span class="text-red-500 mr-2 text-xl">❗</span>
+                        <div><strong>肝臟問題跡象：</strong>皮膚或眼睛變黃（黃疸）、尿色變深、腹痛、不明原因噁心/嘔吐。</div>
+                    </li>
+                    <li class="flex items-start">
+                        <span class="text-red-500 mr-2 text-xl">❗</span>
+                        <div><strong>感染跡象：</strong>發燒、喉嚨痛、口腔潰瘍（可能為顆粒性白血球缺乏症）。</div>
+                    </li>
+                    <li class="flex items-start">
+                        <span class="text-red-500 mr-2 text-xl">❗</span>
+                        <div><strong>嚴重皮疹</strong>或其他任何新的或惡化的症狀。</div>
+                    </li>
+                </ul>
+            </div>
+            <p class="mt-4 text-sm">醫療團隊是在仔細評估治療效益大於潛在風險後才決定使用藥物。未經治療的甲亢對母胎風險更高。</p>
+        </section>
+
+        <section id="collaboration" class="card bg-gradient-to-r from-blue-500 to-teal-400 text-white">
+            <h2 class="text-2xl md:text-3xl font-bold section-title" style="border-bottom-color: white; color:white;">🤝 與您的醫療團隊攜手合作</h2>
+            <p class="mb-4">有效管理懷孕期間的甲亢，需要您與醫師（內分泌科、婦產科）的緊密合作。按時服藥、遵從監測排程、及時報告任何症狀，並與醫療團隊開放溝通，是確保母胎健康的關鍵。</p>
+            <p class="font-semibold">透過嚴謹的管理和密切追蹤，絕大多數患有甲亢的孕婦都能擁有健康的懷孕結果！</p>
+        </section>
+
+        <footer class="text-center mt-12 mb-6">
+            <p class="text-xs text-gray-600">本資訊圖表內容僅供參考，不能取代專業醫療建議。請務必諮詢您的醫師以獲得個人化的治療方案。</p>
+            <p class="text-xs text-gray-500 mt-1">資料來源：懷孕期間甲狀腺功能亢進藥物治療與追蹤之專業指引</p>
+        </footer>
+
+    </div>
+
+    <script>
+        function wrapLabels(label, maxWidth) {
+            const words = label.split(' ');
+            let line = '';
+            const lines = [];
+            for (const word of words) {
+                if ((line + word).length > maxWidth) {
+                    lines.push(line.trim());
+                    line = '';
+                }
+                line += word + ' ';
+            }
+            lines.push(line.trim());
+            return lines;
+        }
+
+        const targetRangesCtx = document.getElementById('targetRangesChart').getContext('2d');
+        const targetRangesChart = new Chart(targetRangesCtx, {
+            type: 'bar',
+            data: {
+                labels: [
+                    wrapLabels('第一孕期 TSH (0.1-2.5 mIU/L)', 16), 
+                    wrapLabels('第二孕期 TSH (0.2-3.0 mIU/L)', 16), 
+                    wrapLabels('第三孕期 TSH (0.3-3.0 mIU/L)', 16),
+                    wrapLabels('Free T4 (正常範圍上限/孕期上限1/3)', 16)
+                ],
+                datasets: [{
+                    label: '目標範圍 (示意)',
+                    data: [2.5, 3.0, 3.0, 10], 
+                    backgroundColor: [
+                        'rgba(255, 107, 107, 0.6)', // Coral Red
+                        'rgba(255, 209, 102, 0.6)', // Sunny Yellow
+                        'rgba(6, 214, 160, 0.6)',   // Turquoise Green
+                        'rgba(17, 138, 178, 0.6)'   // Cerulean Blue
+                    ],
+                    borderColor: [
+                        '#FF6B6B',
+                        '#FFD166',
+                        '#06D6A0',
+                        '#118AB2'
+                    ],
+                    borderWidth: 1,
+                    barPercentage: 0.5,
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                indexAxis: 'y',
+                scales: {
+                    x: {
+                        beginAtZero: true,
+                        title: {
+                            display: true,
+                            text: '參考值 (示意)'
+                        }
+                    },
+                    y: {
+                        ticks: {
+                            autoSkip: false,
+                             callback: function(value, index, values) {
+                                let label = this.getLabelForValue(value);
+                                return Array.isArray(label) ? label : [label];
+                            }
+                        }
+                    }
+                },
+                plugins: {
+                    title: {
+                        display: true,
+                        text: '懷孕各期 TSH 及 Free T4 治療目標示意',
+                        font: { size: 16 },
+                        color: '#073B4C'
+                    },
+                    legend: {
+                        display: false
+                    },
+                    tooltip: {
+                        callbacks: {
+                            title: function(tooltipItems) {
+                                const item = tooltipItems[0];
+                                let label = item.chart.data.labels[item.dataIndex];
+                                if (Array.isArray(label)) {
+                                  return label.join(' ');
+                                } else {
+                                  return label;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    </script>
+</body>
+</html>

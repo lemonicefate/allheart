@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>血脂管理與心血管風險計算機 (含三酸甘油脂)</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', 'Noto Sans TC', sans-serif;
+        }
+        .result-card {
+            transition: all 0.3s ease-in-out;
+            transform: translateY(20px);
+            opacity: 0;
+        }
+        .result-card.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+        .result-section {
+            border-radius: 0.75rem;
+            border: 1px solid #e5e7eb; /* border-gray-200 */
+            padding: 1rem; /* p-4 */
+            margin-top: 1.5rem; /* mt-6 */
+        }
+        details > summary {
+            list-style: none;
+            cursor: pointer;
+        }
+        details > summary::-webkit-details-marker {
+            display: none;
+        }
+        details[open] summary .arrow {
+            transform: rotate(90deg);
+        }
+        .arrow {
+            transition: transform 0.2s;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800">
+
+    <div class="container mx-auto p-4 md:p-8 max-w-4xl">
+        
+        <header class="text-center mb-8">
+            <h1 class="text-3xl md:text-4xl font-bold text-gray-900">血脂管理與心血管風險計算機</h1>
+            <p class="mt-2 text-gray-600">根據 2022 臺灣高血壓、高血脂、糖尿病指引建議 (並參考初級預防流程圖)</p>
+        </header>
+
+        <main class="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <!-- Input Form -->
+            <div class="bg-white p-6 rounded-xl shadow-lg border border-gray-200">
+                <h2 class="text-2xl font-bold mb-6 border-b pb-4">請輸入您的風險因子</h2>
+                <form id="riskForm" class="space-y-6">
+                    
+                    <div>
+                        <label class="block text-md font-medium text-gray-700 mb-2">1. 您是否有以下任何一項疾病？</label>
+                        <div class="space-y-2">
+                            <div class="flex items-center">
+                                <input type="checkbox" id="has_ascvd" name="condition" value="ascvd" class="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500">
+                                <label for="has_ascvd" class="ml-3 block text-sm text-gray-900">冠狀動脈、腦血管或周邊動脈疾病 (ASCVD)</label>
+                            </div>
+                            <div class="flex items-center">
+                                <input type="checkbox" id="has_dm" name="condition" value="dm" class="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500">
+                                <label for="has_dm" class="ml-3 block text-sm text-gray-900">糖尿病 (DM)</label>
+                            </div>
+                            <div class="flex items-center">
+                                <input type="checkbox" id="has_ckd" name="condition" value="ckd" class="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500">
+                                <label for="has_ckd" class="ml-3 block text-sm text-gray-900">慢性腎臟病 (CKD，第三期以上)</label>
+                            </div>
+                             <div class="flex items-center">
+                                <input type="checkbox" id="has_fh" name="condition" value="fh" class="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500">
+                                <label for="has_fh" class="ml-3 block text-sm text-gray-900">家族性高膽固醇血症 (FH)</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div>
+                        <label for="ldl" class="block text-md font-medium text-gray-700">2. 低密度脂蛋白膽固醇 (LDL-C) (mg/dL)</label>
+                        <input type="number" id="ldl" name="ldl" class="mt-2 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm" placeholder="例如：135">
+                    </div>
+
+                    <div>
+                        <label for="tg" class="block text-md font-medium text-gray-700">3. 三酸甘油脂 (TG) (mg/dL)</label>
+                        <input type="number" id="tg" name="tg" class="mt-2 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm" placeholder="例如：250">
+                    </div>
+
+                    <div id="other_risk_factors_container" class="space-y-6">
+                         <div>
+                            <label class="block text-md font-medium text-gray-700">4. 其他風險因子（若無第1項疾病請填寫）</label>
+                            <div id="other_risk_factors" class="space-y-2 mt-2">
+                                <div class="flex items-center">
+                                    <input type="checkbox" id="is_male_age" class="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500">
+                                    <label for="is_male_age" class="ml-3 block text-sm text-gray-900">男性 ≥ 45歲 或 女性 ≥ 55歲</label>
+                                </div>
+                                <div class="flex items-center">
+                                    <input type="checkbox" id="has_smoking" class="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500">
+                                    <label for="has_smoking" class="ml-3 block text-sm text-gray-900">目前吸菸</label>
+                                </div>
+                                 <div class="flex items-center">
+                                    <input type="checkbox" id="has_hdl" class="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500">
+                                    <label for="has_hdl" class="ml-3 block text-sm text-gray-900">高密度脂蛋白膽固醇 (HDL-C) &lt; 40 mg/dL</label>
+                                </div>
+                                <div class="flex items-start">
+                                    <input type="checkbox" id="has_family_history" class="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500 mt-1">
+                                    <label for="has_family_history" class="ml-3 block text-sm text-gray-900">早發性冠心病家族史<br><span class="text-xs text-gray-500">(男性一等親&lt;55歲或女性一等親&lt;65歲罹患冠心病)</span></label>
+                                </div>
+                                <div class="flex items-center">
+                                    <input type="checkbox" id="has_hypertension" class="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500">
+                                    <label for="has_hypertension" class="ml-3 block text-sm text-gray-900">高血壓</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="pt-4">
+                        <button type="button" id="calculateBtn" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-lg focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors duration-200">
+                            計算風險與建議
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Results Display -->
+            <div id="result" class="bg-white p-6 rounded-xl shadow-lg border border-gray-200">
+                 <h2 class="text-2xl font-bold mb-6 border-b pb-4">評估結果</h2>
+                <div id="resultContent" class="space-y-6">
+                    <p class="text-gray-500">結果將會顯示於此。</p>
+                </div>
+                 <div class="mt-6 p-4 bg-blue-50 border-l-4 border-blue-400 rounded-r-lg">
+                    <h4 class="font-bold text-blue-800">免責聲明</h4>
+                    <p class="text-sm text-blue-700 mt-1">此工具僅供衛教參考，不能取代專業醫療建議。所有治療決策請務必與您的醫師討論。</p>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // --- Drug Information ---
+        const statinInfo = {
+            medium: `
+                <details class="mt-2 bg-gray-100 p-3 rounded-lg">
+                    <summary class="font-semibold text-gray-800 flex justify-between items-center">
+                        <span>建議藥物：中強度 Statin</span>
+                        <span class="arrow text-blue-600 transform transition-transform">▶</span>
+                    </summary>
+                    <div class="mt-2 text-sm space-y-2 text-gray-700 border-t pt-2">
+                        <p><strong>藥物範例:</strong> Atorvastatin (理普妥) 10-20mg, Rosuvastatin (冠脂妥) 5-10mg, Simvastatin 20-40mg。</p>
+                        <p><strong>服用頻次:</strong> 通常每日一次，因膽固醇多在夜間合成，建議晚上服用。</p>
+                        <p><strong>常見副作用:</strong> 肌肉痠痛或無力、肝功能指數(AST/ALT)上升、消化不良、頭痛。<strong>注意：若出現不正常的深色尿液、嚴重肌肉痠痛無力，請立即就醫。</strong></p>
+                        <p><strong>禁忌症:</strong> 活動性肝病、持續性肝指數上升、懷孕或哺乳期間。</p>
+                    </div>
+                </details>
+            `,
+            high: `
+                <details class="mt-2 bg-gray-100 p-3 rounded-lg">
+                    <summary class="font-semibold text-gray-800 flex justify-between items-center">
+                        <span>建議藥物：中至高強度 Statin</span>
+                        <span class="arrow text-blue-600 transform transition-transform">▶</span>
+                    </summary>
+                    <div class="mt-2 text-sm space-y-2 text-gray-700 border-t pt-2">
+                        <p><strong>藥物範例:</strong><br>
+                           - <strong>中強度:</strong> Atorvastatin (理普妥) 10-20mg, Rosuvastatin (冠脂妥) 5-10mg。<br>
+                           - <strong>高強度:</strong> Atorvastatin 40-80mg, Rosuvastatin 20mg。</p>
+                        <p><strong>服用頻次:</strong> 通常每日一次，建議晚上服用。</p>
+                        <p><strong>常見副作用:</strong> 肌肉痠痛或無力、肝功能指數(AST/ALT)上升、消化不良、頭痛。高強度藥物副作用發生機率可能稍高。<strong>注意：若出現不正常的深色尿液、嚴重肌肉痠痛無力，請立即就醫。</strong></p>
+                        <p><strong>禁忌症:</strong> 活動性肝病、持續性肝指數上升、懷孕或哺乳期間。</p>
+                    </div>
+                </details>
+            `
+        };
+
+        const fibrateInfo = `
+            <details class="mt-2 bg-gray-100 p-3 rounded-lg">
+                <summary class="font-semibold text-gray-800 flex justify-between items-center">
+                    <span>降TG藥物資訊：Fibrates 類</span>
+                    <span class="arrow text-blue-600 transform transition-transform">▶</span>
+                </summary>
+                <div class="mt-2 text-sm space-y-2 text-gray-700 border-t pt-2">
+                    <p><strong>藥物範例:</strong> Fenofibrate (弗尼利脂寧), Gemfibrozil。</p>
+                    <p><strong>服用頻次:</strong> 通常每日一次，建議隨餐服用以增加吸收。</p>
+                    <p><strong>常見副作用:</strong> 腸胃不適(腹痛、噁心、腹瀉)、膽結石風險增加、肝功能指數上升、肌肉疼痛。<strong>注意：與 Statin 類藥物併用時，肌肉病變風險會增加，需密切監測。</strong></p>
+                    <p><strong>禁忌症:</strong> 嚴重腎臟或肝臟疾病、膽囊疾病、懷孕或哺乳期間。</p>
+                </div>
+            </details>
+        `;
+
+        // --- DOM Elements ---
+        const calculateBtn = document.getElementById('calculateBtn');
+        const resultContent = document.getElementById('resultContent');
+        const ldlInput = document.getElementById('ldl');
+        const tgInput = document.getElementById('tg');
+        
+        const hasAscvd = document.getElementById('has_ascvd');
+        const hasDm = document.getElementById('has_dm');
+        const hasCkd = document.getElementById('has_ckd');
+        const hasFh = document.getElementById('has_fh');
+
+        const mainConditions = [hasAscvd, hasDm, hasCkd, hasFh];
+        const otherRiskFactorsContainer = document.getElementById('other_risk_factors_container');
+
+        // --- Event Listeners and Functions ---
+        const toggleOtherFactors = () => {
+            const anyMainConditionChecked = mainConditions.some(cb => cb.checked);
+            otherRiskFactorsContainer.style.display = anyMainConditionChecked ? 'none' : 'block';
+        };
+        
+        mainConditions.forEach(cb => cb.addEventListener('change', toggleOtherFactors));
+        toggleOtherFactors();
+
+        calculateBtn.addEventListener('click', () => {
+            const ldl = parseInt(ldlInput.value, 10);
+            const tg = parseInt(tgInput.value, 10);
+            
+            if (isNaN(ldl) || isNaN(tg)) {
+                resultContent.innerHTML = `<div class="p-4 text-red-700 bg-red-100 border-l-4 border-red-500" role="alert"><p class="font-bold">輸入錯誤</p><p>請輸入有效的 LDL-C 和 TG 數值。</p></div>`;
+                return;
+            }
+
+            const isAscvd = hasAscvd.checked;
+            const isDm = hasDm.checked;
+            const isCkd = hasCkd.checked;
+            const isFh = hasFh.checked;
+
+            let riskFactorsCount = 0;
+            if (otherRiskFactorsContainer.style.display !== 'none') {
+                if (document.getElementById('is_male_age').checked) riskFactorsCount++;
+                if (document.getElementById('has_smoking').checked) riskFactorsCount++;
+                if (document.getElementById('has_hdl').checked) riskFactorsCount++;
+                if (document.getElementById('has_family_history').checked) riskFactorsCount++;
+                if (document.getElementById('has_hypertension').checked) riskFactorsCount++;
+            }
+
+            let riskCategory = '';
+            if (isAscvd || isFh) {
+                riskCategory = '極高風險';
+            } else if (isDm || isCkd || ldl >= 190) {
+                riskCategory = '高風險';
+            } else {
+                if (riskFactorsCount >= 2) { riskCategory = '中風險'; } 
+                else if (riskFactorsCount === 1) { riskCategory = '低風險'; } 
+                else { riskCategory = '理想風險'; }
+            }
+            
+            let ldlRecs;
+            switch (riskCategory) {
+                case '極高風險':
+                    ldlRecs = { riskColor: 'bg-red-700', title: '極高風險族群', subtitle: '(如ASCVD, 家族性高膽固醇血症)', initialAction: '應立即與醫師討論藥物治療，並搭配生活習慣調整。' + statinInfo.high, startThreshold: '任何數值', targetValue: '< 55 mg/dL' };
+                    break;
+                case '高風險':
+                    ldlRecs = { riskColor: 'bg-red-500', title: '高風險族群', subtitle: '(如糖尿病, 慢性腎臟病, LDL ≥ 190)', initialAction: '依據基線LDL-C和臨床狀況，建議與醫師討論開始中至高強度statin治療，並同時進行生活型態改變。' + statinInfo.high, startThreshold: '100 mg/dL', targetValue: '< 100 mg/dL' };
+                    break;
+                case '中風險':
+                    ldlRecs = { riskColor: 'bg-orange-500', title: '中風險族群', subtitle: '(2項或以上風險因子)', initialAction: '建議先進行3-6個月的非藥物治療。若LDL-C仍未達標，則可考慮使用中強度Statin。' + statinInfo.medium, startThreshold: '115 mg/dL', targetValue: '< 115 mg/dL' };
+                    break;
+                case '低風險':
+                    ldlRecs = { riskColor: 'bg-yellow-500', title: '低風險族群', subtitle: '(1項風險因子)', initialAction: '建議先進行3-6個月的非藥物治療。若LDL-C仍未達標，則可考慮使用中強度Statin。' + statinInfo.medium, startThreshold: '130 mg/dL', targetValue: '< 130 mg/dL' };
+                    break;
+                default:
+                    ldlRecs = { riskColor: 'bg-green-500', title: '理想風險族群', subtitle: '(0項風險因子)', initialAction: '恭喜！您的風險較低，請繼續維持健康生活習慣。', startThreshold: '190 mg/dL', targetValue: '< 160 mg/dL' };
+                    break;
+            }
+
+            let tgRecs = {
+                targetValue: '< 150 mg/dL',
+                management: '',
+                medication: '一般而言，健保給付降三酸甘油脂藥物，通常針對數值極高 (如 > 500 mg/dL) 以預防胰臟炎，或在特定高風險族群合併高數值時。' + fibrateInfo
+            };
+
+            if (tg >= 500) {
+                tgRecs.management = '您的數值屬於<strong class="text-red-600">極高</strong>，為預防急性胰臟炎風險，應立即與醫師討論藥物治療。';
+            } else if (tg >= 200 && tg < 500) {
+                tgRecs.management = '您的數值屬於<strong class="text-orange-600">偏高</strong>。首要目標是將LDL-C達標。若LDL-C已達標但TG仍高，可與醫師討論是否需加上降TG藥物。';
+            } else if (tg >= 150 && tg < 200) {
+                tgRecs.management = '您的數值屬於<strong class="text-yellow-600">邊緣性偏高</strong>。建議加強生活習慣調整，包含飲食控制、規律運動與體重管理。';
+            } else {
+                tgRecs.management = '您的數值在<strong class="text-green-600">理想範圍</strong>。請繼續維持健康的生活習慣。';
+            }
+
+            displayResults(ldlRecs, tgRecs);
+        });
+
+        function displayResults(ldlRecs, tgRecs) {
+            resultContent.innerHTML = `
+                <div class="result-card">
+                    <!-- LDL-C Results -->
+                    <div class="result-section bg-gray-50/50">
+                        <div class="flex items-start mb-3">
+                            <span class="w-3 h-3 rounded-full ${ldlRecs.riskColor} mr-3 flex-shrink-0 mt-2"></span>
+                            <div>
+                                <h3 class="text-xl font-bold">LDL-C 風險評估：${ldlRecs.title}</h3>
+                                <p class="text-sm text-gray-500">${ldlRecs.subtitle}</p>
+                            </div>
+                        </div>
+                        <div class="space-y-4 text-gray-700 pl-6">
+                            <div>
+                                <strong class="block text-md text-gray-800">1. 治療啟動建議：</strong>
+                                <p>${ldlRecs.initialAction}</p>
+                            </div>
+                            <div>
+                                <strong class="block text-md text-gray-800">2. 考慮藥物治療的 LDL-C 數值：</strong>
+                                <p>當 LDL-C 超過 <span class="font-bold text-lg text-blue-700">${ldlRecs.startThreshold}</span> 時，建議與醫師討論藥物治療。</p>
+                            </div>
+                            <div>
+                                <strong class="block text-md text-gray-800">3. LDL-C 控制目標值：</strong>
+                                <p>治療目標應控制在 <span class="font-bold text-lg text-blue-700">${ldlRecs.targetValue}</span>。</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Triglyceride Results -->
+                     <div class="result-section bg-gray-50/50">
+                        <div class="flex items-center mb-3">
+                             <svg class="w-5 h-5 mr-2 text-blue-600 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 18.657A8 8 0 016.343 7.343S7 9 9 10c0-2 .5-5 2.986-7.014A8.003 8.003 0 0122 12c0 3-1 7-6.343 6.657z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.879 16.121A3 3 0 1014.12 11.88l-4.242 4.242z"></path></svg>
+                            <h3 class="text-xl font-bold">三酸甘油脂 (TG) 評估</h3>
+                        </div>
+                        <div class="space-y-4 text-gray-700 pl-7">
+                            <div>
+                                <strong class="block text-md text-gray-800">1. TG 理想目標值：</strong>
+                                <p>一般建議控制在 <span class="font-bold text-lg text-blue-700">${tgRecs.targetValue}</span>。</p>
+                            </div>
+                            <div>
+                                <strong class="block text-md text-gray-800">2. TG 管理建議：</strong>
+                                <p>${tgRecs.management}</p>
+                            </div>
+                            <div>
+                                <strong class="block text-md text-gray-800">3. 關於降 TG 藥物：</strong>
+                                <p class="text-sm">${tgRecs.medication}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            const card = resultContent.querySelector('.result-card');
+            setTimeout(() => card.classList.add('show'), 10);
+        }
+    </script>
+</body>
+</html>
