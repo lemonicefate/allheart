@@ -1,0 +1,545 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>麻疹防治全攻略</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Noto Sans TC', sans-serif;
+            background-color: #f0f4f8; /* D6EAF8 a bit lighter */
+        }
+        .chart-container {
+            position: relative;
+            margin: auto;
+            height: 320px;
+            width: 100%;
+            max-width: 600px;
+        }
+        @media (min-width: 768px) {
+            .chart-container {
+                height: 400px;
+            }
+        }
+        .kpi-card {
+            background-color: #003F5C;
+            color: white;
+        }
+        .kpi-number {
+            font-size: 3.5rem;
+            font-weight: 700;
+            line-height: 1;
+            color: #A1CCE4;
+        }
+        .flowchart-step {
+            border-color: #366E9B;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .flowchart-step:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+        .flowchart-arrow {
+            color: #366E9B;
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-gray-800">
+
+    <div class="container mx-auto p-4 md:p-8">
+
+        <header class="text-center mb-12">
+            <h1 class="text-4xl md:text-5xl font-bold text-[#003F5C] mb-2">麻疹(Measles)</h1>
+            <p class="text-lg text-[#366E9B]">傳染性很高的傳播疾病</p>
+        </header>
+
+        <section id="threat" class="mb-16">
+            <h2 class="text-3xl font-bold text-center mb-8 text-[#003F5C]">看不見的威脅：麻疹的驚人傳播力</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 text-center">
+                <div class="kpi-card rounded-xl shadow-lg p-6 flex flex-col justify-center items-center">
+                    <div class="kpi-number">90%+</div>
+                    <div class="mt-2 text-xl font-semibold">接觸後感染率</div>
+                    <p class="mt-1 text-base text-gray-300">在無免疫力人群中，暴露後的侵襲率極高。</p>
+                </div>
+                <div class="kpi-card rounded-xl shadow-lg p-6 flex flex-col justify-center items-center">
+                    <div class="kpi-number">2小時</div>
+                    <div class="mt-2 text-xl font-semibold">空氣中存活</div>
+                    <p class="mt-1 text-base text-gray-300">病毒可在空氣中懸浮，即使患者離開後仍具傳染性。</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="symptoms" class="mb-16">
+            <h2 class="text-3xl font-bold text-center mb-8 text-[#003F5C]">經典三部曲：辨識麻疹病程</h2>
+            <p class="text-center max-w-3xl mx-auto mb-10 text-gray-600">麻疹的臨床表現具有高度特徵性，可清晰劃分為三個階段。及早辨識是控制傳播的關鍵。</p>
+            <div class="flex flex-col md:flex-row items-center md:items-stretch justify-center gap-4 md:gap-0">
+                <div class="flowchart-step bg-white rounded-lg shadow-md p-6 border-l-4 w-full md:w-1/3">
+                    <h3 class="text-xl font-bold text-[#366E9B]">第一幕：前驅期</h3>
+                    <p class="text-sm text-gray-500">(3-5天)</p>
+                    <ul class="mt-4 list-disc list-inside text-left space-y-2">
+                        <li><span class="font-semibold">高燒</span> (≥ 38°C)</li>
+                        <li><span class="font-semibold">三C症狀</span>
+                            <ul class="list-disc list-inside mt-1 pl-5 space-y-1">
+                                <li>咳嗽(cough)</li>
+                                <li>流鼻水(coryza)</li>
+                                <li>結膜炎(conjunctivitis)</li>
+                            </ul>
+                        </li>
+                        <li class="font-bold text-red-600">口腔出現柯氏斑點 (Koplik's Spots)</li>
+                    </ul>
+                </div>
+                <div class="text-4xl flowchart-arrow font-sans transform rotate-90 md:rotate-0 mx-4">&#10140;</div>
+                <div class="flowchart-step bg-white rounded-lg shadow-md p-6 border-l-4 w-full md:w-1/3">
+                    <h3 class="text-xl font-bold text-[#366E9B]">第二幕：出疹期</h3>
+                    <p class="text-sm text-gray-500">(3-4天)</p>
+                    <ul class="mt-4 list-disc list-inside text-left space-y-2">
+                        <li><span class="font-semibold">體溫再度飆高</span> (可達40°C)</li>
+                        <li><span class="font-semibold">紅色斑丘疹</span></li>
+                        <li><span class="font-semibold">由上至下擴散</span>：從耳後髮際線到臉部，再到全身</li>
+                    </ul>
+                </div>
+                <div class="text-4xl flowchart-arrow font-sans transform rotate-90 md:rotate-0 mx-4">&#10140;</div>
+                <div class="flowchart-step bg-white rounded-lg shadow-md p-6 border-l-4 w-full md:w-1/3">
+                    <h3 class="text-xl font-bold text-[#366E9B]">第三幕：恢復期</h3>
+                    <p class="text-sm text-gray-500">(7-10天)</p>
+                    <ul class="mt-4 list-disc list-inside text-left space-y-2">
+                        <li><span class="font-semibold">皮疹依序消退</span></li>
+                        <li>留下<span class="font-semibold">褐色色素沉澱</span></li>
+                        <li>伴隨<span class="font-semibold">糠麩樣脫屑</span></li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <section id="complications" class="mb-16">
+            <h2 class="text-3xl font-bold text-center mb-8 text-[#003F5C]">不只是皮疹：麻疹的嚴重併發症</h2>
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 items-center">
+                <div class="lg:col-span-1 bg-white rounded-xl shadow-lg p-6">
+                    <h3 class="text-2xl font-bold text-center text-[#366E9B] mb-4">併發症發生率</h3>
+                    <div class="chart-container h-64 md:h-80">
+                        <canvas id="complicationRateChart"></canvas>
+                    </div>
+                    <p class="mt-4 text-center text-gray-600">將近三分之一的病患會出現至少一種併發症，這絕非良性疾病。</p>
+                </div>
+                <div class="lg:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="bg-white rounded-lg shadow-md p-6">
+                        <h4 class="font-bold text-lg text-[#003F5C]">常見併發症</h4>
+                        <p class="text-gray-600 mt-2">中耳炎、腹瀉，以及最常導致嬰幼兒死亡的<span class="font-bold">肺炎</span>。這些多為病毒破壞免疫後引發的繼發性細菌感染。</p>
+                    </div>
+                     <div class="bg-white rounded-lg shadow-md p-6">
+                        <h4 class="font-bold text-lg text-[#003F5C]">急性腦炎</h4>
+                        <p class="text-gray-600 mt-2">發生率約 <span class="font-bold">1/1000</span>，可能導致永久性腦損傷甚至死亡。</p>
+                    </div>
+                     <div class="bg-white rounded-lg shadow-md p-6">
+                        <h4 class="font-bold text-lg text-[#003F5C]">高風險族群</h4>
+                        <p class="text-gray-600 mt-2">小於5歲的嬰幼兒、大於20歲的成人、孕婦及免疫功能低下者，併發症風險顯著增高。</p>
+                    </div>
+                    <div class="bg-red-100 border-l-4 border-red-500 text-red-700 p-6 rounded-lg shadow-md">
+                        <h4 class="font-bold text-lg text-red-800">亞急性硬化性全腦炎 (SSPE)</h4>
+                        <p class="text-red-900 mt-2">感染後數年才發病的慢性退化性腦病變，罕見但 <span class="font-bold">100%致命</span>。</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="vaccine" class="mb-16">
+            <h2 class="text-3xl font-bold text-center mb-8 text-[#003F5C]">我們的盾牌：MMR 疫苗</h2>
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <div class="bg-white rounded-xl shadow-lg p-6 flex flex-col">
+                    <h3 class="text-2xl font-bold text-center text-[#366E9B] mb-4">疫苗保護力</h3>
+                     <div class="grid grid-cols-2 items-center h-full text-center flex-grow">
+                        <div>
+                            <div class="text-9xl font-bold text-[#003F5C]">93%</div>
+                            <div class="text-lg font-semibold text-gray-700 mt-2">接種第一劑後</div>
+                        </div>
+                        <div>
+                            <div class="text-9xl font-bold text-[#003F5C]">97%</div>
+                            <div class="text-lg font-semibold text-gray-700 mt-2">接種第二劑後</div>
+                        </div>
+                    </div>
+                    <p class="mt-4 text-center text-gray-600">完成兩劑MMR疫苗接種可提供近乎完全的長期保護。</p>
+                </div>
+                 <div class="bg-white rounded-xl shadow-lg p-6 flex flex-col justify-center">
+                    <h3 class="text-2xl font-bold text-center text-[#366E9B] mb-6">台灣公費MMR疫苗兒童接種時程</h3>
+                    <div class="flex flex-col md:flex-row items-center justify-center gap-4 md:gap-8 py-6">
+                        <!-- First Dose -->
+                        <div class="text-center">
+                            <div class="p-4 bg-slate-100 rounded-lg shadow-md border-b-4 border-[#366E9B] hover:shadow-xl transition-shadow duration-300 ease-in-out">
+                                <h4 class="font-bold text-[#003F5C]">第一劑</h4>
+                                <p class="text-gray-700 mt-1">滿 12 個月</p>
+                            </div>
+                        </div>
+
+                        <!-- Arrow -->
+                        <div class="text-4xl text-[#A1CCE4] font-sans transform rotate-90 md:rotate-0">&#10140;</div>
+
+                        <!-- Second Dose -->
+                        <div class="text-center">
+                            <div class="p-4 bg-slate-100 rounded-lg shadow-md border-b-4 border-[#366E9B] hover:shadow-xl transition-shadow duration-300 ease-in-out">
+                                <h4 class="font-bold text-[#003F5C]">第二劑</h4>
+                                <p class="text-gray-700 mt-1">滿 5 歲至入國小前</p>
+                            </div>
+                        </div>
+                    </div>
+                    <p class="mt-4 text-center text-gray-600">按時完成兩劑接種，建立完整保護力。</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="challenges" class="mb-16">
+             <h2 class="text-3xl font-bold text-center mb-12 text-[#003F5C]">免疫防線的裂縫：現代挑戰</h2>
+             <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+
+                <div class="bg-white rounded-xl shadow-lg p-6 flex flex-col">
+                    <h3 class="text-2xl font-bold text-[#366E9B] mb-4">嬰兒「免疫空窗期」</h3>
+                    <div class="chart-container flex-grow">
+                        <canvas id="immunityWindowChart"></canvas>
+                    </div>
+                    <p class="mt-4 text-gray-600">母傳抗體在6-9個月時衰退，而第一劑疫苗在12個月才接種，期間形成一個長達數月的易感窗口。</p>
+                </div>
+
+                <div class="bg-white rounded-xl shadow-lg p-6 flex flex-col">
+                     <h3 class="text-2xl font-bold text-[#366E9B] mb-4">成人「免疫力衰退」</h3>
+                    <div class="chart-container flex-grow">
+                        <canvas id="waningImmunityChart"></canvas>
+                    </div>
+                    <p class="mt-4 text-gray-600">1981年後出生的「疫苗世代」，因缺乏自然感染的再刺激，抗體可能隨時間下降，成年後保護力不足。</p>
+                </div>
+
+                <div class="bg-white rounded-xl shadow-lg p-6 flex flex-col items-center justify-center text-center">
+                     <h3 class="text-2xl font-bold text-[#366E9B] mb-4">長期威脅：「免疫失憶症」</h3>
+                     <div class="text-7xl mb-4">🧠</div>
+                     <p class="text-lg text-gray-600 mb-4">麻疹病毒會摧毀免疫記憶細胞，導致人體「忘記」如何對抗其他病原體。</p>
+                     <div class="w-full bg-[#003F5C] text-white rounded-lg p-4">
+                        <div class="text-4xl font-bold">11%-73%</div>
+                        <div class="text-md font-semibold">的既往抗體種類可能被清除</div>
+                     </div>
+                     <p class="mt-4 text-sm text-gray-500">此影響可持續2-3年，大幅增加感染其他疾病的風險。MMR疫苗可預防此情況。</p>
+                </div>
+             </div>
+        </section>
+
+        <section id="strategy" class="mb-16">
+            <h2 class="text-3xl font-bold text-center mb-8 text-[#003F5C]">強化防線：精準接種策略</h2>
+            <p class="text-center max-w-3xl mx-auto mb-10 text-gray-600">面對現代挑戰，我們需要更精準的策略來保護不同風險的族群。</p>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <div class="bg-white rounded-lg shadow-md p-6 text-center hover:shadow-xl transition-shadow">
+                    <div class="text-5xl mb-3">👶</div>
+                    <h4 class="text-xl font-bold text-[#003F5C]">6-11個月嬰兒</h4>
+                    <p class="mt-2 text-gray-600">若需前往麻疹流行地區，可評估後<span class="font-semibold">提前自費接種</span>一劑MMR疫苗。</p>
+                </div>
+                <div class="bg-white rounded-lg shadow-md p-6 text-center hover:shadow-xl transition-shadow">
+                    <div class="text-5xl mb-3">✈️</div>
+                    <h4 class="text-xl font-bold text-[#003F5C]">國際旅客</h4>
+                    <p class="mt-2 text-gray-600">建議<span class="font-semibold">1981年後出生者</span>，出國前確認已完成兩劑MMR接種或具備免疫力。</p>
+                </div>
+                <div class="bg-white rounded-lg shadow-md p-6 text-center hover:shadow-xl transition-shadow">
+                    <div class="text-5xl mb-3">🩺</div>
+                    <h4 class="text-xl font-bold text-[#003F5C]">高風險職業</h4>
+                    <p class="mt-2 text-gray-600">醫護人員、航空機組員等，應<span class="font-semibold">確保具備麻疹免疫力</span>，可考慮補接種。</p>
+                </div>
+                 <div class="bg-white rounded-lg shadow-md p-6 text-center hover:shadow-xl transition-shadow">
+                    <div class="text-5xl mb-3">🙋</div>
+                    <h4 class="text-xl font-bold text-[#003F5C]">考慮補接種者</h4>
+                    <p class="mt-2 text-gray-600">擔心免疫力不足的成人，可<span class="font-semibold">自費檢測抗體</span>或直接補接種一劑MMR疫苗。</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="vaccine-guidelines" class="mb-16">
+            <h2 class="text-3xl font-bold text-center mb-12 text-[#003F5C]">MMR 疫苗接種須知</h2>
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+
+                <!-- Card 1: Contraindications (禁忌) -->
+                <div class="bg-red-100 border-l-4 border-red-500 text-red-800 p-6 rounded-lg shadow-md flex flex-col h-full">
+                    <h3 class="font-bold text-xl mb-4 flex items-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636" />
+                        </svg>
+                        接種禁忌
+                    </h3>
+                    <ul class="list-disc list-inside space-y-2 text-red-900 flex-grow">
+                        <li>先前對疫苗任何成分曾發生<span class="font-semibold">嚴重過敏反應</span>者。</li>
+                        <li><span class="font-semibold">孕婦</span>。</li>
+                        <li>已知患有<span class="font-semibold">嚴重免疫缺失者</span>（如愛滋病、白血病、淋巴癌、或正接受化療、免疫抑制藥物治療者）。 </li>
+                    </ul>
+                </div>
+
+                <!-- Card 2: Post-vaccination Reactions (接種後反應) -->
+                <div class="bg-white rounded-lg shadow-md p-6 flex flex-col h-full">
+                    <h3 class="font-bold text-xl mb-4 text-[#003F5C] flex items-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                        接種後可能反應
+                    </h3>
+                    <ul class="list-disc list-inside space-y-2 text-gray-700 flex-grow">
+                        <li>局部反應很少。</li>
+                        <li>接種後 5-12 天，偶有<span class="font-semibold">疹子、咳嗽、鼻炎或發燒</span>。</li>
+                        <li>德國麻疹疫苗成分偶可引起發燒、暫時性關節痛、關節炎及神經炎。</li>
+                        <li>腮腺炎疫苗成分引起輕微中樞神經反應之機率極小。</li>
+                    </ul>
+                </div>
+
+                <!-- Card 3: Precautions (注意事項) -->
+                <div class="bg-yellow-100 border-l-4 border-yellow-500 text-yellow-800 p-6 rounded-lg shadow-md flex flex-col h-full">
+                    <h3 class="font-bold text-xl mb-4 flex items-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                        </svg>
+                        接種前注意事項
+                    </h3>
+                    <ul class="list-disc list-inside space-y-2 text-yellow-900 flex-grow">
+                        <li>發燒或正患有急性中重度疾病者，宜待<span class="font-semibold">病情穩定後</span>再接種。</li>
+                        <li>曾有血小板低下症或紫斑症病史者，宜請醫師評估。</li>
+                        <li>已知對「蛋」之蛋白質有嚴重過敏者，可於醫療院所接種並<span class="font-semibold">留觀30分鐘</span>。</li>
+                        <li>女性接種後<span class="font-semibold">4週內應避免懷孕</span>。</li>
+                        <li>接受結核菌素測驗者，應於接種前/當天施測，否則應間隔一個月。</li>
+                    </ul>
+                </div>
+
+                <!-- Card 4: Blood Products Interval -->
+                 <div class="bg-white rounded-lg shadow-md p-6 flex flex-col h-full">
+                    <h3 class="font-bold text-xl mb-4 text-[#003F5C] flex items-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                        </svg>
+                        血液製劑與接種間隔
+                    </h3>
+                    <ul class="list-disc list-inside space-y-2 text-gray-700 flex-grow">
+                        <li>最近曾輸血或接受其他血液製劑者，應詢問醫師何時可接種。</li>
+                        <li>一般肌肉注射免疫球蛋白(IG)或B肝免疫球蛋白(HBIG)：宜間隔<span class="font-semibold">3個月</span>。</li>
+                        <li>輸血或靜脈注射血液製品：宜間隔<span class="font-semibold">6個月</span>。</li>
+                        <li>靜脈注射高劑量免疫球蛋白(IVIG)：宜間隔<span class="font-semibold">11個月</span>。</li>
+                    </ul>
+                </div>
+
+            </div>
+        </section>
+
+        <footer class="text-center mt-12 py-8 border-t border-gray-300">
+            <p class="text-gray-600">接種疫苗是保護自己、保護家人最有效的方式！</p>
+            <p class="text-gray-600">-誠心耳鼻喉科診所關心您-</p>
+            <p class="text-sm text-gray-500 mt-2">資料來源：衛生福利部疾病管制署。本資訊圖表僅供衛教參考，實際醫療決策請諮詢專業醫師。</p>
+        </footer>
+
+    </div>
+
+    <script>
+        const brilliantBlues = {
+            dark: '#003F5C',
+            medium: '#366E9B',
+            light: '#6B9DC9',
+            lighter: '#A1CCE4',
+            lightest: '#D6EAF8'
+        };
+
+        const chartTooltipTitleCallback = (tooltipItems) => {
+            const item = tooltipItems[0];
+            let label = item.chart.data.labels[item.dataIndex];
+            if (Array.isArray(label)) {
+                return label.join(' ');
+            }
+            return label;
+        };
+        
+        const commonTooltipOptions = {
+            plugins: {
+                tooltip: {
+                    callbacks: {
+                        title: chartTooltipTitleCallback
+                    },
+                    backgroundColor: 'rgba(0, 63, 92, 0.9)',
+                    titleFont: { size: 14, weight: 'bold' },
+                    bodyFont: { size: 12 },
+                    padding: 10,
+                    cornerRadius: 4,
+                    displayColors: true
+                },
+                legend: {
+                    labels: {
+                        color: brilliantBlues.dark,
+                        font: {
+                           size: 12
+                        }
+                    }
+                }
+            },
+            scales: {
+                y: {
+                    ticks: { color: brilliantBlues.dark },
+                    grid: { color: '#e0e0e0' }
+                },
+                x: {
+                    ticks: { color: brilliantBlues.dark },
+                    grid: { display: false }
+                }
+            }
+        };
+
+        function wrapLabel(str, maxWidth) {
+            if (str.length <= maxWidth) {
+                return str;
+            }
+            const words = str.split(' ');
+            const lines = [];
+            let currentLine = '';
+            for (const word of words) {
+                if ((currentLine + ' ' + word).trim().length > maxWidth) {
+                    lines.push(currentLine.trim());
+                    currentLine = word;
+                } else {
+                    currentLine = (currentLine + ' ' + word).trim();
+                }
+            }
+            if (currentLine) {
+                lines.push(currentLine.trim());
+            }
+            return lines;
+        }
+
+        new Chart(document.getElementById('complicationRateChart'), {
+            type: 'doughnut',
+            data: {
+                labels: ['出現併發症', '無併發症'],
+                datasets: [{
+                    data: [30, 70],
+                    backgroundColor: [brilliantBlues.medium, brilliantBlues.lightest],
+                    borderColor: ['#ffffff'],
+                    borderWidth: 2
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: {
+                            color: brilliantBlues.dark,
+                            font: { size: 14 }
+                        }
+                    },
+                    tooltip: commonTooltipOptions.plugins.tooltip
+                }
+            }
+        });
+
+        
+
+        new Chart(document.getElementById('immunityWindowChart'), {
+            type: 'line',
+            data: {
+                labels: ['出生', '3月', '6月', '9月', '12月', '15月'],
+                datasets: [{
+                    label: '母傳抗體保護力',
+                    data: [100, 70, 40, 15, 5, 0],
+                    borderColor: brilliantBlues.light,
+                    backgroundColor: 'rgba(107, 157, 201, 0.2)',
+                    fill: true,
+                    tension: 0.4
+                }, {
+                    label: '自身主動免疫力 (接種後)',
+                    data: [0, 0, 0, 0, 0, 93],
+                    borderColor: brilliantBlues.medium,
+                    backgroundColor: 'rgba(54, 110, 155, 0.2)',
+                    fill: true,
+                    tension: 0.4
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                 ...commonTooltipOptions,
+                 plugins: {
+                    ...commonTooltipOptions.plugins,
+                    filler: {
+                        propagate: true
+                    }
+                },
+                scales: {
+                    y: { ...commonTooltipOptions.scales.y, min: 0, max: 100, title: {display: true, text: '保護力水平 (%)', color: brilliantBlues.dark}},
+                    x: commonTooltipOptions.scales.x
+                },
+                elements: {
+                    point:{
+                        radius: 3
+                    }
+                }
+            }
+        });
+        
+        new Chart(document.getElementById('waningImmunityChart'), {
+            type: 'line',
+            data: {
+                labels: ['5歲', '10歲', '18歲', '25歲', '30歲'],
+                datasets: [{
+                    label: '疫苗世代抗體水平趨勢',
+                    data: [97, 90, 80, 70, 65],
+                    borderColor: brilliantBlues.medium,
+                    backgroundColor: 'rgba(54, 110, 155, 0.2)',
+                    fill: 'start',
+                    tension: 0.1
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                ...commonTooltipOptions,
+                scales: {
+                    y: { ...commonTooltipOptions.scales.y, min: 50, max: 100, title: {display: true, text: '抗體陽性率 (%)', color: brilliantBlues.dark}},
+                    x: commonTooltipOptions.scales.x
+                }
+            }
+        });
+
+        new Chart(document.getElementById('costBreakdownChart'), {
+            type: 'pie',
+            data: {
+                labels: ['公共衛生應對成本', '生產力損失', '直接醫療費用'],
+                datasets: [{
+                    data: [68, 29, 3],
+                    backgroundColor: [brilliantBlues.dark, brilliantBlues.medium, brilliantBlues.light],
+                    borderColor: ['#ffffff'],
+                    borderWidth: 2
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: {
+                            color: brilliantBlues.dark,
+                            font: { size: 12 }
+                        }
+                    },
+                    tooltip: {
+                         ...commonTooltipOptions.plugins.tooltip,
+                         callbacks: {
+                            ...commonTooltipOptions.plugins.tooltip.callbacks,
+                            label: function(context) {
+                                let label = context.label || '';
+                                if (label) {
+                                    label += ': ';
+                                }
+                                if (context.parsed !== null) {
+                                    label += context.parsed + '%';
+                                }
+                                return label;
+                            }
+                        }
+                    }
+                }
+            }
+        });
+
+    </script>
+</body>
+</html>

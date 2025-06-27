@@ -9,7 +9,7 @@ This website includes three main functions: Health Calculators, Health Education
 ### Health Calculators
 
 *   **[Amoxicillin Dose Calculator](amoxicillin-dose-calculator.html)**: Calculates the recommended dosage of Amoxicillin.
-*   **[Lipid Calculator](lipid-calculator.html)**: Analyzes your lipid data.
+*   **[Lipid Calculator](lipid-calculator.html)**: Analyzes your lipid data and check if meets the criteria for medication .
 *   **[Pediatric Antibiotic Calculator](pediatric-antibiotic-calculator.html)**: Calculates the recommended dosage of antibiotics for children.
 
 ### Health Education

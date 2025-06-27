@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>腸病毒全攻略：給家長的視覺化指南</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Noto+Sans+TC:wght@400;500;700&display=swap"
+    rel="stylesheet">
+  <!--
+    Narrative Plan:
+    1.  Introduction: Define the challenge of Enterovirus in Taiwan - common but potentially severe.
+    2.  Epidemiology Section: Visualize transmission routes, seasonal patterns, and high-risk groups.
+    3.  Home Care Guide: Provide a visual flow for managing mild symptoms and distinguishing between Herpangina and HFMD.
+    4.  Emergency Red Flags: Use high-impact visuals to highlight the four critical warning signs requiring immediate medical attention.
+    5.  Prevention & Vaccination: Detail hygiene best practices and provide a data-driven comparison of the Envacgen and EnVAX-A71 vaccines.
+    6.  Conclusion: Summarize the key takeaway - a dual strategy of vigilant observation and proactive prevention.
+
+    Visualization Plan:
+    -   Seasonality: Line Chart (Chart.js) to show change over time. Goal: Change. Method: Chart.js Canvas. NO SVG.
+    -   High-Risk Age Group: Donut Chart (Chart.js) to show a key proportion. Goal: Inform. Method: Chart.js Canvas. NO SVG.
+    -   Home Care Flow: Flow Chart created with structured HTML/CSS. Goal: Organize. Method: Tailwind CSS. NO SVG, NO MERMAID JS.
+    -   Severe Symptoms: High-impact list with large text and Unicode icons. Goal: Inform. Method: Styled HTML. NO SVG.
+    -   Vaccine Side Effect Comparison: Grouped Bar Chart (Chart.js) to compare data sets. Goal: Compare. Method: Chart.js Canvas. NO SVG.
+    -   Vaccine Features: HTML Table for structured data. Goal: Organize. Method: Styled HTML. NO SVG.
+
+    Color Palette Selection: "Energetic & Playful" (#FF6B6B, #FFD166, #06D6A0, #118AB2, #073B4C) was chosen for a high-contrast, engaging but still professional feel suitable for a health topic concerning children.
+
+    Confirmation: NEITHER Mermaid JS NOR SVG were used in this output. All visualizations are rendered using Chart.js on Canvas or structured HTML with Tailwind CSS.
+    -->
+  <style>
+    body {
+      font-family: 'Inter', 'Noto Sans TC', sans-serif;
+      background-color: #f8fafc;
+      /* Tailwind's gray-50 */
+    }
+
+    .chart-container {
+      position: relative;
+      width: 100%;
+      max-width: 600px;
+      margin-left: auto;
+      margin-right: auto;
+      height: 300px;
+      max-height: 400px;
+    }
+
+    @media (min-width: 768px) {
+      .chart-container {
+        height: 350px;
+      }
+    }
+
+    .flow-arrow {
+      color: #118AB2;
+      font-weight: bold;
+      font-size: 2rem;
+    }
+  </style>
+</head>
+
+<body class="text-gray-800">
+
+  <div class="container mx-auto p-4 md:p-8 max-w-7xl">
+
+    <header class="text-center mb-12">
+      <h1 class="text-4xl md:text-5xl font-bold text-[#073B4C] mb-2">腸病毒全攻略</h1>
+      <p class="text-lg text-[#118AB2]">一份給家長與照護者的視覺化指南</p>
+    </header>
+
+    <main class="space-y-12">
+
+      <section id="epidemiology">
+        <div class="bg-white rounded-2xl shadow-lg p-6 md:p-8">
+          <h2 class="text-3xl font-bold text-[#073B4C] mb-6">認識敵人：腸病毒的流行特徵</h2>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div class="flex flex-col">
+              <h3 class="text-xl font-semibold text-[#118AB2] mb-4">全年流行，夏季達高峰</h3>
+              <p class="text-gray-600 mb-4">台灣氣候濕熱，腸病毒全年都可能發生。疫情通常在3-4月開始上升，並在7-9月達到高峰。這張圖表顯示了典型的年度流行趨勢。</p>
+              <div class="chart-container flex-grow">
+                <canvas id="seasonalityChart"></canvas>
+              </div>
+            </div>
+            <div class="flex flex-col">
+              <h3 class="text-xl font-semibold text-[#118AB2] mb-4">高風險族群：5歲以下嬰幼兒</h3>
+              <p class="text-gray-600 mb-4">雖然所有年齡層都可能感染，但5歲以下的嬰幼兒是併發重症及死亡風險最高的族群，需要特別注意。</p>
+              <div class="chart-container flex-grow">
+                <canvas id="riskGroupChart"></canvas>
+              </div>
+            </div>
+          </div>
+          <div class="mt-8 p-6 bg-amber-50 rounded-lg border border-amber-200">
+            <h3 class="text-xl font-semibold text-[#118AB2] mb-3">關鍵知識：酒精消毒無效！</h3>
+            <p class="text-gray-700">腸病毒對酒精具抵抗性。最有效的預防方式是<strong class="text-[#FF6B6B]">使用肥皂徹底洗手</strong>，並使用<strong
+                class="text-[#FF6B6B]">含氯漂白水（500ppm）</strong>進行環境消毒。成人的無症狀感染是主要的家庭傳染源，從外返家後務必先洗手、更衣再接觸孩童。</p>
+          </div>
+        </div>
+      </section>
+
+      <section id="symptoms-care">
+        <div class="bg-white rounded-2xl shadow-lg p-6 md:p-8">
+          <h2 class="text-3xl font-bold text-[#073B4C] mb-6">居家戰鬥：症狀緩解與照護指南</h2>
+          <p class="text-gray-600 mb-8 max-w-3xl mx-auto text-center">
+            腸病毒沒有特效藥，照護核心是「支持性療法」，目標是緩解不適並預防脫水。絕大多數孩子會在7-10天內自行康復。</p>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-8 text-center">
+            <div class="bg-teal-50 p-6 rounded-lg border border-teal-200">
+              <h3 class="text-2xl font-bold text-[#06D6A0] mb-2">疱疹性咽峽炎</h3>
+              <p class="text-gray-700">特徵是口腔<strong class="text-[#06D6A0]">後部</strong>出現水泡或潰瘍，導致喉嚨劇痛。</p>
+            </div>
+            <div class="bg-red-50 p-6 rounded-lg border border-red-200">
+              <h3 class="text-2xl font-bold text-[#FF6B6B] mb-2">手足口病</h3>
+              <p class="text-gray-700">除了口腔潰瘍，<strong class="text-[#FF6B6B]">手、腳、臀部</strong>也會出現皮疹或水泡。EV-A71型是常見病因。</p>
+            </div>
+          </div>
+          <div class="mt-8">
+            <h3 class="text-xl font-semibold text-center text-[#118AB2] mb-4">照護流程：預防脫水是關鍵</h3>
+            <div class="flex flex-col md:flex-row items-center justify-center space-y-4 md:space-y-0 md:space-x-4">
+              <div class="p-4 bg-gray-100 rounded-lg text-center">
+                <div class="text-4xl mb-2">🌡️</div>
+                <h4 class="font-semibold">發燒/喉嚨痛</h4>
+                <p class="text-sm">使用醫師指示的退燒藥</p>
+              </div>
+              <div class="flow-arrow hidden md:block">→</div>
+              <div class="flow-arrow block md:hidden">↓</div>
+              <div class="p-4 bg-gray-100 rounded-lg text-center">
+                <div class="text-4xl mb-2">🍦</div>
+                <h4 class="font-semibold">給予冰涼軟質食物</h4>
+                <p class="text-sm">布丁、冰淇淋、優格、豆花</p>
+              </div>
+              <div class="flow-arrow hidden md:block">→</div>
+              <div class="flow-arrow block md:hidden">↓</div>
+              <div class="p-4 bg-gray-100 rounded-lg text-center">
+                <div class="text-4xl mb-2">💧</div>
+                <h4 class="font-semibold">補充水分</h4>
+                <p class="text-sm">開水、電解質水</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="red-flags">
+        <div class="bg-[#073B4C] text-white rounded-2xl shadow-lg p-6 md:p-8">
+          <h2 class="text-3xl font-bold text-center text-white mb-2">紅色警報：立即送醫的重症前兆</h2>
+          <p class="text-center text-amber-200 mb-8">發病後3-7天是危險期。若出現以下<strong
+              class="text-white">任何一項</strong>症狀，請立即前往大型醫院急診。</p>
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div class="bg-[#118AB2]/50 p-6 rounded-lg text-center transform hover:scale-105 transition-transform">
+              <span class="text-5xl">😴</span>
+              <h3 class="text-xl font-bold mt-4 mb-2">意識不清、嗜睡</h3>
+              <p class="text-sm">難以叫醒、活動力顯著下降</p>
+            </div>
+            <div class="bg-[#118AB2]/50 p-6 rounded-lg text-center transform hover:scale-105 transition-transform">
+              <span class="text-5xl">🤸</span>
+              <h3 class="text-xl font-bold mt-4 mb-2">肌躍型抽搐</h3>
+              <p class="text-sm">無故驚嚇、全身肌肉突發性收縮</p>
+            </div>
+            <div class="bg-[#118AB2]/50 p-6 rounded-lg text-center transform hover:scale-105 transition-transform">
+              <span class="text-5xl">🤮</span>
+              <h3 class="text-xl font-bold mt-4 mb-2">持續嘔吐</h3>
+              <p class="text-sm">非因飲食或咳嗽引起的反覆嘔吐</p>
+            </div>
+            <div class="bg-[#118AB2]/50 p-6 rounded-lg text-center transform hover:scale-105 transition-transform">
+              <span class="text-5xl">💓</span>
+              <h3 class="text-xl font-bold mt-4 mb-2">呼吸急促/心跳加快</h3>
+              <p class="text-sm">在平靜且未發燒狀態下發生</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="vaccines">
+        <div class="bg-white rounded-2xl shadow-lg p-6 md:p-8">
+          <h2 class="text-3xl font-bold text-[#073B4C] mb-6">最強防護罩：腸病毒A71型疫苗</h2>
+          <p class="text-gray-600 mb-8 max-w-3xl mx-auto text-center">疫苗是預防<strong
+              class="text-[#FF6B6B]">EV-A71型重症</strong>最有效的方式。接種疫苗無法預防所有腸病毒感染，但能大幅降低致命併發症的風險。目前台灣有兩款自費疫苗可供選擇。</p>
+
+          <div class="overflow-x-auto mb-12">
+            <table class="w-full text-sm text-left text-gray-500">
+              <thead class="text-xs text-white uppercase bg-[#118AB2]">
+                <tr>
+                  <th scope="col" class="px-6 py-3 rounded-l-lg">項目</th>
+                  <th scope="col" class="px-6 py-3">國光/安特羅 (EnVAX-A71)</th>
+                  <th scope="col" class="px-6 py-3 rounded-r-lg">高端疫苗 (Envacgen)</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr class="bg-white border-b">
+                  <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">適用年齡</th>
+                  <td class="px-6 py-4">滿2個月～未滿6歲</td>
+                  <td class="px-6 py-4">滿2個月～未滿6歲</td>
+                </tr>
+                <tr class="bg-gray-50 border-b">
+                  <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">接種劑次</th>
+                  <td class="px-6 py-4 font-bold text-[#06D6A0]">共 2 劑</td>
+                  <td class="px-6 py-4">依年齡分：<br>2個月-2歲: 3劑<br>2歲-6歲: 2劑</td>
+                </tr>
+                <tr class="bg-white border-b">
+                  <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">接種間隔</th>
+                  <td class="px-6 py-4">兩劑間隔 28 天</td>
+                  <td class="px-6 py-4">基礎劑間隔 56 天<br>(若需第3劑，與第1劑隔1年)</td>
+                </tr>
+                <tr class="bg-gray-50">
+                  <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">保護力指標</th>
+                  <td class="px-6 py-4">血清保護率 98.3%</td>
+                  <td class="px-6 py-4">臨床保護力 96.8%</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div>
+            <h3 class="text-xl font-semibold text-[#118AB2] mb-4 text-center">常見不良反應發生率比較</h3>
+            <p class="text-gray-600 mb-4 text-center">兩款疫苗安全性均良好，副作用多為輕微且短暫。此圖表可幫助您了解兩者常見副作用的發生率差異。</p>
+            <div class="chart-container">
+              <canvas id="vaccineComparisonChart"></canvas>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="text-center mt-12 pt-8 border-t border-gray-200">
+      <p class="text-gray-600">結合<strong class="text-[#118AB2]">警覺性觀察</strong>與<strong
+          class="text-[#06D6A0]">積極性預防</strong>，是守護孩子健康的最佳策略。</p>
+      <p class="text-sm text-gray-400 mt-4">本資訊圖表內容僅供參考，實際醫療決策請務必諮詢您的兒科醫師。</p>
+    </footer>
+
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+
+      const PALETTE = {
+        red: '#FF6B6B',
+        yellow: '#FFD166',
+        green: '#06D6A0',
+        blue: '#118AB2',
+        darkBlue: '#073B4C'
+      };
+
+      function wrapLabel(str, maxWidth) {
+        if (str.length <= maxWidth) {
+          return str;
+        }
+        const words = str.split(' ');
+        let lines = [];
+        let currentLine = '';
+        for (const word of words) {
+          if ((currentLine + word).length > maxWidth) {
+            lines.push(currentLine.trim());
+            currentLine = '';
+          }
+          currentLine += word + ' ';
+        }
+        lines.push(currentLine.trim());
+        return lines.filter(line => line.length > 0);
+      }
+
+      const tooltipTitleCallback = (tooltipItems) => {
+        const item = tooltipItems[0];
+        let label = item.chart.data.labels[item.dataIndex];
+        return Array.isArray(label) ? label.join(' ') : label;
+      };
+
+      function createSeasonalityChart() {
+        const ctx = document.getElementById('seasonalityChart').getContext('2d');
+        new Chart(ctx, {
+          type: 'line',
+          data: {
+            labels: ['1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月', '9月', '10月', '11月', '12月'],
+            datasets: [{
+              label: '腸病毒就診人次趨勢',
+              data: [2000, 1800, 3500, 6000, 8500, 11000, 15000, 14500, 12000, 7000, 4000, 2500],
+              borderColor: PALETTE.red,
+              backgroundColor: 'rgba(255, 107, 107, 0.2)',
+              fill: true,
+              tension: 0.4
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              legend: { display: false },
+              tooltip: {
+                callbacks: { title: tooltipTitleCallback }
+              }
+            },
+            scales: {
+              y: {
+                beginAtZero: true,
+                title: { display: true, text: '就診人次(估計)' }
+              }
+            }
+          }
+        });
+      }
+
+      function createRiskGroupChart() {
+        const ctx = document.getElementById('riskGroupChart').getContext('2d');
+        new Chart(ctx, {
+          type: 'doughnut',
+          data: {
+            labels: ['5歲以下重症高風險群', '其他年齡層'],
+            datasets: [{
+              label: '風險分佈',
+              data: [90, 10],
+              backgroundColor: [PALETTE.red, PALETTE.yellow],
+              borderColor: '#ffffff',
+              borderWidth: 4,
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              legend: { position: 'bottom' },
+              tooltip: {
+                callbacks: {
+                  title: tooltipTitleCallback,
+                  label: function (context) {
+                    let label = context.dataset.label || '';
+                    if (label) {
+                      label += ': ';
+                    }
+                    if (context.parsed !== null) {
+                      label += context.label + '佔比';
+                    }
+                    return label;
+                  }
+                }
+              }
+            },
+            cutout: '60%'
+          }
+        });
+      }
+
+      function createVaccineComparisonChart() {
+        const ctx = document.getElementById('vaccineComparisonChart').getContext('2d');
+        const labels = ['注射部位疼痛', '發燒', '食慾降低', '疲勞/嗜睡'];
+
+        new Chart(ctx, {
+          type: 'bar',
+          data: {
+            labels: labels.map(label => wrapLabel(label, 16)),
+            datasets: [
+              {
+                label: '國光/安特羅',
+                data: [21.57, 10.34, 12.52, 10.74],
+                backgroundColor: PALETTE.green,
+                borderColor: PALETTE.green,
+                borderWidth: 1
+              },
+              {
+                label: '高端疫苗',
+                data: [23.3, 23.1, 18.9, 12.4],
+                backgroundColor: PALETTE.blue,
+                borderColor: PALETTE.blue,
+                borderWidth: 1
+              }
+            ]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              legend: { position: 'top' },
+              tooltip: {
+                callbacks: { title: tooltipTitleCallback }
+              }
+            },
+            scales: {
+              y: {
+                beginAtZero: true,
+                title: { display: true, text: '發生率 (%)' }
+              }
+            }
+          }
+        });
+      }
+
+      createSeasonalityChart();
+      createRiskGroupChart();
+      createVaccineComparisonChart();
+    });
+  </script>
+</body>
+
+</html>

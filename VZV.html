@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>水痘帶狀疱疹病毒(VZV)全解析</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Noto Sans TC', sans-serif;
+            background-color: #f0f4f8;
+        }
+        .kpi-card {
+            background-color: #003F5C;
+            color: white;
+        }
+        .kpi-number {
+            font-size: 2.5rem;
+            font-weight: 700;
+            line-height: 1;
+            color: #A1CCE4;
+        }
+        .comparison-table {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+        .table-header {
+            grid-column: 1 / -1;
+            font-weight: 700;
+            color: #003F5C;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid #A1CCE4;
+        }
+        .table-cell {
+            background-color: #ffffff;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+        .table-cell-title {
+            font-weight: 700;
+            color: #366E9B;
+        }
+         @media (min-width: 768px) {
+            .comparison-table {
+                grid-template-columns: 1fr 1fr 1fr;
+            }
+            .table-header.col-1 { grid-column: 2 / 3; }
+            .table-header.col-2 { grid-column: 3 / 4; }
+            .table-cell.row-1-col-1 { grid-column: 1 / 2; grid-row: 2 / 3; }
+            .table-cell.row-1-col-2 { grid-column: 2 / 3; grid-row: 2 / 3; }
+            .table-cell.row-1-col-3 { grid-column: 3 / 4; grid-row: 2 / 3; }
+            .table-cell.row-2-col-1 { grid-column: 1 / 2; grid-row: 3 / 4; }
+            .table-cell.row-2-col-2 { grid-column: 2 / 3; grid-row: 3 / 4; }
+            .table-cell.row-2-col-3 { grid-column: 3 / 4; grid-row: 3 / 4; }
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-gray-800">
+
+    <div class="container mx-auto p-4 md:p-8">
+
+        <header class="text-center mb-12">
+            <h1 class="text-4xl md:text-5xl font-bold text-[#003F5C] mb-2">水痘帶狀疱疹病毒 (VZV)</h1>
+            <p class="text-lg text-[#366E9B]">感染-潛伏-再活化：一生的雙重威脅</p>
+        </header>
+
+        <section id="dual-threat" class="mb-16">
+            <h2 class="text-3xl font-bold text-center mb-8 text-[#003F5C]">VZV的雙重面貌</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div class="bg-white rounded-xl shadow-lg p-6 border-t-4 border-[#366E9B]">
+                    <h3 class="text-2xl font-bold text-[#003F5C] mb-3">初次感染：水痘 (Varicella)</h3>
+                    <p class="text-gray-600">一種高傳染性的兒童期疾病，透過空氣、飛沫及接觸傳播。家庭內傳染率高達90%。</p>
+                    <ul class="mt-4 list-disc list-inside space-y-2">
+                        <li>典型症狀：發燒、全身性「滿天星」水疱疹。</li>
+                        <li>傳染期：出疹前1-2天至所有水疱結痂為止。</li>
+                        <li>高風險：成人及青少年感染後症狀通常更嚴重。</li>
+                    </ul>
+                </div>
+                <div class="bg-white rounded-xl shadow-lg p-6 border-t-4 border-red-500">
+                    <h3 class="text-2xl font-bold text-[#003F5C] mb-3">潛伏再活化：帶狀疱疹 (Shingles)</h3>
+                    <p class="text-gray-600">水痘痊癒後，病毒潛伏於感覺神經節，在免疫力下降時再活化，沿單側皮節引發疼痛性水疱疹。</p>
+                    <ul class="mt-4 list-disc list-inside space-y-2">
+                        <li>主要症狀：單側、帶狀分佈的疼痛皮疹。</li>
+                        <li>傳染性：水疱液可傳染給無免疫力者，使其感染水痘。</li>
+                        <li class="font-semibold text-red-700">最常見併發症：疱疹後神經痛 (PHN)，可持續數月至數年。</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <section id="complications" class="mb-16">
+            <h2 class="text-3xl font-bold text-center mb-8 text-[#003F5C]">不只是「出水痘」：水痘的潛在威脅</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <div class="bg-white rounded-lg shadow-md p-6">
+                    <h4 class="font-bold text-lg text-[#003F5C]">皮膚細菌感染</h4>
+                    <p class="text-gray-600 mt-2">最常見併發症。因搔抓導致金黃色葡萄球菌等入侵，引發蜂窩性組織炎，是患者住院主因。</p>
+                </div>
+                <div class="bg-white rounded-lg shadow-md p-6">
+                    <h4 class="font-bold text-lg text-[#003F5C]">肺炎</h4>
+                    <p class="text-gray-600 mt-2">成人最常見的嚴重併發症，尤其好發於孕婦及免疫功能低下者，死亡率可高達40%。</p>
+                </div>
+                <div class="bg-white rounded-lg shadow-md p-6">
+                    <h4 class="font-bold text-lg text-[#003F5C]">中樞神經併發症</h4>
+                    <p class="text-gray-600 mt-2">腦炎是兒童水痘致死主因。小腦性共濟失調則導致運動協調障礙，恢復期可能很長。</p>
+                </div>
+                <div class="bg-red-100 border-l-4 border-red-500 text-red-700 p-6 rounded-lg shadow-md">
+                    <h4 class="font-bold text-lg text-red-800">高風險族群</h4>
+                    <ul class="mt-2 list-disc list-inside text-red-900">
+                        <li>青少年與成人</li>
+                        <li>孕婦 (威脅母嬰)</li>
+                        <li>免疫功能低下者</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <section id="challenges" class="mb-16">
+            <h2 class="text-3xl font-bold text-center mb-8 text-[#003F5C]">單劑疫苗策略的保護力裂縫</h2>
+            <p class="text-center max-w-3xl mx-auto mb-10 text-gray-600">台灣自2004年起提供公費單劑水痘疫苗，雖大幅降低總體發病率，卻也衍生出新的流行病學挑戰。</p>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
+                <div class="kpi-card rounded-xl shadow-lg p-6">
+                    <div class="kpi-number">突破性感染</div>
+                    <p class="mt-2 text-base text-gray-300">接種單劑疫苗後仍感染水痘。症狀雖輕微，但仍具傳染力，是校園疫情的傳播來源。</p>
+                </div>
+                <div class="kpi-card rounded-xl shadow-lg p-6">
+                    <div class="kpi-number">免疫空窗期</div>
+                    <p class="mt-2 text-base text-gray-300">因初級疫苗失效或次級疫苗失效（保護力隨時間衰退），部分兒童實際上未受保護。</p>
+                </div>
+                <div class="kpi-card rounded-xl shadow-lg p-6">
+                    <div class="kpi-number">感染年齡後移</div>
+                    <p class="mt-2 text-base text-gray-300">平均感染年齡從7.9歲上升至16.3歲，落入併發症風險更高的青少年與成人期。</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="dose-comparison" class="mb-16">
+            <h2 class="text-3xl font-bold text-center mb-8 text-[#003F5C]">一劑 vs. 兩劑：保護效益比較</h2>
+            <div class="bg-white rounded-xl shadow-lg p-6 md:p-8">
+                <div class="comparison-table text-center">
+                    <!-- Headers -->
+                    <div class="table-header hidden md:block col-1">單劑接種</div>
+                    <div class="table-header hidden md:block col-2">兩劑接種</div>
+
+                    <!-- Row 1: Prevention of ANY chickenpox -->
+                    <div class="table-cell row-1-col-1 self-center"><p class="table-cell-title">預防任何形式水痘</p></div>
+                    <div class="table-cell row-1-col-2"><p class="md:hidden table-cell-title mb-2">單劑接種</p><p class="text-2xl font-bold text-amber-600">中等 (81-87%)</p></div>
+                    <div class="table-cell row-1-col-3"><p class="md:hidden table-cell-title mb-2">兩劑接種</p><p class="text-2xl font-bold text-green-600">極高 (90%以上)</p></div>
+
+                    <!-- Row 2: Prevention of severe chickenpox -->
+                    <div class="table-cell row-2-col-1 self-center"><p class="table-cell-title">預防中重度水痘</p></div>
+                    <div class="table-cell row-2-col-2"><p class="md:hidden table-cell-title mb-2">單劑接種</p><p class="text-2xl font-bold text-green-600">高</p></div>
+                    <div class="table-cell row-2-col-3"><p class="md:hidden table-cell-title mb-2">兩劑接種</p><p class="text-2xl font-bold text-green-700">極高 (近100%)</p></div>
+                </div>
+                 <p class="mt-6 text-center text-gray-600">結論：兩劑方案能將突破性感染風險降低約 <span class="font-bold text-xl text-[#003F5C]">3.3倍</span>，並提供更全面、更持久的保護。</p>
+            </div>
+        </section>
+        
+        <section id="recommendations" class="mb-16">
+            <h2 class="text-3xl font-bold text-center mb-8 text-[#003F5C]">政策前瞻：邁向黃金標準</h2>
+            <p class="text-center max-w-3xl mx-auto mb-10 text-gray-600">借鑒美國與日本等國經驗，台灣應考慮將兩劑水痘疫苗全面納入公費計畫，以彌補現行策略的不足。</p>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="bg-white rounded-lg shadow-md p-6 text-center hover:shadow-xl transition-shadow">
+                    <div class="text-5xl mb-3">🎯</div>
+                    <h4 class="text-xl font-bold text-[#003F5C]">首要建議</h4>
+                    <p class="mt-2 text-gray-600">將第二劑水痘疫苗納入<span class="font-semibold">常規公費接種</span>項目，建議於兒童4-6歲時施打。</p>
+                </div>
+                <div class="bg-white rounded-lg shadow-md p-6 text-center hover:shadow-xl transition-shadow">
+                    <div class="text-5xl mb-3">📢</div>
+                    <h4 class="text-xl font-bold text-[#003F5C]">公眾溝通</h4>
+                    <p class="mt-2 text-gray-600">加強宣導，讓民眾理解<span class="font-semibold">「兩劑才是完整保護」</span>的新標準，並說明其長期效益。</p>
+                </div>
+                <div class="bg-white rounded-lg shadow-md p-6 text-center hover:shadow-xl transition-shadow">
+                    <div class="text-5xl mb-3">🩺</div>
+                    <h4 class="text-xl font-bold text-[#003F5C]">專業教育</h4>
+                    <p class="mt-2 text-gray-600">確保第一線醫護人員充分理解新政策的科學依據，提供家長專業、有說服力的諮詢。</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="vaccine-guidelines" class="mb-16">
+            <h2 class="text-3xl font-bold text-center mb-12 text-[#003F5C]">水痘疫苗接種須知</h2>
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <div class="bg-red-100 border-l-4 border-red-500 text-red-800 p-6 rounded-lg shadow-md">
+                    <h3 class="font-bold text-xl mb-4 flex items-center">接種禁忌</h3>
+                    <ul class="list-disc list-inside space-y-2 text-red-900">
+                        <li>對疫苗任何成分（如明膠、新黴素）曾有<span class="font-semibold">嚴重過敏反應</span>者。</li>
+                        <li><span class="font-semibold">孕婦</span>。</li>
+                        <li>已知患有<span class="font-semibold">嚴重免疫缺失者</span>。</li>
+                    </ul>
+                </div>
+                <div class="bg-yellow-100 border-l-4 border-yellow-500 text-yellow-800 p-6 rounded-lg shadow-md">
+                    <h3 class="font-bold text-xl mb-4 flex items-center">注意事項</h3>
+                    <ul class="list-disc list-inside space-y-2 text-yellow-900">
+                        <li>育齡女性接種後<span class="font-semibold">4週內</span>應避免懷孕。</li>
+                        <li>18歲以下兒童接種後<span class="font-semibold">6週內</span>避免使用水楊酸類藥物（如阿斯匹靈）。</li>
+                        <li>正患有急性中重度疾病者，宜待病情穩定後再接種。</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <footer class="text-center mt-12 py-8 border-t border-gray-300">
+            <p class="text-gray-600">完整接種兩劑疫苗，是預防VZV雙重威脅最有效的策略。</p>
+            <p class="text-sm text-gray-500 mt-2">資料來源：水痘帶狀疱疹病毒臨床與預防策略分析。本資訊圖表僅供衛教參考，實際醫療決策請諮詢專業醫師。</p>
+        </footer>
+
+    </div>
+</body>
+</html>
