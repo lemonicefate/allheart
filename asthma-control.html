@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>最新氣喘治療指南：讓您呼吸不再卡卡</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Noto Sans TC', sans-serif;
+    }
+
+    .chart-container {
+      position: relative;
+      width: 100%;
+      max-width: 600px;
+      margin-left: auto;
+      margin-right: auto;
+      height: 350px;
+      max-height: 45vh;
+    }
+
+    @media (max-width: 768px) {
+      .chart-container {
+        height: 300px;
+        max-height: 50vh;
+      }
+    }
+
+    .flowchart-node {
+      border: 2px solid;
+      padding: 1rem;
+      border-radius: 0.5rem;
+      text-align: center;
+      flex-grow: 1;
+      margin: 0.5rem;
+      min-height: 120px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    .flowchart-arrow {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2rem;
+      color: #665191;
+      padding: 0 0.5rem;
+    }
+
+    .step-card {
+      background-color: white;
+      border-radius: 0.75rem;
+      box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+      padding: 1.5rem;
+      transition: transform 0.3s, box-shadow 0.3s;
+    }
+
+    .step-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -2px rgb(0 0 0 / 0.1);
+    }
+  </style>
+</head>
+
+<body class="bg-slate-50 text-slate-800">
+  <div class="container mx-auto p-4 md:p-8">
+
+    <header class="text-center mb-12">
+      <h1 class="text-4xl md:text-5xl font-bold text-[#003f5c] mb-4">最新氣喘治療指南：讓您呼吸不再卡卡</h1>
+      <p class="text-xl text-[#2f4b7c]">掌握您的呼吸，從根本改變治療思維</p>
+    </header>
+
+    <main class="space-y-16">
+
+      <section class="text-center">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+          <div class="bg-white p-8 rounded-xl shadow-lg border-l-8 border-[#f95d6a]">
+            <h2 class="text-2xl font-bold text-[#003f5c] mb-4">您真的了解氣喘嗎？</h2>
+            <p class="text-lg mb-4">氣喘並非單純的呼吸不順，而是一種以<strong
+                class="text-[#d45087]">慢性氣道發炎</strong>為核心的疾病。這個根本問題導致氣道對各種刺激物反應過度，引發症狀。</p>
+            <p class="text-slate-500">因此，治療的關鍵在於控制發炎，而不僅僅是緩解症狀。</p>
+          </div>
+          <div class="step-card bg-[#003f5c] text-white">
+            <div class="text-6xl font-bold mb-2">~80%</div>
+            <h3 class="text-xl font-semibold mb-2">技巧決定成敗</h3>
+            <p>高達 80% 的氣喘控制不佳，與不正確的吸入器使用技巧有關。藥物與技巧同等重要！</p>
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <h2 class="text-3xl font-bold text-center mb-8 text-[#003f5c]">千萬不要只用緊急緩解用藥!!!：危險的「SABA 悖論」</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+          <div class="step-card">
+            <h3 class="text-2xl font-bold text-[#d45087] mb-4">告別單獨依賴「藍色吸入劑」</h3>
+            <p class="mb-4">過去，只在症狀出現時使用短效緩解劑 (SABA，如藍色吸入劑) 是常見做法。雖然使用時會顯著改善當下症狀，然而，大規模研究證實這種模式極其危險！</p>
+            <p class="font-semibold">過度依賴 SABA 不僅無法解決根本的發炎問題，反而會增加未來嚴重急性惡化甚至死亡的風險。這是現代氣喘治療最重要的觀念轉變。</p>
+          </div>
+          <div class="step-card">
+            <div class="chart-container">
+              <canvas id="sabaParadoxChart"></canvas>
+            </div>
+            <p class="text-center text-sm text-slate-600 mt-2">SABA 過度使用會造成短期症狀緩解的假象，但長期來看，氣道發炎惡化，導致未來風險急劇上升。</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="bg-white rounded-xl shadow-lg p-6 md:p-8">
+        <h2 class="text-3xl font-bold text-center mb-8 text-[#003f5c]">您的個人化策略：GINA 雙軌治療路徑</h2>
+        <p class="text-center max-w-5xl mx-auto mb-10">現代治療指引提供兩條路徑，其核心差異在於「緩解藥物」的選擇。路徑一為首選，因其能確保每次緩解症狀時都同時治療發炎。</p>
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+          <div class="border-4 border-[#ff7c43] p-6 rounded-lg bg-amber-50">
+            <h3 class="text-2xl font-bold text-center mb-4 text-[#f95d6a]">路徑一 (首選策略) 👍</h3>
+            <p class="text-center font-semibold mb-4">以「低劑量 ICS-Formoterol」作為緩解藥物</p>
+            <p>此策略確保了每次用藥都能同時抗發炎和擴張氣管，從根本上解決了 SABA 悖論。</p>
+            <p class="mb-4">是更安全的選擇。</p>
+            <div class="font-bold text-lg text-center p-3 bg-[#ff7c43] text-white rounded-md">核心概念：維持與緩解治療 (MART)</div>
+            <p class="mt-2 text-center text-sm">使用同一支吸入劑進行每日保養和急性緩解，簡化治療並確保療效。</p>
+          </div>
+          <div class="border-2 border-slate-300 p-6 rounded-lg">
+            <h3 class="text-2xl font-bold text-center mb-4 text-slate-600">路徑二 (替代策略) ⚠️</h3>
+            <p class="text-center font-semibold mb-4">以「SABA (短效緩解劑)」作為緩解藥物</p>
+            <p>關鍵在於：每當使用 SABA 時，都必須搭配規律的控制型藥物 (含 ICS) 使用。</p>
+            <p class="mb-4">此路徑適用於特定情況，但風險較高。</p>
+            <div class="font-bold text-lg text-center p-3 bg-slate-500 text-white rounded-md">核心風險：遵囑性不佳</div>
+            <p class="mt-2 text-center text-sm">患者可能只記得使用 SABA 而忽略了更重要的控制型藥物，導致發炎未受控制。</p>
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <h2 class="text-3xl font-bold text-center mb-8 text-[#003f5c]">吸入器比較：MDI vs. DPI</h2>
+        <div class="max-w-5xl mx-auto px-4">
+          <p class="text-center text-slate-600 mb-8">不同的吸入器需要截然不同的技巧。選擇適合您、而且您能正確操作的裝置至關重要。下表為您整理兩者的關鍵差異：</p>
+          <div class="overflow-x-auto shadow-lg rounded-lg">
+            <table class="w-full text-sm text-left text-slate-600">
+              <thead class="text-2xl text-slate-700 uppercase bg-slate-100">
+                <tr>
+                  <th scope="col" class="px-6 py-3">考慮因素</th>
+                  <th scope="col" class="px-6 py-3 text-[#665191]">MDI (定量噴霧吸入器)</th>
+                  <th scope="col" class="px-6 py-3 text-[#a05195]">DPI (乾粉吸入器)</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr class="bg-white border-b">
+                  <th scope="row" class="px-6 py-4 font-medium text-slate-900 whitespace-nowrap">吸氣方式</th>
+                  <td class="px-6 py-4"><span class="font-bold text-[#665191]">緩慢深長</span><br>(像從杯中啜飲)</td>
+                  <td class="px-6 py-4"><span class="font-bold text-[#a05195]">快速用力</span><br>(像用吸管喝珍奶)</td>
+                </tr>
+                <tr class="bg-slate-50 border-b">
+                  <th scope="row" class="px-6 py-4 font-medium text-slate-900 whitespace-nowrap">適合用途</th>
+                  <td class="px-6 py-4">急性發作緩解、精準劑量控制</td>
+                  <td class="px-6 py-4">長期規律保養</td>
+                </tr>
+                <tr class="bg-white border-b">
+                  <th scope="row" class="px-6 py-4 font-medium text-slate-900 whitespace-nowrap">呼吸能力需求</th>
+                  <td class="px-6 py-4">不需特別強的吸力</td>
+                  <td class="px-6 py-4">需要足夠強的吸力來驅動藥粉</td>
+                </tr>
+                <tr class="bg-slate-50 border-b">
+                  <th scope="row" class="px-6 py-4 font-medium text-slate-900 whitespace-nowrap">手口協調</th>
+                  <td class="px-6 py-4"><span class="text-red-600 font-semibold">要求高</span><br>(可搭配輔助艙解決)</td>
+                  <td class="px-6 py-4"><span class="text-green-600 font-semibold">不需協調</span></td>
+                </tr>
+                <tr class="bg-white border-b">
+                  <th scope="row" class="px-6 py-4 font-medium text-slate-900 whitespace-nowrap">適用族群</th>
+                  <td class="px-6 py-4">兒童、年長者、需快速緩解者</td>
+                  <td class="px-6 py-4">具良好吸氣能力、偏好簡單操作者</td>
+                </tr>
+                <tr class="bg-slate-50">
+                  <th scope="row" class="px-6 py-4 font-medium text-slate-900 whitespace-nowrap">關鍵限制</th>
+                  <td class="px-6 py-4">手口協調是主要障礙</td>
+                  <td class="px-6 py-4">吸氣力道不足會影響藥效</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="mt-8 text-center">
+            <p class="font-bold text-center text-[#d45087] bg-yellow-100 border border-yellow-300 p-4 rounded-lg inline-block">⚠️ 每次使用含類固醇(ICS)的吸入劑後，務必漱口並吐掉，以防聲音沙啞或口腔念珠菌感染。</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="bg-white rounded-xl shadow-lg p-6 md:p-8">
+        <h2 class="text-3xl font-bold text-center mb-8 text-[#003f5c]">治療的動態調整</h2>
+        <p class="text-center max-w-5xl mx-auto mb-10">氣喘治療並非一種藥物一種劑量用到底，而是一個持續評估與調整的過程。</p>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+          <!-- 升階治療 Card -->
+          <div class="bg-rose-50 border-l-4 border-rose-400 p-6 rounded-lg shadow-md text-center flex flex-col">
+            <h3 class="text-2xl font-bold text-[#d45087] mb-2">升階治療</h3>
+            <div class="text-5xl mb-2">📈</div>
+            <p class="font-semibold mb-2">快速反應</p>
+            <div class="flex-grow">
+              <p class="text-sm">當控制不佳時，可在數週內快速升階以重新奪回控制。但升階前務必檢查：</p>
+              <ul class="list-disc list-inside text-left inline-block text-sm mt-2">
+                <li>遵囑性</li>
+                <li>吸入技巧</li>
+                <li>誘發因子</li>
+              </ul>
+            </div>
+          </div>
+          <!-- 降階治療 Card -->
+          <div class="bg-indigo-50 border-l-4 border-indigo-400 p-6 rounded-lg shadow-md text-center flex flex-col">
+            <h3 class="text-2xl font-bold text-[#665191] mb-2">降階治療</h3>
+            <div class="text-5xl mb-2">🐢</div>
+            <p class="font-semibold mb-2">謹慎漸進</p>
+            <div class="flex-grow">
+              <p class="text-sm">只有在穩定控制至少3個月後，才應考慮降階。過程緩慢，每次調降 25-50%，並持續觀察。</p>
+              <p class="font-bold text-sm mt-2">完全停藥風險高，需由醫師指導。</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <h2 class="text-3xl font-bold text-center mb-8 text-[#003f5c]">特殊族群的考量</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+          <!-- Card 1: Pregnancy -->
+          <div class="step-card flex flex-col">
+            <div class="flex-grow">
+              <div class="flex items-center mb-4">
+                <svg class="w-8 h-8 mr-3 text-[#a05195]" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
+                <h3 class="text-xl font-bold text-[#003f5c]">懷孕期間的氣喘</h3>
+              </div>
+              <p class="mb-4">對胎兒最大的威脅，來自<strong class="text-[#d45087]">未受控制的氣喘</strong>（可能導致缺氧），而非藥物本身。維持良好控制是首要目標，切勿自行停藥。</p>
+            </div>
+            <div class="text-center p-3 mt-4 bg-[#a05195] text-white rounded-md font-semibold">最安全的策略就是積極治療</div>
+          </div>
+          <!-- Card 2: Children -->
+          <div class="step-card flex flex-col">
+            <div class="flex-grow">
+                <div class="flex items-center mb-4">
+                    <svg class="w-8 h-8 mr-3 text-[#a05195]" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
+                    <h3 class="text-xl font-bold text-[#003f5c]">兒童氣喘與生長</h3>
+                </div>
+              <p class="mb-4">這是家長最擔心的議題。但研究證實，未受控制的氣喘本身對生長的負面影響，遠大於吸入型類固醇 (ICS) 的微小影響。</p>
+              <div class="chart-container" style="height: 200px;">
+                <canvas id="childGrowthChart"></canvas>
+              </div>
+            </div>
+            <p class="text-center text-sm text-slate-600 mt-4">確保肺部正常發育、預防急性惡化的好處，遠大於藥物對身高的微小影響。</p>
+          </div>
+        </div>
+      </section>
+
+    </main>
+
+    <footer class="text-center mt-16 border-t-2 pt-8 border-[#003f5c]">
+      <h2 class="text-2xl font-bold text-[#2f4b7c] mb-4">成為您氣喘照護的夥伴</h2>
+      <p class="max-w-3xl mx-auto mb-4">現代氣喘管理賦予患者主動權。理解您的疾病、正確使用藥物，並與您的醫師共同制定一份「個人化氣喘行動計畫」，是過上正常、不受限制生活的關鍵。</p>
+      <p class="text-xs text-slate-400">此資訊圖表僅供衛教參考，不能取代專業醫療建議。所有治療決策請諮詢您的醫師。</p>
+    </footer>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      const tooltipTitleCallback = (tooltipItems) => {
+        const item = tooltipItems[0];
+        let label = item.chart.data.labels[item.dataIndex];
+        if (Array.isArray(label)) {
+          return label.join(' ');
+        }
+        return label;
+      };
+
+      const sharedChartOptions = {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: {
+            labels: {
+              color: '#003f5c',
+              font: {
+                family: "'Noto Sans TC', sans-serif"
+              }
+            }
+          },
+          tooltip: {
+            callbacks: {
+              title: tooltipTitleCallback
+            },
+            titleFont: {
+              family: "'Noto Sans TC', sans-serif"
+            },
+            bodyFont: {
+              family: "'Noto Sans TC', sans-serif"
+            }
+          }
+        },
+        scales: {
+          x: {
+            ticks: {
+              color: '#2f4b7c',
+              font: {
+                family: "'Noto Sans TC', sans-serif"
+              }
+            },
+            grid: {
+              display: false
+            }
+          },
+          y: {
+            ticks: {
+              color: '#2f4b7c',
+              font: {
+                family: "'Noto Sans TC', sans-serif"
+              }
+            },
+            grid: {
+              color: '#e2e8f0'
+            }
+          }
+        }
+      };
+
+      const sabaParadoxCtx = document.getElementById('sabaParadoxChart').getContext('2d');
+      new Chart(sabaParadoxCtx, {
+        type: 'line',
+        data: {
+          labels: ['初期', '數週後', '數月後', '長期'],
+          datasets: [{
+            label: 'SABA 使用者的主觀感受',
+            data: [100, 80, 60, 40],
+            borderColor: '#ffa600',
+            backgroundColor: '#ffa60033',
+            fill: false,
+            tension: 0.1
+          }, {
+            label: 'SABA 使用者的未來風險',
+            data: [10, 30, 70, 100],
+            borderColor: '#f95d6a',
+            backgroundColor: '#f95d6a33',
+            fill: true,
+            tension: 0.1
+          }, {
+            label: 'ICS/LABA 使用者的未來風險',
+            data: [15, 12, 10, 8],
+            borderColor: '#2f4b7c',
+            backgroundColor: '#2f4b7c33',
+            fill: true,
+            tension: 0.1,
+            borderDash: [5, 5]
+          }]
+        },
+        options: {
+          ...sharedChartOptions,
+          scales: {
+            x: { ...sharedChartOptions.scales.x },
+            y: {
+              ...sharedChartOptions.scales.y,
+              title: { display: true, text: '相對程度', color: '#665191' }
+            }
+          }
+        }
+      });
+
+      
+      new Chart(childGrowthCtx, {
+        type: 'line',
+        data: {
+          labels: ['6歲', '8歲', '10歲', '12歲', '14歲'],
+          datasets: [{
+            label: '正常生長',
+            data: [115, 128, 140, 151, 163],
+            borderColor: '#2f4b7c',
+            fill: false,
+            tension: 0.1,
+            borderDash: [5, 5]
+          }, {
+            label: '未控制的氣喘',
+            data: [114, 125, 134, 142, 150],
+            borderColor: '#f95d6a',
+            fill: false,
+            tension: 0.1
+          }, {
+            label: '經ICS治療的氣喘',
+            data: [114.5, 127, 139, 150, 161.5],
+            borderColor: '#ff7c43',
+            fill: false,
+            tension: 0.1
+          }]
+        },
+        options: {
+          ...sharedChartOptions,
+          scales: {
+            x: { ...sharedChartOptions.scales.x },
+            y: {
+              ...sharedChartOptions.scales.y,
+              title: { display: true, text: '身高 (公分)', color: '#665191' }
+            }
+          },
+          plugins: {
+            ...sharedChartOptions.plugins,
+            legend: { ...sharedChartOptions.plugins.legend, position: 'bottom' }
+          }
+        }
+      });
+    });
+  </script>
+</body>
+
+</html>
