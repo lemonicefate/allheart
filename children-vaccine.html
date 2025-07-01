@@ -1,0 +1,655 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>台灣兒童公費/自費疫苗面面觀</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
+  <!-- Chosen Palette: Warm Neutrals -->
+  <!-- Application Structure Plan: A tab-based Single Page Application (SPA) designed for parental ease-of-use. The structure prioritizes user tasks over the original report's linear format. It consists of three main interactive views: 1) **Vaccine Schedule:** An interactive timeline and a summary chart to quickly identify required vaccines by age. 2) **Vaccine Details:** A lookup tool to get in-depth information on any specific vaccine. 3) **Info & Resources:** A consolidated section for practical advice (pre/post-vaccination care) and official resources. This structure was chosen because it directly answers the primary questions parents have (What's next? What is this for? What should I do?), providing a clear, non-linear path to information and reducing cognitive load compared to reading a long document. -->
+  <!-- Visualization & Content Choices: 
+        - Report Info: Full vaccination schedule (Table 1). Goal: Show change/progression over time and allow quick lookups. Viz/Method: Interactive vertical timeline (HTML/CSS/JS) and a summary Bar Chart (Chart.js) showing vaccine counts per age group with detailed tooltips. Interaction: Clicking on a timeline entry reveals details. The bar chart provides a quick overview of busy periods, enhanced with specific vaccine names on hover. Justification: More engaging and intuitive than a static table, with improved tooltip detail and simplified age categories for better overview.
+        - Report Info: Details of each vaccine. Goal: Inform/Compare. Viz/Method: A dynamic content area (HTML/JS) populated based on a user's selection from a dropdown list. Interaction: User selects a vaccine, and the app displays its purpose, schedule, and side effects. Justification: Allows focused learning without overwhelming the user with information about all vaccines at once.
+        - Report Info: Practical advice (preparation, aftercare, relief fund). Goal: Inform/Organize. Viz/Method: Accordion-style expandable sections (HTML/JS). Interaction: Click-to-reveal content. Justification: Standard, space-saving UI for organizing blocks of text like FAQs.
+        - All libraries used are Canvas-based (Chart.js) or implemented with HTML/CSS/JS.
+    -->
+  <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+  <style>
+    body {
+      font-family: 'Noto Sans TC', sans-serif;
+    }
+
+    .tab-active {
+      border-color: #0d9488;
+      /* teal-600 */
+      color: #0d9488;
+      /* teal-600 */
+      background-color: #ccfbf1;
+      /* teal-100 */
+    }
+
+    .tab-inactive {
+      border-color: transparent;
+      color: #475569;
+      /* slate-600 */
+    }
+
+    .chart-container {
+      position: relative;
+      width: 100%;
+      max-width: 600px;
+      margin-left: auto;
+      margin-right: auto;
+      height: 320px;
+      max-height: 400px;
+    }
+
+    @media (min-width: 768px) {
+      .chart-container {
+        height: 400px;
+      }
+    }
+
+    /* Simple transition for accordion */
+    .accordion-content {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.3s ease-in-out;
+    }
+  </style>
+</head>
+
+<body class="bg-amber-50 text-slate-800">
+
+  <div class="container mx-auto p-4 md:p-8 max-w-7xl">
+
+    <header class="text-center mb-8">
+      <h1 class="text-3xl md:text-4xl font-bold text-teal-800 mb-2">台灣兒童公費/自費疫苗面面觀</h1>
+      <p class="text-slate-600 max-w-5xl mx-auto">台灣CDC最新的兒童預防接種資訊，以更清晰、互動的方式呈現，幫助您輕鬆掌握孩子的疫苗接種時程與重要須知，共同守護孩子的健康。</p>
+    </header>
+
+    <!-- Tabs Navigation -->
+    <div class="mb-8 border-b border-slate-300">
+      <nav class="flex flex-wrap -mb-px" aria-label="Tabs">
+        <button class="tab-btn tab-active text-lg font-medium px-4 py-3 border-b-2" data-tab="schedule">
+          <span class="mr-2">📅</span>疫苗時程總覽
+        </button>
+        <button class="tab-btn tab-inactive text-lg font-medium px-4 py-3 border-b-2" data-tab="details">
+          <span class="mr-2">💉</span>各類疫苗詳情
+        </button>
+        <button class="tab-btn tab-inactive text-lg font-medium px-4 py-3 border-b-2" data-tab="info">
+          <span class="mr-2">ℹ️</span>接種須知與資源
+        </button>
+      </nav>
+    </div>
+
+    <!-- Tab Content -->
+    <main>
+      <!-- Schedule Tab -->
+      <div id="schedule" class="tab-content">
+        <div class="bg-white p-6 rounded-2xl shadow-lg mb-8">
+          <h2 class="text-2xl font-bold text-teal-700 mb-3">疫苗接種時程概覽</h2>
+          <p class="text-slate-600 mb-6">
+            孩子從出生到學齡前的完整疫苗接種路徑圖，幫助您了解各個年齡階段需要接種的疫苗種類數量。您可以將滑鼠懸停在長條圖上，查看該年齡區間的具體疫苗名稱。
+          </p>
+          <div class="chart-container mb-8">
+            <canvas id="vaccineCountChart"></canvas>
+          </div>
+        </div>
+
+        <div class="bg-white p-6 rounded-2xl shadow-lg">
+          <h2 class="text-2xl font-bold text-teal-700 mb-6">互動接種時間軸</h2>
+          <p class="text-slate-600 mb-4">公費疫苗以<span
+              class="inline-block bg-teal-100 text-teal-800 text-sm font-medium px-2.5 py-1 rounded-full">淺綠色</span>標示，自費疫苗則以<span
+              class="inline-block bg-pink-100 text-pink-800 text-sm font-medium px-2.5 py-1 rounded-full">粉紅色</span>標示。<br>若疫苗名稱旁有<span
+              class="font-bold underline cursor-help">底線</span>，表示滑鼠懸停可查看更多間隔資訊。</p>
+          <div id="timeline-container" class="space-y-4">
+            <!-- Timeline items will be injected by JS -->
+          </div>
+        </div>
+      </div>
+
+      <!-- Details Tab -->
+      <div id="details" class="tab-content hidden">
+        <div class="bg-white p-6 rounded-2xl shadow-lg">
+          <h2 class="text-2xl font-bold text-teal-700 mb-3">各類疫苗詳情查詢</h2>
+          <p class="text-slate-600 mb-6">
+            您是否對某支特定疫苗感到好奇？這個區塊能幫助您深入了解每一種公費疫苗。請從下方的下拉選單中選擇您想查詢的疫苗，系統將會顯示該疫苗的詳細資訊，包括它所預防的疾病、建議的接種劑次、時程，以及接種後可能出現的反應與注意事項。
+          </p>
+          <div class="mb-6">
+            <label for="vaccine-select" class="block mb-2 font-medium text-slate-700">請選擇疫苗：</label>
+            <select id="vaccine-select"
+              class="w-full max-w-md p-3 border border-slate-300 rounded-lg shadow-sm focus:ring-2 focus:ring-teal-500 focus:border-teal-500">
+              <!-- Options will be injected by JS -->
+            </select>
+          </div>
+          <div id="vaccine-detail-content" class="mt-6 p-6 bg-amber-50/50 rounded-lg border border-amber-200">
+            <p class="text-center text-slate-500">請從上方選擇一種疫苗以查看詳細資訊。</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Info Tab -->
+      <div id="info" class="tab-content hidden">
+        <div class="bg-white p-6 rounded-2xl shadow-lg">
+          <h2 class="text-2xl font-bold text-teal-700 mb-3">接種須知與資源</h2>
+          <p class="text-slate-600 mb-6">
+            為了讓疫苗接種過程更加順利，我們為您整理了接種前、中、後的注意事項，以及重要的官方資源和政策更新。您可以點擊下方的各個項目來展開或收合內容，快速找到您需要的資訊，包含行前準備、接種後照護，以及不良反應的通報與救濟管道。
+          </p>
+          <div id="info-accordion" class="space-y-4">
+            <!-- Accordion items will be injected by JS -->
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <footer class="text-center mt-12 text-sm text-slate-500">
+      <p>資訊來源：衛生福利部疾病管制署、長庚醫療財團法人等公開資料。本指南僅供參考，最新資訊請以<a href="https://www.cdc.gov.tw" target="_blank"
+          class="text-teal-600 hover:underline">疾管署官方網站</a>為準。</p>
+      <p>最後資料更新日期：2025年7月1日。請注意，疫苗政策可能隨時調整。</p>
+    </footer>
+
+  </div>
+
+  <script>
+    const vaccineData = {
+      'B肝疫苗': {
+        name: 'B型肝炎疫苗 (Hepatitis B vaccine)',
+        disease: '預防B型肝炎病毒感染。',
+        schedule: '共3劑：出生24小時內、滿1個月、滿6個月。',
+        sideEffects: '接種部位可能出現輕微紅腫，或伴隨發燒、嘔吐，但反應通常輕微且短暫。',
+        notes: '此疫苗為預防母嬰垂直傳播的重要防線。'
+      },
+      '五合一疫苗': {
+        name: '五合一疫苗 (DTaP-Hib-IPV)',
+        disease: '預防白喉、破傷風、非細胞性百日咳、b型嗜血桿菌及不活化小兒麻痺。',
+        schedule: '共4劑：出生滿2個月、4個月、6個月、1歲6個月。',
+        sideEffects: '副作用輕微且不常見，可能包含噁心、嘔吐、發燒或腹瀉。',
+        notes: '完成接種後，對破傷風的預防效果可達95%，保護力維持十年。'
+      },
+      '肺炎鏈球菌疫苗': {
+        name: '13價結合型肺炎鏈球菌疫苗 (PCV13)',
+        disease: '預防肺炎鏈球菌引起的肺炎、中耳炎、腦膜炎等。',
+        schedule: '共3劑：出生滿2個月、4個月、12-15個月。',
+        sideEffects: '接種後的局部反應通常較少，安全性良好。',
+        notes: '對於2-5歲未曾接種的兒童，公費提供1劑補接種。'
+      },
+      '卡介苗': {
+        name: '卡介苗 (BCG vaccine)',
+        disease: '預防嚴重型結核病。',
+        schedule: '共1劑：建議出生滿5-8個月接種。1歲前完成。',
+        sideEffects: '接種部位會出現特殊反應：紅色小結節 → 膿泡/潰瘍 → 癒合結疤，過程約2-3個月。偶有同側腋窩淋巴腺腫大。',
+        notes: '接種條件嚴格，需足月產且體重達2500公克以上。105年起時程調整為出生滿5個月後接種。'
+      },
+      '水痘疫苗': {
+        name: '水痘疫苗 (Varicella vaccine)',
+        disease: '預防由水痘帶狀疱疹病毒引起的水痘。',
+        schedule: '公費1劑：出生滿12個月。自費第2劑：滿4-6歲。',
+        sideEffects: '局部反應通常較為輕微。',
+        notes: '公費僅提供第1劑。自費第2劑建議於入學前完成，與第1劑間隔至少3個月。'
+      },
+      'MMR疫苗': {
+        name: '麻疹腮腺炎德國麻疹混合疫苗 (MMR vaccine)',
+        disease: '預防麻疹、腮腺炎、德國麻疹。',
+        schedule: '共2劑：出生滿12個月、滿5歲至入小學前。',
+        sideEffects: '可能在接種後4-10天出現微發燒(持續2-5天)、疹子、鼻炎或輕微咳嗽。',
+        notes: '極罕見情況下可能引起急性腦炎(約百萬分之一)。'
+      },
+      '日本腦炎疫苗': {
+        name: '日本腦炎疫苗 (JE vaccine)',
+        disease: '預防日本腦炎病毒感染。',
+        schedule: '共2劑：出生滿15個月、滿27個月。',
+        sideEffects: '局部反應少。',
+        notes: '106年5月22日起改採細胞培養之活性減毒疫苗，保護力更持久。'
+      },
+      'A肝疫苗': {
+        name: 'A型肝炎疫苗 (Hepatitis A vaccine)',
+        disease: '預防A型肝炎病毒感染。',
+        schedule: '共2劑：出生滿18個月、滿27個月(間隔至少9個月)。',
+        sideEffects: '局部反應少。',
+        notes: '公費對象為106年1月1日以後出生的幼兒。自114年1月1日起，時程修訂為出生滿18個月接種第1劑，滿27個月接種第2劑。'
+      },
+      '流感疫苗': {
+        name: '幼兒流行性感冒疫苗 (Influenza vaccine)',
+        disease: '預防季節性流感。',
+        schedule: '出生滿6個月至入國小前，每年1劑。',
+        sideEffects: '局部反應、發燒等。',
+        notes: '初次接種者(8歲以下)需接種2劑，間隔一個月以上。自2025年1月1日起，公費流感疫苗將開放全民接種。'
+      },
+      'DTaP-IPV疫苗': {
+        name: '白喉破傷風非細胞性百日咳及不活化小兒麻痺混合疫苗 (DTaP-IPV)',
+        disease: '預防白喉、破傷風、百日咳及小兒麻痺。',
+        schedule: '共1劑：滿5歲至入小學前接種。',
+        sideEffects: '通常作為五合一疫苗的加強劑，反應輕微。',
+        notes: '此為學齡前的最後一劑常規疫苗補強。'
+      },
+      'COVID-19疫苗': {
+        name: 'COVID-19疫苗 (新冠肺炎疫苗)',
+        disease: '預防新冠肺炎。',
+        schedule: '滿6個月以上至未滿6歲幼兒，建議2劑基礎劑。',
+        sideEffects: '與成人相似，多為局部疼痛、發燒、疲倦等。',
+        notes: '兩劑建議間隔4至8週以上。此為因應新興傳染病而納入的公費項目。'
+      },
+      'B肝免疫球蛋白': {
+        name: 'B型肝炎免疫球蛋白 (HBIG)',
+        disease: '提供即時的B型肝炎病毒保護。',
+        schedule: '1劑，出生24小時內儘速接種。',
+        sideEffects: '局部反應為主。',
+        notes: '限定高風險新生兒接種(母親為B肝e抗原陽性者)，提供被動免疫。'
+      },
+      '輪狀病毒疫苗': {
+        name: '輪狀病毒疫苗 (Rotavirus vaccine)',
+        disease: '預防輪狀病毒引起的腸胃炎。',
+        schedule: '口服，通常2或3劑，出生滿2個月開始，需在6-8個月內完成。',
+        sideEffects: '可能輕微腹瀉、嘔吐。',
+        notes: '台灣目前為自費疫苗，劑型與劑次依廠牌而異，請諮詢醫師。'
+      }
+    };
+
+    const rawTimelineData = [
+      {
+        age: '出生24小時內', vaccines: [
+          { name: 'B肝疫苗', dose: '第1劑', type: 'public' },
+          { name: 'B肝免疫球蛋白', dose: '1劑', type: 'public' }
+        ]
+      },
+      {
+        age: '滿1個月', vaccines: [
+          { name: 'B肝疫苗', dose: '第2劑', intervalNote: '與第1劑間隔至少1個月', type: 'public' }
+        ]
+      },
+      {
+        age: '滿2個月', vaccines: [
+          { name: '五合一疫苗', dose: '第1劑', type: 'public' },
+          { name: '肺炎鏈球菌疫苗', dose: '第1劑', type: 'public' },
+          { name: '輪狀病毒疫苗', dose: '第1劑', type: 'self-funded', notes: '口服疫苗，需諮詢醫師選擇劑型' }
+        ]
+      },
+      {
+        age: '滿4個月', vaccines: [
+          { name: '五合一疫苗', dose: '第2劑', intervalNote: '與第1劑間隔至少2個月', type: 'public' },
+          { name: '肺炎鏈球菌疫苗', dose: '第2劑', intervalNote: '與第1劑間隔至少2個月', type: 'public' },
+          { name: '輪狀病毒疫苗', dose: '第2劑', type: 'self-funded', intervalNote: '與第1劑間隔至少4週', notes: '口服疫苗，需諮詢醫師選擇劑型' }
+        ]
+      },
+      {
+        age: '滿5-8個月', vaccines: [
+          { name: '卡介苗', dose: '1劑', type: 'public', notes: '建議於年滿1歲前完成' }
+        ]
+      },
+      {
+        age: '滿6個月', vaccines: [
+          { name: '五合一疫苗', dose: '第3劑', intervalNote: '與第2劑間隔至少2個月', type: 'public' },
+          { name: 'B肝疫苗', dose: '第3劑', intervalNote: '與第2劑間隔至少5個月', type: 'public' },
+          { name: '輪狀病毒疫苗', dose: '第3劑', type: 'self-funded', intervalNote: '部分劑型有第3劑，與第2劑間隔至少4週', notes: '口服疫苗，需諮詢醫師選擇劑型' }
+        ]
+      },
+      {
+        age: '滿6個月以上', vaccines: [
+          { name: '流感疫苗', dose: '每年1劑', type: 'public', notes: '初次接種者(8歲以下)需接種2劑，間隔一個月以上' },
+          { name: 'COVID-19疫苗', dose: '基礎劑', type: 'public', notes: '建議2劑間隔4至8週以上' }
+        ]
+      },
+      {
+        age: '滿12個月', vaccines: [
+          { name: '水痘疫苗', dose: '第1劑', type: 'public' },
+          { name: 'MMR疫苗', dose: '第1劑', type: 'public' }
+        ]
+      },
+      {
+        age: '滿12-15個月', vaccines: [
+          { name: '肺炎鏈球菌疫苗', dose: '第3劑', intervalNote: '與第2劑間隔至少6個月', type: 'public' }
+        ]
+      },
+      {
+        age: '滿15個月', vaccines: [
+          { name: '日本腦炎疫苗', dose: '第1劑', type: 'public' }
+        ]
+      },
+      {
+        age: '滿18個月', vaccines: [
+          { name: '五合一疫苗', dose: '第4劑', intervalNote: '與第3劑間隔至少6個月', type: 'public' },
+          { name: 'A肝疫苗', dose: '第1劑', type: 'public', notes: '自114年1月1日起實施' }
+        ]
+      },
+      {
+        age: '滿27個月', vaccines: [
+          { name: '日本腦炎疫苗', dose: '第2劑', intervalNote: '與第1劑間隔至少12個月', type: 'public' },
+          { name: 'A肝疫苗', dose: '第2劑', intervalNote: '與第1劑間隔至少9個月', type: 'public' }
+        ]
+      },
+      {
+        age: '滿4-6歲', vaccines: [
+          { name: '水痘疫苗', dose: '第2劑', type: 'self-funded', intervalNote: '與第1劑間隔至少3個月，建議於入學前完成' }
+        ]
+      },
+      {
+        age: '滿5歲至入小學前', vaccines: [
+          { name: 'MMR疫苗', dose: '第2劑', type: 'public' },
+          { name: '日本腦炎疫苗', dose: '1劑', type: 'public', notes: '提供已完成3劑不活化疫苗之幼童接種' },
+          { name: '五合一疫苗', dose: '1劑', type: 'public' }
+        ]
+      }
+    ];
+
+    // Group and sort combined timeline data
+    const combinedTimelineData = {};
+    rawTimelineData.forEach(item => {
+      if (!combinedTimelineData[item.age]) {
+        combinedTimelineData[item.age] = { age: item.age, vaccines: [] };
+      }
+      combinedTimelineData[item.age].vaccines.push(...item.vaccines);
+    });
+
+    // Convert back to an array and sort by age (simple heuristic for now)
+    const sortedTimelineData = Object.values(combinedTimelineData).sort((a, b) => {
+      // Simple sorting by age string, can be improved with more robust age parsing if needed
+      const ageOrder = {
+        '出生24小時內': 0, '滿1個月': 1, '滿2個月': 2, '滿4個月': 3, '滿5-8個月': 4,
+        '滿6個月': 5, '滿6個月以上': 6, '滿12個月': 7, '滿12-15個月': 8, '滿15個月': 9,
+        '滿18個月': 10, '滿27個月': 11, '滿4-6歲': 12, '滿5歲至入小學前': 13
+      };
+      return ageOrder[a.age] - ageOrder[b.age];
+    });
+
+    const infoData = [
+      {
+        title: '疫苗接種前準備',
+        content: `
+                    <p class="mb-2">為確保接種過程順利，出發前請備妥以下文件：</p>
+                    <ul class="list-disc list-inside space-y-2 text-slate-600">
+                        <li><strong>兒童健康手冊（黃卡）：</strong>這是記錄所有預防接種的重要文件。</li>
+                        <li><strong>健保卡：</strong>新生兒在出生60天內可持父母任一方的健保卡。</li>
+                        <li><strong>戶口名簿影本：</strong>或其他新生兒身分證明文件。</li>
+                    </ul>
+                    <p class="mt-4">接種前，請確保孩子身體狀況良好，沒有發燒或其他急性病症。也建議事先致電醫療院所預約或確認疫苗庫存，避免白跑一趟。</p>
+                `
+      },
+      {
+        title: '接種後照護與不良反應處理',
+        content: `
+                    <p class="mb-2">接種後請在現場稍作休息觀察至少30分鐘，無不適再離開。</p>
+                    <p class="mb-2">回家後請多喝水、多休息。接種部位若有紅腫，可適度冰敷，但請勿搓揉。輕微發燒為常見反應，可給予溫水拭浴，若體溫超過38.5℃且有不適，可依醫師指示使用退燒藥。</p>
+                    <p class="mb-2"><strong>特別注意：</strong>卡介苗接種部位的膿泡或潰瘍為正常反應，請勿擠壓或包紮，保持清潔乾燥即可，約2-3個月會自然癒合。</p>
+                    <p class="font-bold mt-4">若出現以下嚴重反應，請立即就醫：</p>
+                    <ul class="list-disc list-inside space-y-2 text-slate-600">
+                        <li>持續高燒不退。</li>
+                        <li>出現嚴重急性症狀，如呼吸困難、抽搐等。</li>
+                        <li>接種部位嚴重腫脹、化膿。</li>
+                        <li>活動力、食慾明顯下降。</li>
+                    </ul>
+                `
+      },
+      {
+        title: '預防接種受害救濟機制',
+        content: `
+                    <p class="mb-2">台灣設有「預防接種受害救濟」機制。若疑似因接種疫苗後發生嚴重不良事件，可在知悉事件2年內或事件發生5年內，向接種地衛生局提出申請。</p>
+                    <p class="mb-2">申請需備齊申請書、身分證明、接種證明及相關醫療診斷證明等文件。案件將由「衛生福利部預防接種受害救濟審議小組」進行審查。</p>
+                    <p class="mt-4">此機制的設立，旨在保障民眾權益，並展現政府對疫苗安全的負責態度。詳細資訊可洽詢各地衛生局或疾管署。</p>
+                `
+      },
+      {
+        title: '重要政策更新提醒',
+        content: `
+                    <p class="mb-2">疫苗政策會動態調整，以下是近年幾項重要更新：</p>
+                    <ul class="list-disc list-inside space-y-2 text-slate-600">
+                        <li><strong>卡介苗：</strong>自105年起，接種時程調整為出生滿5-8個月。</li>
+                        <li><strong>日本腦炎疫苗：</strong>自106年起，改採活性減毒疫苗，提供更持久的保護。</li>
+                        <li><strong>A型肝炎疫苗：</strong>自107年起，納入常規公費疫苗，並逐步擴大適用對象。</li>
+                        <li><strong>流感疫苗：</strong>自2025年1月1日起，將開放全民公費接種，直至疫苗用罄。</li>
+                        <li><strong>COVID-19疫苗：</strong>已納入滿6個月以上幼兒的公費接種範圍。</li>
+                    </ul>
+                    <p class="mt-4">強烈建議家長定期查閱疾管署網站或撥打防疫專線1922，以獲取最即時的官方指引。</p>
+                `
+      }
+    ];
+
+    // Prepare data for Chart.js tooltip - now dynamically generated from sortedTimelineData
+    const chartDetailedData = {
+      '出生-6個月': [],
+      '6個月-1歲': [],
+      '1-5歲': [],
+      '5歲以上': []
+    };
+
+    sortedTimelineData.forEach(item => {
+      const vaccinesInAgeGroup = item.vaccines.map(v => `${v.name}${v.dose ? ` (${v.dose})` : ''}`);
+      if (item.age === '出生24小時內' || item.age === '滿1個月' || item.age === '滿2個月' || item.age === '滿4個月' || item.age === '滿5-8個月') {
+        chartDetailedData['出生-6個月'].push(...vaccinesInAgeGroup);
+      } else if (item.age === '滿6個月' || item.age === '滿6個月以上' || item.age === '滿12個月') {
+        chartDetailedData['6個月-1歲'].push(...vaccinesInAgeGroup);
+      } else if (item.age === '滿12-15個月' || item.age === '滿15個月' || item.age === '滿18個月' || item.age === '滿27個月' || item.age === '滿4-6歲') {
+        chartDetailedData['1-5歲'].push(...vaccinesInAgeGroup);
+      } else if (item.age === '滿5歲至入小學前') {
+        chartDetailedData['5歲以上'].push(...vaccinesInAgeGroup);
+      }
+    });
+
+    // Remove duplicates from the merged vaccine lists
+    for (const key in chartDetailedData) {
+      chartDetailedData[key] = [...new Set(chartDetailedData[key])];
+    }
+
+
+    document.addEventListener('DOMContentLoaded', () => {
+      const tabs = document.querySelectorAll('.tab-btn');
+      const tabContents = document.querySelectorAll('.tab-content');
+      const vaccineSelect = document.getElementById('vaccine-select');
+      const vaccineDetailContent = document.getElementById('vaccine-detail-content');
+      const timelineContainer = document.getElementById('timeline-container');
+      const infoAccordionContainer = document.getElementById('info-accordion');
+
+      // Tab switching logic
+      tabs.forEach(tab => {
+        tab.addEventListener('click', () => {
+          tabs.forEach(item => {
+            item.classList.remove('tab-active');
+            item.classList.add('tab-inactive');
+          });
+          tab.classList.add('tab-active');
+          tab.classList.remove('tab-inactive');
+
+          const target = tab.getAttribute('data-tab');
+          tabContents.forEach(content => {
+            if (content.id === target) {
+              content.classList.remove('hidden');
+            } else {
+              content.classList.add('hidden');
+            }
+          });
+        });
+      });
+
+      // Populate vaccine select dropdown
+      const defaultOption = document.createElement('option');
+      defaultOption.textContent = '--- 請選擇 ---';
+      defaultOption.value = '';
+      vaccineSelect.appendChild(defaultOption);
+
+      Object.keys(vaccineData).forEach(key => {
+        const option = document.createElement('option');
+        option.value = key;
+        option.textContent = vaccineData[key].name;
+        vaccineSelect.appendChild(option);
+      });
+
+      // Handle vaccine selection change
+      vaccineSelect.addEventListener('change', (e) => {
+        const selectedKey = e.target.value;
+        if (selectedKey) {
+          const data = vaccineData[selectedKey];
+          vaccineDetailContent.innerHTML = `
+                        <h3 class="text-xl font-bold text-teal-700 mb-2">${data.name}</h3>
+                        <div class="space-y-3 text-slate-700">
+                            <p><strong>主要預防：</strong>${data.disease}</p>
+                            <p><strong>建議時程：</strong>${data.schedule}</p>
+                            <p><strong>常見反應：：</strong>${data.sideEffects}</p>
+                            ${data.notes ? `<div class="mt-4 p-3 bg-teal-50 border border-teal-200 rounded-md text-sm"><p><strong>💡 特別提醒：</strong>${data.notes}</p></div>` : ''}
+                        </div>
+                    `;
+        } else {
+          vaccineDetailContent.innerHTML = '<p class="text-center text-slate-500">請從上方選擇一種疫苗以查看詳細資訊。</p>';
+        }
+      });
+
+      // Function to render timeline items
+      function renderTimeline(data) {
+        data.forEach(item => {
+          // Sort vaccines within each age group: public first, then self-funded
+          item.vaccines.sort((a, b) => {
+            if (a.type === 'public' && b.type === 'self-funded') return -1;
+            if (a.type === 'self-funded' && b.type === 'public') return 1;
+            return 0; // Maintain original order if same type
+          });
+
+          const vaccinesHtml = item.vaccines.map(v => {
+            const baseClass = v.type === 'self-funded' ? 'bg-pink-100 text-pink-800' : 'bg-teal-100 text-teal-800';
+            const doseText = v.dose ? ` (${v.dose})` : '';
+            const notesText = v.notes ? ` ${v.notes}` : ''; // Not used for tooltip, but good for data
+            const intervalTitle = v.intervalNote ? `title="${v.intervalNote}"` : '';
+            const underlineClass = v.intervalNote ? 'underline cursor-help' : '';
+            return `<span class="inline-block ${baseClass} text-sm font-medium mr-2 mb-2 px-2.5 py-1 rounded-full ${underlineClass}" ${intervalTitle}>${v.name}${doseText}</span>`;
+          }).join('');
+
+          const timelineItem = `
+                        <div class="relative pl-8">
+                            <div class="absolute left-0 top-1 w-4 h-4 bg-sky-500 rounded-full border-4 border-white"></div>
+                            <div class="pl-4 border-l-2 border-slate-200 ml-2">
+                               <h3 class="font-bold text-lg text-slate-800">${item.age}</h3>
+                               <div class="mt-2">${vaccinesHtml}</div>
+                            </div>
+                        </div>
+                    `;
+          timelineContainer.innerHTML += timelineItem;
+        });
+      }
+
+      // Render all combined vaccines
+      renderTimeline(sortedTimelineData);
+
+      // Populate info accordion
+      infoData.forEach(item => {
+        const accordionItem = document.createElement('div');
+        accordionItem.className = 'border border-slate-200 rounded-lg overflow-hidden';
+        accordionItem.innerHTML = `
+                    <button class="accordion-toggle w-full flex justify-between items-center p-4 text-left font-medium text-slate-800 bg-slate-100 hover:bg-slate-200 transition-colors">
+                        <span>${item.title}</span>
+                        <span class="transform transition-transform duration-300">▼</span>
+                    </button>
+                    <div class="accordion-content">
+                        <div class="p-4 bg-white text-slate-600">${item.content}</div>
+                    </div>
+                `;
+        infoAccordionContainer.appendChild(accordionItem);
+      });
+
+      // Accordion logic
+      document.querySelectorAll('.accordion-toggle').forEach(button => {
+        button.addEventListener('click', () => {
+          const content = button.nextElementSibling;
+          const icon = button.querySelector('span:last-child');
+          if (content.style.maxHeight) {
+            content.style.maxHeight = null;
+            icon.style.transform = 'rotate(0deg)';
+          } else {
+            // Close other open accordions
+            document.querySelectorAll('.accordion-content').forEach(c => c.style.maxHeight = null);
+            document.querySelectorAll('.accordion-toggle span:last-child').forEach(i => i.style.transform = 'rotate(0deg)');
+
+            content.style.maxHeight = content.scrollHeight + "px";
+            icon.style.transform = 'rotate(180deg)';
+          }
+        });
+      });
+
+      // Initialize Vaccine Count Chart
+      const chartCtx = document.getElementById('vaccineCountChart').getContext('2d');
+      const chartLabels = Object.keys(chartDetailedData);
+      const chartDataPoints = Object.values(chartDetailedData).map(arr => arr.length);
+
+      new Chart(chartCtx, {
+        type: 'bar',
+        data: {
+          labels: chartLabels,
+          datasets: [{
+            label: '疫苗種類數量',
+            data: chartDataPoints,
+            backgroundColor: 'rgba(13, 148, 136, 0.6)', // teal-600 with opacity
+            borderColor: 'rgba(15, 118, 110, 1)', // teal-700
+            borderWidth: 1,
+            borderRadius: 5,
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          scales: {
+            y: {
+              beginAtZero: true,
+              ticks: {
+                stepSize: 1
+              },
+              title: {
+                display: true,
+                text: '疫苗種類數'
+              }
+            },
+            x: {
+              title: {
+                display: true,
+                text: '年齡區間'
+              }
+            }
+          },
+          plugins: {
+            legend: {
+              display: false
+            },
+            title: {
+              display: true,
+              text: '各年齡區間接種疫苗種類數統計',
+              font: {
+                size: 16
+              },
+              padding: {
+                bottom: 20
+              }
+            },
+            tooltip: {
+              callbacks: {
+                label: function (context) {
+                  const value = context.raw;
+                  const ageGroup = chartLabels[context.dataIndex];
+                  const vaccines = chartDetailedData[ageGroup] || [];
+
+                  let tooltipText = [];
+                  tooltipText.push(`在此期間約需接種 ${value} 種不同疫苗。`);
+                  if (vaccines.length > 0) {
+                    tooltipText.push('包含：');
+                    // Sort vaccines alphabetically for consistent tooltip display
+                    vaccines.sort().forEach(v => {
+                      if (v.length > 20) { // Wrap long vaccine names for tooltip
+                        tooltipText.push(`- ${v.substring(0, 20)}...`);
+                      } else {
+                        tooltipText.push(`- ${v}`);
+                      }
+                    });
+                  }
+                  return tooltipText;
+                }
+              }
+            }
+          }
+        }
+      });
+    });
+  </script>
+
+</body>
+
+</html>

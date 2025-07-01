@@ -27,11 +27,12 @@ const buttons = [
     { href: 'thyroid-medication-pregnancy.html', text: '懷孕甲狀腺用藥', category: 'internal-medicine', color: 'yellow' },
     { href: 'smoking-cessation-meds.html', text: '戒菸用藥', category: 'internal-medicine', color: 'yellow' },
 
+    { href: 'children-vaccine.html', text: '兒童公費/自費疫苗統整', category: 'infection-disease', color: 'purple' },
     { href: 'covid-medication.html', text: 'COVID及用藥', category: 'infection-disease', color: 'purple' },
     { href: 'measles.html', text: '麻疹', category: 'infection-disease', color: 'purple' },
     { href: 'pneumococcus-vaccine.html', text: '肺炎鏈球菌及疫苗', category: 'infection-disease', color: 'purple' },
     { href: 'enterovirus.html', text: '腸病毒', category: 'infection-disease', color: 'purple' },
-    { href: 'VZV.html', text: '帶狀皰疹(皮蛇)及疫苗', category: 'infection-disease', color: 'purple' },
+    { href: 'vzv.html', text: '帶狀皰疹(皮蛇)及疫苗', category: 'infection-disease', color: 'purple' },
 
 ];  
 
