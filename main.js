@@ -7,11 +7,15 @@ const buttons = [
     { href: 'health-check-analyzer.html', text: '健檢報告數值分析器', category: 'tools', color: 'blue' },
     { href: 'lipid-calculator.html', text: '血脂計算機', category: 'tools', color: 'blue' },
     { href: 'cloud-report-organizer.html', text: '健保雲端報告整理工具', category: 'tools', color: 'blue' },
+    { href: 'timer-for-bppv.html', text: 'BPPV復位計時工具', category: 'tools', color: 'blue' },
 
     { href: 'nasal-spray.html', text: '鼻噴劑', category: 'ent', color: 'orange' },
     { href: 'inferior-turbinate-rfa.html', text: '下鼻甲RFA', category: 'ent', color: 'orange' },
     { href: 'osas.html', text: '睡眠呼吸中止症候群', category: 'ent', color: 'orange' },
-    
+    { href: 'trigeminal-neuralgia.html', text: '三叉神經痛', category: 'ent', color: 'orange' },
+    { href: 'vertigo.html', text: '眩暈', category: 'ent', color: 'orange' },
+    { href: 'papilloma-hpv.html', text: '乳突瘤與HPV病毒/疫苗', category: 'ent', color: 'orange' },
+
 
     { href: 'my-plate-education.html', text: 'My Plate 餐盤衛教', category: 'disease', color: 'green' },
     { href: 'mounjaro.html', text: '猛健樂', category: 'disease', color: 'green' },
@@ -25,9 +29,10 @@ const buttons = [
 
     { href: 'covid-medication.html', text: 'COVID及用藥', category: 'infection-disease', color: 'purple' },
     { href: 'measles.html', text: '麻疹', category: 'infection-disease', color: 'purple' },
+    { href: 'pneumococcus-vaccine.html', text: '肺炎鏈球菌及疫苗', category: 'infection-disease', color: 'purple' },
     { href: 'enterovirus.html', text: '腸病毒', category: 'infection-disease', color: 'purple' },
     { href: 'VZV.html', text: '帶狀皰疹(皮蛇)及疫苗', category: 'infection-disease', color: 'purple' },
-    { href: 'papilloma-hpv.html', text: '乳突瘤 HPV', category: 'infection-disease', color: 'purple' },
+
 ];  
 
 // 2. 頁面載入完成後執行
