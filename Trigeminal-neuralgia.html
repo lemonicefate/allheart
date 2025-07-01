@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>三叉神經痛全解析圖表</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Noto Sans TC', sans-serif;
+      background-color: #f0f4f8;
+    }
+
+    .chart-container {
+      position: relative;
+      width: 100%;
+      max-width: 600px;
+      margin-left: auto;
+      margin-right: auto;
+      height: 320px;
+      max-height: 400px;
+    }
+
+    @media (min-width: 768px) {
+      .chart-container {
+        height: 380px;
+      }
+    }
+
+    .kpi-box {
+      background-color: #003f5c;
+      color: white;
+      padding: 1.5rem;
+      border-radius: 0.5rem;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .kpi-number {
+      font-size: 3rem;
+      font-weight: 700;
+      line-height: 1;
+      color: #ffa600;
+    }
+
+    .kpi-text {
+      font-size: 1.125rem;
+      margin-top: 0.5rem;
+    }
+
+    .flowchart-step {
+      background-color: white;
+      border-left: 4px solid #7a5195;
+      padding: 1rem;
+      border-radius: 0.25rem;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+      text-align: center;
+      position: relative;
+      margin-bottom: 2rem;
+    }
+
+    .flowchart-arrow {
+      width: 2px;
+      height: 2rem;
+      background-color: #7a5195;
+      margin: 0 auto;
+    }
+
+    .flowchart-arrow::after {
+      content: '';
+      position: absolute;
+      left: 50%;
+      bottom: -0.75rem;
+      transform: translateX(-50%);
+      border-left: 8px solid transparent;
+      border-right: 8px solid transparent;
+      border-top: 8px solid #7a5195;
+    }
+
+    .management-card {
+      background-color: white;
+      border-radius: 0.5rem;
+      padding: 1.5rem;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      text-align: center;
+      transition: transform 0.2s;
+    }
+
+    .management-card:hover {
+      transform: translateY(-5px);
+    }
+
+    .management-icon {
+      font-size: 3rem;
+      margin-bottom: 1rem;
+    }
+  </style>
+</head>
+
+<body class="bg-slate-50 text-slate-800">
+
+  <div class="container mx-auto p-4 md:p-8">
+
+    <header class="text-center mb-12">
+      <h1 class="text-4xl md:text-5xl font-bold text-[#003f5c] mb-2">三叉神經痛 (Trigeminal neuralgia)</h1>
+      <p class="text-xl text-slate-600">慢性的臉部疼痛</p>
+    </header>
+
+    <section id="intro" class="mb-12">
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+        <div class="kpi-box">
+          <p class="text-lg">醫學界公認的</p>
+          <span class="kpi-number">最劇烈</span>
+          <p class="kpi-text">生理疼痛之一，有「自殺性疾病」之稱</p>
+        </div>
+        <div>
+          <h2 class="text-2xl font-bold text-[#003f5c] mb-4">什麼是三叉神經痛？</h2>
+          <p class="text-slate-700 leading-relaxed">
+            三叉神經痛是一種慢性的神經系統疾病，特徵是在臉部三叉神經分佈的區域內，反覆出現短暫、劇烈如電擊或刀割的疼痛。即使是洗臉、說話或微風吹拂等輕微刺激，都可能引發難以忍受的劇痛，嚴重影響患者的日常生活與心理健康。
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section id="demographics" class="mb-12 p-6 bg-white rounded-lg shadow-md">
+      <h2 class="text-2xl font-bold text-center text-[#003f5c] mb-8">哪些人是高風險族群？</h2>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-8 text-center">
+        <div class="bg-slate-100 p-8 rounded-lg flex flex-col justify-center items-center h-48">
+          <span class="text-6xl md:text-7xl font-bold text-[#bc5090]">女性</span>
+          <p class="text-xl mt-3 text-slate-700">患病率<strong class="text-[#bc5090]">高出男性 1.5 倍</strong></p>
+        </div>
+        <div class="bg-slate-100 p-8 rounded-lg flex flex-col justify-center items-center h-48">
+          <span class="text-6xl md:text-7xl font-bold text-[#7a5195]">50歲+</span>
+          <p class="text-xl mt-3 text-slate-700">好發率<strong class="text-[#7a5195]">高達 3 倍</strong></p>
+        </div>
+      </div>
+      <div class="mt-10 text-center">
+        <h3 class="text-xl font-semibold text-[#003f5c] mb-3">疼痛好發區域</h3>
+        <p class="text-slate-700 max-w-5xl mx-auto leading-relaxed">
+          疼痛最常發生於臉部的<strong class="text-[#003f5c]">第二分支（上頜）</strong>和<strong class="text-[#003f5c]">第三分支（下頜）</strong>區域，這也是為什麼三叉神經痛常被誤認為牙痛的原因。
+        </p>
+      </div>
+    </section>
+
+    <section id="causes" class="mb-12 p-6 bg-white rounded-lg shadow-md">
+      <h2 class="text-2xl font-bold text-center text-[#003f5c] mb-6">疼痛的根源是什麼？</h2>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+        <div>
+          <h3 class="text-xl font-semibold text-center mb-4">病因分析</h3>
+          <div class="chart-container">
+            <canvas id="causesChart"></canvas>
+          </div>
+        </div>
+        <div>
+          <p class="text-slate-700 leading-relaxed">
+            <strong class="text-[#bc5090]">原發性 (約 85%):</strong> 最常見的原因是腦底部的血管壓迫到三叉神經根部，導致神經外層的保護性髓鞘受損，從而引發異常的神經放電與劇痛。
+            <br><br>
+            <strong class="text-[#ff764a]">繼發性 (約 15%):</strong>
+            由其他疾病引起，例如腦瘤壓迫、多發性硬化症（損害神經髓鞘的自體免疫疾病）、或腦部創傷等。精確診斷需要高解析度MRI來排除這些潛在病因。
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section id="treatment-path" class="mb-12 p-6 bg-white rounded-lg shadow-md">
+      <h2 class="text-2xl font-bold text-center text-[#003f5c] mb-6">治療路徑圖：階梯式治療策略</h2>
+      <p class="text-center max-w-5xl mx-auto text-slate-600 mb-8">
+        治療三叉神經痛通常採用階梯式方法，從最保守的藥物治療開始。如果效果不佳或副作用難以忍受，才會考慮更具侵入性的手術或介入性治療。
+      </p>
+
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <!-- 藥物治療區塊 -->
+        <div>
+          <h3 class="text-xl font-bold text-[#7a5195] mb-4">第一步：藥物治療</h3>
+          <p class="text-slate-700 mb-4">藥物治療是三叉神經痛的首選初始治療方案，抗癲癇藥物是主要的治療藥物。</p>
+
+          <div class="space-y-4">
+            <!-- Carbamazepine -->
+            <div class="bg-slate-50 p-4 rounded-lg border border-slate-200">
+              <h4 class="font-semibold text-lg text-[#003f5c]">Carbamazepine (Tegretol) <span class="text-sm text-slate-500">(黃金標準)</span></h4>
+              <ul class="list-disc list-inside text-slate-600 text-sm mt-2">
+                <li>約70%患者反應良好。</li>
+                <li>常見不良反應：噁心嘔吐、鎮靜嗜睡、頭暈、低鈉血症等。</li>
+                <li>需監測血細胞計數、肝功能和血清鈉水平。</li>
+              </ul>
+            </div>
+            <!-- Oxcarbazepine -->
+            <div class="bg-slate-50 p-4 rounded-lg border border-slate-200">
+              <h4 class="font-semibold text-lg text-[#003f5c]">Oxcarbazepine (Trileptal)</h4>
+              <ul class="list-disc list-inside text-slate-600 text-sm mt-2">
+                <li>效果與Carbamazepine相似，但耐受性更好，藥物相互作用可能性更低。</li>
+                <li>副作用較少，低血鈉症需注意。</li>
+              </ul>
+            </div>
+            <!-- 其他藥物 -->
+            <div class="bg-slate-50 p-4 rounded-lg border border-slate-200">
+              <h4 class="font-semibold text-lg text-[#003f5c]">其他藥物</h4>
+              <ul class="list-disc list-inside text-slate-600 text-sm mt-2">
+                <li>Lamotrigine：可作為替代治療，需小心Steven-Johnson syndrome。</li>
+                <li>Baclofen：GABA類似物，可單獨或與Carbamazepine聯合使用。</li>
+                <li>Gabapentin / Pregabalin：鈣通道阻滯劑，起效快，副作用較輕。</li>
+                <li>Topiramate：可能引起認知障礙、體重下降。</li>
+                <li>抗憂鬱藥物：改善情緒並抑制痛感傳遞。</li>
+                <li>嗎啡類藥物：止痛效果強，但有成癮性，通常為後線藥物。</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <!-- 外科手術與介入性治療區塊 -->
+        <div>
+          <h3 class="text-xl font-bold text-[#7a5195] mb-4">第二/三步：外科手術與介入性治療</h3>
+          <p class="text-slate-700 mb-4">當藥物治療效果不佳或副作用無法耐受時，可考慮外科手術或介入性治療。</p>
+
+          <div class="space-y-4">
+            <!-- 微血管減壓術 (MVD) -->
+            <div class="bg-slate-50 p-4 rounded-lg border border-slate-200">
+              <h4 class="font-semibold text-lg text-[#003f5c]">微血管減壓術 (MVD)</h4>
+              <ul class="list-disc list-inside text-slate-600 text-sm mt-2">
+                <li>旨在移動或切除與三叉神經接觸的血管。</li>
+                <li>有效性：可使疼痛消失或數年內減輕。</li>
+                <li>風險：聽力下降、面部無力/麻木、卒中等。</li>
+                <li>復發率：術後3-5年內有復發風險。</li>
+              </ul>
+            </div>
+            <!-- 伽馬刀 (Gamma Knife) -->
+            <div class="bg-slate-50 p-4 rounded-lg border border-slate-200">
+              <h4 class="font-semibold text-lg text-[#003f5c]">腦立體定向放射外科治療（伽馬刀）</h4>
+              <ul class="list-disc list-inside text-slate-600 text-sm mt-2">
+                <li>將放射劑量集中對準三叉神經根。</li>
+                <li>有效性：約80-85%有效。</li>
+                <li>風險：面部麻木是常見副作用。</li>
+                <li>復發率：術後3-5年內有復發風險。</li>
+              </ul>
+            </div>
+            <!-- 介入性治療 -->
+            <div class="bg-slate-50 p-4 rounded-lg border border-slate-200">
+              <h4 class="font-semibold text-lg text-[#003f5c]">介入性治療 (神經根切斷術)</h4>
+              <ul class="list-disc list-inside text-slate-600 text-sm mt-2">
+                <li>甘油注射：損害三叉神經阻斷疼痛信號，可能引起面部麻木。</li>
+                <li>球囊壓迫術：破壞三叉神經阻斷疼痛信號，可能引起短暫面部麻木。</li>
+                <li>射頻熱凝損毀術：選擇性破壞神經纖維，可能引起痛性麻木。</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+
+    <section id="treatment-comparison" class="mb-12 p-6 bg-white rounded-lg shadow-md">
+      <h2 class="text-2xl font-bold text-center text-[#003f5c] mb-2">權衡各種治療方案</h2>
+      <p class="text-center max-w-3xl mx-auto text-slate-600 mb-8">
+        不同的治療方法在成功率和潛在風險/復發率之間存在差異。與您的醫生詳細討論，選擇最適合的治療方案。
+      </p>
+      <div class="chart-container mx-auto">
+        <canvas id="treatmentComparisonChart"></canvas>
+      </div>
+      <p class="text-center mt-4 text-slate-600 text-sm">*數據為文獻報告範圍的約略平均值，僅供參考，實際情況因個體差異而異。</p>
+    </section>
+
+    <section id="management" class="mb-12">
+      <h2 class="text-2xl font-bold text-center text-[#003f5c] mb-8">日常生活管理與自我照護</h2>
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div class="management-card">
+          <div class="management-icon text-[#7a5195]">🍽️</div>
+          <h3 class="text-xl font-semibold mb-2">飲食調整</h3>
+          <p class="text-slate-600">避免堅硬、辛辣、生冷的食物。選擇流質或半流質飲食以減少咀嚼，補充B群維生素。</p>
+        </div>
+        <div class="management-card">
+          <div class="management-icon text-[#bc5090]">🌬️</div>
+          <h3 class="text-xl font-semibold mb-2">避免誘因</h3>
+          <p class="text-slate-600">動作輕柔、面部保暖、避免冷風直吹。規律作息，保證充足睡眠，避免過度勞累。</p>
+        </div>
+        <div class="management-card">
+          <div class="management-icon text-[#ef5675]">😌</div>
+          <h3 class="text-xl font-semibold mb-2">心理支持</h3>
+          <p class="text-slate-600">保持心情舒暢，尋求心理諮詢或加入支持團體。積極的心態有助於對抗疾病。</p>
+        </div>
+        <div class="management-card">
+          <div class="management-icon text-[#ff764a]">🤸</div>
+          <h3 class="text-xl font-semibold mb-2">復健運動</h3>
+          <p class="text-slate-600">在疼痛緩解期，進行輕柔的面部肌肉和頸部運動，配合散步等全身性鍛鍊，促進康復。</p>
+        </div>
+      </div>
+    </section>
+
+  </div>
+
+  <footer class="text-center p-4 mt-8 text-sm text-slate-500">
+    <p>本資訊圖表內容基於醫學資訊整理，僅供衛教參考，不能取代專業醫療建議。若有任何醫療問題，請諮詢您的醫師。</p>
+  </footer>
+
+  <script>
+    const vibrantPalette = ['#bc5090', '#ef5675', '#ff764a', '#ffa600', '#7a5195'];
+    const primaryColor = '#003f5c';
+    const secondaryColor = '#7a5195';
+
+    function wrapText(label) {
+      const maxLength = 16;
+      if (typeof label !== 'string' || label.length <= maxLength) {
+        return label;
+      }
+      const words = label.split(' ');
+      const lines = [];
+      let currentLine = '';
+      words.forEach(word => {
+        if ((currentLine + ' ' + word).trim().length > maxLength) {
+          lines.push(currentLine.trim());
+          currentLine = word;
+        } else {
+          currentLine = (currentLine + ' ' + word).trim();
+        }
+      });
+      lines.push(currentLine.trim());
+      return lines;
+    }
+
+    const tooltipTitleCallback = (tooltipItems) => {
+      const item = tooltipItems[0];
+      let label = item.chart.data.labels[item.dataIndex];
+      if (Array.isArray(label)) {
+        return label.join(' ');
+      }
+      return label;
+    };
+
+    const defaultChartOptions = {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: {
+          labels: {
+            color: '#334155',
+            font: {
+              size: 14
+            }
+          }
+        },
+        tooltip: {
+          callbacks: {
+            title: tooltipTitleCallback
+          }
+        }
+      },
+      scales: {
+        y: {
+          ticks: { color: '#475569' },
+          grid: { color: '#e2e8f0' }
+        },
+        x: {
+          ticks: { color: '#475569' },
+          grid: { display: false }
+        }
+      }
+    };
+
+    
+
+    const causesChartCtx = document.getElementById('causesChart').getContext('2d');
+    new Chart(causesChartCtx, {
+      type: 'pie',
+      data: {
+        labels: ['原發性 (血管壓迫)', '繼發性 (腫瘤、MS等)'],
+        datasets: [{
+          label: '病因佔比',
+          data: [85, 15],
+          backgroundColor: [secondaryColor, vibrantPalette[2]],
+          borderColor: '#ffffff',
+          borderWidth: 3
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: {
+            position: 'top',
+            labels: { color: '#334155', font: { size: 14 } }
+          },
+          tooltip: {
+            callbacks: { title: tooltipTitleCallback }
+          }
+        }
+      }
+    });
+
+    const treatmentComparisonChartCtx = document.getElementById('treatmentComparisonChart').getContext('2d');
+    const treatmentLabels = ['藥物治療 (Carbamazepine)', '微血管減壓術 (MVD)', '伽馬刀放射治療', '射頻熱凝損毀術'];
+    new Chart(treatmentComparisonChartCtx, {
+      type: 'bar',
+      data: {
+        labels: treatmentLabels.map(wrapText),
+        datasets: [
+          {
+            label: '初始成功率 (%)',
+            data: [70, 90, 85, 80],
+            backgroundColor: primaryColor,
+          },
+          {
+            label: '長期復發/風險率 (%)',
+            data: [30, 20, 15, 30],
+            backgroundColor: vibrantPalette[1],
+          }
+        ]
+      },
+      options: {
+        ...defaultChartOptions,
+        scales: {
+          y: {
+            beginAtZero: true,
+            max: 100,
+            title: { display: true, text: '百分比 (%)', color: '#334155' },
+            ticks: { color: '#475569' },
+            grid: { color: '#e2e8f0' }
+          },
+          x: {
+            ticks: { color: '#475569' },
+            grid: { display: false }
+          }
+        },
+        plugins: {
+          legend: {
+            position: 'top',
+            labels: { color: '#334155', font: { size: 14 } }
+          },
+          tooltip: {
+            callbacks: { title: tooltipTitleCallback }
+          }
+        }
+      }
+    });
+  </script>
+
+</body>
+
+</html>

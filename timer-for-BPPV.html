@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>一分鐘倒數計時器</title>
+  <!-- 引入 Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    /* 自訂字體 */
+    body {
+      font-family: 'Inter', sans-serif;
+    }
+  </style>
+</head>
+
+<body class="bg-gradient-to-br from-amber-100 to-orange-200 min-h-screen flex items-center justify-center p-4">
+  <!-- 
+    開發者備註：
+    - 若要調整整個卡片的「寬度」，請修改下方的 'max-w-2xl'。
+    - Tailwind 提供從 'max-w-xs' 到 'max-w-7xl' 的多種尺寸，數字越大越寬。
+  -->
+  <div
+    class="bg-white p-8 rounded-2xl shadow-xl max-w-2xl w-full text-center transition-all duration-300">
+    <h1 class="text-3xl md:text-4xl font-bold text-gray-800 mb-6">倒數計時器</h1>
+    <!-- 時間顯示區域 -->
+    <!-- 
+      開發者備註：
+      - 若要調整框格「高度」，請修改下方的 'py-24' (py 代表垂直 padding)，數字越大越高。
+      - 若要調整時間「字體大小」，請修改下方的 'text-[10rem]'。
+      - '9xl' 是 Tailwind 的內建最大尺寸，但你可以用 'text-[任意值rem]' 的格式自訂更大的尺寸。
+    -->
+    <div id="countdown-display"
+      class="text-[10rem] leading-none font-extrabold text-gray-800 bg-gray-200 py-24 px-6 rounded-xl mb-8 border-4 border-gray-400 shadow-inner flex items-center justify-center">
+      01:00
+    </div>
+
+    <!-- 按鈕區域 -->
+    <div class="flex flex-col space-y-4">
+      <button id="start-button"
+        class="bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-6 rounded-xl shadow-lg transition-all duration-200 transform hover:scale-105 focus:outline-none focus:ring-4 focus:ring-green-300">
+        開始倒數
+      </button>
+      <button id="reset-button"
+        class="bg-red-500 hover:bg-red-600 text-white font-bold py-3 px-6 rounded-xl shadow-lg transition-all duration-200 transform hover:scale-105 focus:outline-none focus:ring-4 focus:ring-red-300"
+        disabled>
+        重設
+      </button>
+    </div>
+  </div>
+
+  <script>
+    // 獲取 DOM 元素
+    const countdownDisplay = document.getElementById('countdown-display');
+    const startButton = document.getElementById('start-button');
+    const resetButton = document.getElementById('reset-button');
+
+    let timerInterval; // 用於儲存計時器間隔的變數
+    let timeLeft = 60; // 初始時間，單位為秒
+
+    /**
+     * 格式化時間，將秒數轉換為 MM:SS 格式
+     * @param {number} seconds - 剩餘的秒數
+     * @returns {string} 格式化後的 MM:SS 字串
+     */
+    function formatTime(seconds) {
+      const minutes = Math.floor(seconds / 60);
+      const remainingSeconds = seconds % 60;
+      // 使用padStart確保分鐘和秒數都是兩位數
+      return `${String(minutes).padStart(2, '0')}:${String(remainingSeconds).padStart(2, '0')}`;
+    }
+
+    /**
+     * 更新倒數計時器顯示
+     */
+    function updateDisplay() {
+      if (timeLeft > 0) {
+        countdownDisplay.textContent = formatTime(timeLeft);
+      } else {
+        countdownDisplay.textContent = "時間到";
+        clearInterval(timerInterval); // 時間到，清除計時器
+        startButton.disabled = false; // 啟用開始按鈕
+        resetButton.disabled = false; // 啟用重設按鈕 (允許重新開始)
+        // 可以添加一些視覺效果或聲音提示
+        countdownDisplay.classList.add('text-red-600', 'animate-pulse'); // 添加紅色和脈衝動畫
+      }
+    }
+
+    /**
+     * 開始倒數計時
+     */
+    function startTimer() {
+      startButton.disabled = true; // 禁用開始按鈕，避免重複點擊
+      resetButton.disabled = false; // 啟用重設按鈕
+      countdownDisplay.classList.remove('text-red-600', 'animate-pulse'); // 移除結束時的樣式
+
+      // 如果計時器已經在運行，先清除它
+      if (timerInterval) {
+        clearInterval(timerInterval);
+      }
+
+      // 每秒更新一次時間
+      timerInterval = setInterval(() => {
+        timeLeft--;
+        updateDisplay();
+      }, 1000); // 1000 毫秒 = 1 秒
+    }
+
+    /**
+     * 重設計時器
+     */
+    function resetTimer() {
+      clearInterval(timerInterval); // 清除任何正在運行的計時器
+      timeLeft = 60; // 重設時間為 60 秒
+      updateDisplay(); // 更新顯示為初始狀態 (01:00)
+      startButton.disabled = false; // 啟用開始按鈕
+      resetButton.disabled = true; // 禁用重設按鈕，直到開始計時
+      countdownDisplay.classList.remove('text-red-600', 'animate-pulse'); // 移除結束時的樣式
+    }
+
+    // 添加事件監聽器
+    startButton.addEventListener('click', startTimer);
+    resetButton.addEventListener('click', resetTimer);
+
+    // 頁面載入時初始化計時器
+    window.onload = resetTimer;
+  </script>
+</body>
+
+</html>

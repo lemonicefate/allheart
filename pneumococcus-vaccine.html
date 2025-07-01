@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html lang="zh-Hant" class="scroll-smooth">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>互動式肺炎鏈球菌疫苗指南</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
+  <!-- Chosen Palette: Calm Harmony -->
+  <!-- Application Structure Plan: 本應用程式採用以使用者為中心的任務導向設計，將報告內容重組為五個邏輯區塊：1. 認識威脅：簡化疾病介紹，讓使用者快速掌握核心風險。2. 疫苗比較：透過互動式圖表與卡片，將複雜的疫苗特性視覺化，幫助使用者理解關鍵差異。3. 您的接種計畫：此為核心互動功能，將官方繁瑣的接種建議表格轉化為一個個人化的動態查詢工具，使用者只需點選自己的狀況，即可獲得清晰、直接的接種指導。4. 接種實務：以常見問答形式整理副作用等資訊，方便查閱。5. 尋找資源：提供實用的下一步指引。此結構旨在引導使用者從認知、比較、決策到行動，而非單純複製報告的線性結構，大幅提升了資訊的易用性與實用價值。 -->
+  <!-- Visualization & Content Choices: 1. 疾病介紹 -> Goal: Inform -> Viz: Icon + Text Cards (HTML/CSS) -> Interaction: Hover -> Justification: 將侵襲性疾病視覺化，比純文字更具衝擊力與易讀性。2. 疫苗比較 -> Goal: Compare -> Viz: Bar Chart (Chart.js Canvas) & Detail Cards (HTML) -> Interaction: Click tabs to switch chart data & view details -> Justification: 長條圖能直觀比較疫苗的「保護力品質」與「涵蓋廣度」，有效傳達「先求質、再求量」的核心概念。3. 接種建議 -> Goal: Guide/Personalize -> Viz: Interactive Form & Dynamic Result Display (HTML/CSS) -> Interaction: User selects age/risk/history -> Justification: 將報告中最複雜的表格邏輯轉化為一個簡單的互動工具，是將資訊轉為個人化行動方案的關鍵，解決了使用者最大的痛點。所有視覺元素均使用HTML/CSS或Canvas，無SVG/Mermaid。 -->
+  <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+  <style>
+    body {
+      font-family: 'Noto Sans TC', sans-serif;
+      background-color: #F8F9FA;
+    }
+
+    .chart-container {
+      position: relative;
+      width: 100%;
+      max-width: 800px;
+      margin-left: auto;
+      margin-right: auto;
+      height: 320px;
+      max-height: 400px;
+    }
+
+    @media (min-width: 768px) {
+      .chart-container {
+        height: 400px;
+      }
+    }
+
+    .tab-active {
+      border-bottom-color: #3B82F6;
+      color: #3B82F6;
+      font-weight: 700;
+    }
+
+    .tab-inactive {
+      border-bottom-color: transparent;
+      color: #6B7280;
+    }
+
+    .plan-card {
+      background-color: #EBF5FF;
+      border-left: 5px solid #3B82F6;
+    }
+
+    .step-bubble {
+      background-color: #3B82F6;
+      color: white;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 1.25rem;
+      flex-shrink: 0;
+    }
+
+    .arrow-right {
+      content: '→';
+      font-size: 2rem;
+      color: #9CA3AF;
+      margin: 0 1rem;
+    }
+  </style>
+</head>
+
+<body class="text-gray-800">
+
+  <!-- Header -->
+  <header class="bg-white shadow-sm sticky top-0 z-50">
+    <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex items-center justify-between h-16">
+        <div class="flex items-center">
+          <span class="text-xl md:text-2xl font-bold text-blue-600">肺炎鏈球菌疫苗互動指南</span>
+        </div>
+        <nav class="hidden md:flex space-x-8">
+          <a href="#threat" class="text-gray-600 hover:text-blue-600 transition">認識威脅</a>
+          <a href="#vaccines" class="text-gray-600 hover:text-blue-600 transition">疫苗比較</a>
+          <a href="#plan" class="text-gray-600 hover:text-blue-600 transition">您的接種計畫</a>
+          <a href="#faq" class="text-gray-600 hover:text-blue-600 transition">接種實務</a>
+        </nav>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="container mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12">
+
+    <!-- Hero Section -->
+    <section class="text-center mb-12 md:mb-16">
+      <h1 class="text-3xl md:text-5xl font-bold text-gray-900 mb-4">做出明智的健康決策</h1>
+      <p class="max-w-3xl mx-auto text-lg text-gray-600">
+        肺炎鏈球菌可能引發嚴重疾病，但透過疫苗接種可以有效預防。本工具將幫助您了解疾病風險、比較疫苗選項，並提供基於台灣官方建議的個人化接種計畫。
+      </p>
+    </section>
+
+    <!-- Section 1: The Threat -->
+    <section id="threat" class="mb-12 md:mb-16 scroll-mt-20">
+      <h2 class="text-2xl md:text-3xl font-bold text-center mb-2 text-gray-900">認識威脅：肺炎鏈球菌疾病</h2>
+      <p class="text-center text-gray-600 mb-8 max-w-2xl mx-auto">
+        肺炎鏈球菌是一種常見細菌，但當它侵入無菌部位時，將可能引發嚴重的「侵襲性疾病」(IPD)，對特定族群構成致命威脅。</p>
+      <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div class="bg-white p-6 rounded-lg shadow-md border-t-4 border-red-400">
+          <h3 class="font-bold text-xl mb-2">肺炎 (Pneumonia)</h3>
+          <p class="text-gray-600">最常見的嚴重感染形式，導致肺部發炎、呼吸困難，是長者死亡的重要原因之一。</p>
+        </div>
+        <div class="bg-white p-6 rounded-lg shadow-md border-t-4 border-red-400">
+          <h3 class="font-bold text-xl mb-2">腦膜炎 (Meningitis)</h3>
+          <p class="text-gray-600">細菌侵犯腦部與脊髓，死亡率高，且存活者可能留下永久性神經後遺症。</p>
+        </div>
+        <div class="bg-white p-6 rounded-lg shadow-md border-t-4 border-red-400">
+          <h3 class="font-bold text-xl mb-2">敗血症 (Sepsis)</h3>
+          <p class="text-gray-600">細菌侵入血液，引發全身性發炎反應，可能導致休克與多重器官衰竭。</p>
+        </div>
+        <div class="bg-white p-6 rounded-lg shadow-md border-t-4 border-yellow-400">
+          <h3 class="font-bold text-xl mb-2">非侵襲性感染</h3>
+          <p class="text-gray-600">較常見且症狀較緩和，例如兒童常見的中耳炎、鼻竇炎等。</p>
+        </div>
+      </div>
+      <div class="mt-8 bg-blue-50 p-6 rounded-lg text-center">
+        <h4 class="font-bold text-lg mb-2">誰是高風險族群？</h4>
+        <p class="text-blue-800">雖然人人都可能感染，但 <span class="font-bold">5歲以下幼童</span>、<span
+            class="font-bold">65歲以上長者</span>，以及患有<span class="font-bold">慢性病</span>或<span
+            class="font-bold">免疫功能不全</span>的民眾，面臨的風險最大。</p>
+      </div>
+    </section>
+
+    <!-- Section 2: Vaccine Comparison -->
+    <section id="vaccines" class="mb-12 md:mb-16 scroll-mt-20">
+      <h2 class="text-2xl md:text-3xl font-bold text-center mb-2 text-gray-900">疫苗比較：如何選擇？</h2>
+      <p class="text-center text-gray-600 mb-8 max-w-2xl mx-auto">
+        市面上的疫苗主要分為「結合型」和「多醣體」兩大類。理解它們的差異是制定最佳防護策略的關鍵，現代策略強調「先求質（結合型），再求量（多醣體）」。</p>
+      <div class="bg-white rounded-lg shadow-lg p-4 sm:p-6 lg:p-8">
+        <div class="mb-6 border-b border-gray-200">
+          <nav class="flex -mb-px" id="vaccineTabs">
+            <button data-vaccine="PCV13"
+              class="vaccine-tab tab-active py-4 px-6 text-center border-b-2 font-medium text-sm transition">PCV13</button>
+            <button data-vaccine="PPV23"
+              class="vaccine-tab tab-inactive py-4 px-6 text-center border-b-2 font-medium text-sm transition">PPV23</button>
+            <button data-vaccine="PCV15"
+              class="vaccine-tab tab-inactive py-4 px-6 text-center border-b-2 font-medium text-sm transition">PCV15</button>
+            <button data-vaccine="PCV20"
+              class="vaccine-tab tab-inactive py-4 px-6 text-center border-b-2 font-medium text-sm transition">PCV20</button>
+          </nav>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+          <div id="vaccineDetails">
+            <!-- Vaccine details will be rendered here -->
+          </div>
+          <div class="chart-container">
+            <canvas id="vaccineChart"></canvas>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Section 3: Your Vaccination Plan -->
+    <section id="plan" class="mb-12 md:mb-16 scroll-mt-20">
+      <h2 class="text-2xl md:text-3xl font-bold text-center mb-2 text-gray-900">您的接種計畫</h2>
+      <p class="text-center text-gray-600 mb-8 max-w-2xl mx-auto">
+        根據您的年齡、風險狀況與過往接種史，台灣疾管署提供了明確的公費接種建議。請依序回答以下問題，以獲得您的個人化接種方案。</p>
+
+      <div class="bg-white rounded-lg shadow-lg p-6 md:p-8">
+        <!-- Step 1: Age Group -->
+        <div class="mb-6">
+          <label class="block text-xl font-bold mb-3 text-gray-700">第一步：請選擇您的年齡層</label>
+          <div class="flex flex-wrap gap-3" id="ageGroup">
+            <button data-age="infant"
+              class="px-4 py-2 rounded-full border-2 border-gray-300 hover:bg-blue-100 hover:border-blue-500 transition">嬰幼兒
+              (5歲以下)</button>
+            <button data-age="adult"
+              class="px-4 py-2 rounded-full border-2 border-gray-300 hover:bg-blue-100 hover:border-blue-500 transition">成人
+              (19-64歲) & 高風險</button>
+            <button data-age="senior"
+              class="px-4 py-2 rounded-full border-2 border-gray-300 hover:bg-blue-100 hover:border-blue-500 transition">長者
+              (65歲以上)</button>
+          </div>
+        </div>
+
+        <!-- Step 2: Vaccination History -->
+        <div id="historyStep" class="mb-6 hidden">
+          <label class="block text-xl font-bold mb-3 text-gray-700">第二步：您的肺炎鏈球菌疫苗接種史？</label>
+          <div class="flex flex-wrap gap-3" id="vaccineHistory">
+            <button data-history="none"
+              class="px-4 py-2 rounded-full border-2 border-gray-300 hover:bg-blue-100 hover:border-blue-500 transition">從未接種過</button>
+            <button data-history="ppv23"
+              class="px-4 py-2 rounded-full border-2 border-gray-300 hover:bg-blue-100 hover:border-blue-500 transition">只打過
+              PPV23</button>
+            <button data-history="pcv"
+              class="px-4 py-2 rounded-full border-2 border-gray-300 hover:bg-blue-100 hover:border-blue-500 transition">只打過
+              PCV13/15</button>
+            <button data-history="both"
+              class="px-4 py-2 rounded-full border-2 border-gray-300 hover:bg-blue-100 hover:border-blue-500 transition">兩種都已按建議接種</button>
+          </div>
+        </div>
+
+        <!-- Result -->
+        <div id="recommendationResult" class="mt-8">
+          <!-- Recommendation will be displayed here -->
+        </div>
+      </div>
+    </section>
+
+    <!-- Section 4: FAQ -->
+    <section id="faq" class="scroll-mt-20">
+      <h2 class="text-2xl md:text-3xl font-bold text-center mb-8 text-gray-900">接種實務：常見問答</h2>
+      <div class="max-w-3xl mx-auto space-y-4">
+        <div class="bg-white rounded-lg shadow-sm">
+          <details class="p-6 cursor-pointer">
+            <summary class="font-bold text-lg">接種後有哪些常見副作用？</summary>
+            <p class="text-gray-600 mt-4">
+              接種後的不良反應通常輕微且短暫。最常見的是注射部位的疼痛、紅腫或痠痛，通常在2天內緩解。少部分人可能出現輕微發燒、疲倦或肌肉痠痛。建議接種後在院所休息30分鐘，返家後多喝水、多休息。
+            </p>
+          </details>
+        </div>
+        <div class="bg-white rounded-lg shadow-sm">
+          <details class="p-6 cursor-pointer">
+            <summary class="font-bold text-lg">哪些人不適合接種？</summary>
+            <p class="text-gray-600 mt-4">
+              對疫苗任何成分曾有嚴重過敏反應者不應接種。正在發燒或患有中重度急性疾病者，應待病情穩定後再接種。若有疑慮，請務必與您的醫師討論。
+            </p>
+          </details>
+        </div>
+        <div class="bg-white rounded-lg shadow-sm">
+          <details class="p-6 cursor-pointer">
+            <summary class="font-bold text-lg">可以和其他疫苗一起打嗎？</summary>
+            <p class="text-gray-600 mt-4">
+              可以。肺炎鏈球菌疫苗可與流感疫苗在同一次門診接種，但需分開不同手臂施打。與COVID-19疫苗則建議至少間隔7天。
+            </p>
+          </details>
+        </div>
+        <div class="bg-white rounded-lg shadow-sm">
+          <details class="p-6 cursor-pointer">
+            <summary class="font-bold text-lg">哪裡可以接種？</summary>
+            <p class="text-gray-600 mt-4">
+              各縣市的衛生所及合約醫療院所均提供接種服務。建議您在前往前，先致電洽詢疫苗庫存、公自費資格與門診時間。您可以透過各地衛生局網站或疾管署網站查詢合約院所名單。
+            </p>
+          </details>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Footer -->
+  <footer class="bg-gray-800 text-white mt-12 md:mt-16">
+    <div class="container mx-auto px-4 sm:px-6 lg:px-8 py-6 text-center">
+      <p>本應用程式資訊彙整自台灣衛生福利部疾病管制署公開資料，僅供衛教參考。</p>
+      <p class="text-sm text-gray-400 mt-2">實際接種計畫請務必與您的醫師或專業醫療人員討論。 最後更新：2024年</p>
+    </div>
+  </footer>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+
+      const vaccineData = {
+        PCV13: {
+          name: 'PCV13 (13價結合型疫苗)',
+          description: '以能誘導高品質、高強度且持久的免疫反應而聞名，能產生關鍵的「免疫記憶」。是台灣嬰幼兒常規接種與成人高風險族群建議中的核心疫苗。',
+          features: { coverage: 13, quality: 90, duration: 85 }
+        },
+        PPV23: {
+          name: 'PPV23 (23價多醣體疫苗)',
+          description: '涵蓋血清型最廣，但其誘導的免疫反應強度與持久性均不如結合型疫苗，且無法產生有效免疫記憶。主要用於成人，作為擴大保護光譜的輔助角色。',
+          features: { coverage: 23, quality: 60, duration: 50 }
+        },
+        PCV15: {
+          name: 'PCV15 (15價結合型疫苗)',
+          description: '新一代結合型疫苗，在PCV13基礎上額外增加2種血清型(22F, 33F)，以應對「血清型置換」現象。目前在台灣部分院所可自費接種。',
+          features: { coverage: 15, quality: 92, duration: 88 }
+        },
+        PCV20: {
+          name: 'PCV20 (20價結合型疫苗)',
+          description: '最新一代結合型疫苗，提供更廣泛的結合型疫苗保護。目前在台灣尚未引進。其免疫反應品質與持久性預期與其他結合型疫苗相當。',
+          features: { coverage: 20, quality: 95, duration: 90 }
+        }
+      };
+
+      const vaccineDetailsContainer = document.getElementById('vaccineDetails');
+      const vaccineTabs = document.querySelectorAll('.vaccine-tab');
+      const vaccineChartCanvas = document.getElementById('vaccineChart').getContext('2d');
+      let vaccineChart;
+
+      function renderVaccineDetails(vaccineKey) {
+        const data = vaccineData[vaccineKey];
+        vaccineDetailsContainer.innerHTML = `
+                    <h3 class="text-2xl font-bold mb-3 text-gray-900">${data.name}</h3>
+                    <p class="text-gray-600 mb-4">${data.description}</p>
+                    <div class="space-y-2">
+                        <div class="flex items-center"><span class="font-semibold w-28">疫苗技術:</span> <span class="px-2 py-1 bg-blue-100 text-blue-800 rounded-md text-sm">${data.name.includes('結合型') ? '結合型' : '多醣體'}</span></div>
+                        <div class="flex items-center"><span class="font-semibold w-28">涵蓋血清型:</span> <span class="font-bold text-lg">${data.features.coverage} 種</span></div>
+                        <div class="flex items-center"><span class="font-semibold w-28">免疫記憶:</span> <span class="font-bold ${data.name.includes('結合型') ? 'text-green-600' : 'text-red-600'}">${data.name.includes('結合型') ? '可產生' : '無法有效產生'}</span></div>
+                    </div>
+                `;
+      }
+
+      function renderChart(vaccineKey) {
+        const data = vaccineData[vaccineKey];
+        const chartData = {
+          labels: ['涵蓋廣度 (血清型數量)', '保護力品質', '保護持久性'],
+          datasets: [{
+            label: data.name,
+            data: [data.features.coverage, data.features.quality, data.features.duration],
+            backgroundColor: 'rgba(59, 130, 246, 0.6)',
+            borderColor: 'rgba(59, 130, 246, 1)',
+            borderWidth: 1,
+            barThickness: 40,
+          }]
+        };
+
+        const chartOptions = {
+          responsive: true,
+          maintainAspectRatio: false,
+          indexAxis: 'y',
+          scales: {
+            x: {
+              beginAtZero: true,
+              max: 100,
+              ticks: {
+                callback: function (value, index, values) {
+                  if (this.getLabelForValue(value).includes('血清型')) return value;
+                  return value + '%';
+                }
+              }
+            },
+            y: {
+              ticks: {
+                font: {
+                  size: 14,
+                }
+              }
+            }
+          },
+          plugins: {
+            legend: {
+              display: false
+            },
+            tooltip: {
+              callbacks: {
+                label: function (context) {
+                  let label = context.dataset.label || '';
+                  if (label) {
+                    label += ': ';
+                  }
+                  if (context.parsed.x !== null) {
+                    if (context.label.includes('血清型')) {
+                      label += `${context.parsed.x} 種`;
+                    } else {
+                      label += `${context.parsed.x}% (示意)`;
+                    }
+                  }
+                  return label;
+                }
+              }
+            }
+          }
+        };
+
+        if (vaccineChart) {
+          vaccineChart.data = chartData;
+          vaccineChart.update();
+        } else {
+          vaccineChart = new Chart(vaccineChartCanvas, {
+            type: 'bar',
+            data: chartData,
+            options: chartOptions,
+          });
+        }
+      }
+
+      vaccineTabs.forEach(tab => {
+        tab.addEventListener('click', () => {
+          vaccineTabs.forEach(t => t.classList.replace('tab-active', 'tab-inactive'));
+          tab.classList.replace('tab-inactive', 'tab-active');
+          const vaccineKey = tab.dataset.vaccine;
+          renderVaccineDetails(vaccineKey);
+          renderChart(vaccineKey);
+        });
+      });
+
+      // Initial render
+      renderVaccineDetails('PCV13');
+      renderChart('PCV13');
+
+      // Recommendation Logic
+      const ageGroupContainer = document.getElementById('ageGroup');
+      const historyStep = document.getElementById('historyStep');
+      const historyContainer = document.getElementById('vaccineHistory');
+      const resultContainer = document.getElementById('recommendationResult');
+      let selectedAge = null;
+      let selectedHistory = null;
+
+      function createRecommendationHtml(title, steps) {
+        let stepsHtml = steps.map((step, index) => `
+                    <div class="flex items-center">
+                        <div class="step-bubble">${index + 1}</div>
+                        <div class="ml-4">
+                            <h4 class="font-bold">${step.action}</h4>
+                            <p class="text-sm text-gray-600">${step.details}</p>
+                        </div>
+                    </div>
+                `).join('<div class="arrow-right hidden md:block"></div>');
+
+        return `
+                    <div class="plan-card p-6 rounded-lg">
+                        <h3 class="text-xl font-bold mb-4 text-blue-800">${title}</h3>
+                        <div class="flex flex-col md:flex-row items-start md:items-center space-y-4 md:space-y-0">
+                           ${stepsHtml}
+                        </div>
+                    </div>
+                    <p class="text-xs text-gray-500 mt-2 text-center">此為根據疾管署公開資料的建議，實際狀況請諮詢醫師。</p>
+                `;
+      }
+
+      function updateRecommendation() {
+        if (!selectedAge) {
+          resultContainer.innerHTML = '';
+          return;
+        }
+
+        if (selectedAge === 'infant') {
+          historyStep.classList.add('hidden');
+          resultContainer.innerHTML = createRecommendationHtml(
+            "嬰幼兒公費接種建議 (2+1劑)",
+            [
+              { action: '第一劑', details: '出生滿 2 個月' },
+              { action: '第二劑', details: '出生滿 4 個月' },
+              { action: '追加劑', details: '出生滿 12-15 個月' }
+            ]
+          );
+          return;
+        }
+
+        historyStep.classList.remove('hidden');
+        if (!selectedHistory) {
+          resultContainer.innerHTML = '';
+          return;
+        }
+
+        let title = selectedAge === 'senior' ? '65歲以上長者接種建議' : '19-64歲高風險族群接種建議';
+        let recommendationHtml = '';
+        const interval = selectedAge === 'senior' ? '至少1年' : '至少8週';
+        const highRiskNote = selectedAge === 'senior' ? `(高風險對象可縮短至${interval})` : '';
+
+        switch (selectedHistory) {
+          case 'none':
+            recommendationHtml = createRecommendationHtml(title, [
+              { action: '接種 1 劑 PCV13/15', details: '建立高品質、長期的免疫基礎' },
+              { action: '接種 1 劑 PPV23', details: `間隔${interval}後 ${highRiskNote}，擴大保護範圍` }
+            ]);
+            break;
+          case 'ppv23':
+            recommendationHtml = createRecommendationHtml(title, [
+              { action: '接種 1 劑 PCV13/15', details: `與前一劑PPV23間隔至少1年後，補強免疫記憶與保護力品質` }
+            ]);
+            break;
+          case 'pcv':
+            recommendationHtml = createRecommendationHtml(title, [
+              { action: '接種 1 劑 PPV23', details: `與前一劑PCV13/15間隔${interval}後 ${highRiskNote}，擴大保護範圍` }
+            ]);
+            break;
+          case 'both':
+            recommendationHtml = createRecommendationHtml("您已完成現行建議", [
+              { action: '已完成序貫接種', details: '目前無需再追加，請持續注意最新的公衛建議' }
+            ]);
+            break;
+        }
+        resultContainer.innerHTML = recommendationHtml;
+      }
+
+      ageGroupContainer.addEventListener('click', (e) => {
+        if (e.target.tagName === 'BUTTON') {
+          selectedAge = e.target.dataset.age;
+          selectedHistory = null;
+
+          document.querySelectorAll('#ageGroup button').forEach(btn => btn.classList.remove('bg-blue-600', 'text-white', 'border-blue-600'));
+          e.target.classList.add('bg-blue-600', 'text-white', 'border-blue-600');
+
+          document.querySelectorAll('#vaccineHistory button').forEach(btn => btn.classList.remove('bg-blue-600', 'text-white', 'border-blue-600'));
+
+          updateRecommendation();
+        }
+      });
+
+      historyContainer.addEventListener('click', (e) => {
+        if (e.target.tagName === 'BUTTON') {
+          selectedHistory = e.target.dataset.history;
+          document.querySelectorAll('#vaccineHistory button').forEach(btn => btn.classList.remove('bg-blue-600', 'text-white', 'border-blue-600'));
+          e.target.classList.add('bg-blue-600', 'text-white', 'border-blue-600');
+          updateRecommendation();
+        }
+      });
+    });
+  </script>
+</body>
+
+</html>
