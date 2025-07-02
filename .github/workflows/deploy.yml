@@ -1,0 +1,39 @@
+# 命名這個工作流程
+name: Deploy to GitHub Pages
+
+# 觸發條件：當有任何 push 到 main 分支時，就自動執行
+on:
+  push:
+    branches:
+      - main
+
+# 允許工作流程寫入 GitHub Pages
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# 設定部署工作
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      # 步驟一：將你的專案程式碼下載到虛擬主機上
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      # 步驟二：設定 GitHub Pages
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
+
+      # 步驟三：從 /public 資料夾建立部署檔案包 (Artifact)
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          # 這裡明確指定要部署的資料夾！
+          path: './public'
+
+      # 步驟四：將打包好的檔案部署到 GitHub Pages
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
