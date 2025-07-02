@@ -1,7 +1,8 @@
-# 命名這個工作流程
+# deploy.yml (修正後的版本)
+
 name: Deploy to GitHub Pages
 
-# 觸發條件：當有任何 push 到 main 分支時，就自動執行
+# 觸發條件：當有 push 到 main 分支時執行
 on:
   push:
     branches:
@@ -16,6 +17,12 @@ permissions:
 # 設定部署工作
 jobs:
   deploy:
+    # vvvvvvv  在這裡新增了這段必要的 environment 設定 vvvvvvv
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    # ^^^^^^^  在這裡新增了這段必要的 environment 設定 ^^^^^^^
+    
     runs-on: ubuntu-latest
     steps:
       # 步驟一：將你的專案程式碼下載到虛擬主機上
@@ -30,7 +37,7 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          # 這裡明確指定要部署的資料夾！
+          # 這裡指定要部署的資料夾！
           path: './public'
 
       # 步驟四：將打包好的檔案部署到 GitHub Pages
