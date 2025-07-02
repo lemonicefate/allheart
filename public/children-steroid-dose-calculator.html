@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>兒科類固醇劑量互動計算機</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body {
+      background-color: #f7fafc;
+      font-family: 'Inter', 'Noto Sans TC', sans-serif;
+    }
+
+    .indication-btn {
+      transition: all 0.2s ease-in-out;
+    }
+
+    .indication-btn.active {
+      background-color: #4A5568;
+      color: #FFFFFF;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 14px 0 rgba(0, 0, 0, 0.1);
+    }
+
+    .result-card {
+      background-color: white;
+      border-radius: 0.75rem;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+      transition: transform 0.2s;
+    }
+
+    .result-card:hover {
+      transform: translateY(-5px);
+    }
+
+    .input-focus:focus {
+      border-color: #4299e1;
+      box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.5);
+    }
+  </style>
+</head>
+
+<body class="antialiased text-gray-800">
+
+  <div class="container mx-auto p-4 sm:p-6 lg:p-8 max-w-4xl">
+    <header class="text-center mb-8">
+      <h1 class="text-3xl sm:text-4xl font-bold text-gray-900">兒科類固醇劑量計算機</h1>
+      <p class="text-md text-gray-600 mt-2">根據體重與適應症計算建議劑量</p>
+    </header>
+
+    <div class="bg-white p-6 rounded-xl shadow-lg mb-8">
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6 items-center">
+        <div class="md:col-span-1">
+          <label for="weight" class="block text-lg font-semibold text-gray-700 mb-2">1. 輸入兒童體重 (公斤)</label>
+          <input type="number" id="weight" placeholder="例如: 15"
+            class="w-full px-4 py-3 text-2xl font-bold border-2 border-gray-300 rounded-lg focus:outline-none input-focus">
+        </div>
+        <div class="md:col-span-2">
+          <label class="block text-lg font-semibold text-gray-700 mb-2">2. 選擇臨床適應症</label>
+          <div id="indication-selector" class="grid grid-cols-2 sm:grid-cols-3 gap-2">
+            <button data-indication="asthma"
+              class="indication-btn py-3 px-2 text-sm sm:text-base font-semibold bg-gray-200 text-gray-700 rounded-lg">急性氣喘</button>
+            <button data-indication="anti_inflammatory"
+              class="indication-btn py-3 px-2 text-sm sm:text-base font-semibold bg-gray-200 text-gray-700 rounded-lg">抗發炎/免疫抑制</button>
+            <button data-indication="croup"
+              class="indication-btn py-3 px-2 text-sm sm:text-base font-semibold bg-gray-200 text-gray-700 rounded-lg">哮吼
+              (Croup)</button>
+            <button data-indication="nephrotic_syndrome"
+              class="indication-btn py-3 px-2 text-sm sm:text-base font-semibold bg-gray-200 text-gray-700 rounded-lg">腎病症候群</button>
+            <button data-indication="pulse_therapy"
+              class="indication-btn py-3 px-2 text-sm sm:text-base font-semibold bg-gray-200 text-gray-700 rounded-lg">脈衝療法</button>
+            <button data-indication="cerebral_edema"
+              class="indication-btn py-3 px-2 text-sm sm:text-base font-semibold bg-gray-200 text-gray-700 rounded-lg">腦水腫</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="results-container" class="space-y-6">
+      <div id="initial-message" class="text-center py-10 px-6 bg-gray-100 rounded-lg">
+        <p class="text-gray-600">請輸入體重並選擇適應症以開始計算。</p>
+      </div>
+    </div>
+
+    <footer class="text-center mt-12 text-sm text-gray-500">
+      <p class="font-bold text-red-600 bg-red-100 p-3 rounded-lg">免責聲明：本工具僅供臨床專業人員參考，計算結果不能取代臨床判斷。所有劑量皆須由合格醫師最終確認。</p>
+      <p class="mt-4">資料來源：兒童類固醇劑量與使用指南報告</p>
+    </footer>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+
+      const dosageDB = {
+        'asthma': [
+          { drug: 'Prednisolone', low: 1, high: 2, unit: 'mg/kg/day', max: 60, note: 'PO, 療程3-5天。最大劑量依年齡有更細緻區分，此處採常見上限。' },
+          { drug: 'Prednisone', low: 1, high: 2, unit: 'mg/kg/day', max: 80, note: 'PO, 療程3-10天。' },
+          { drug: 'Methylprednisolone', low: 1, high: 2, unit: 'mg/kg/day', max: 60, note: 'PO/IV, 療程3-10天。' },
+          { drug: 'Dexamethasone', low: 0.6, high: 0.6, unit: 'mg/kg/dose', max: 16, note: 'PO/IV/IM, <strong>單次給藥</strong>。' }
+        ],
+        'anti_inflammatory': [
+          { drug: 'Prednisolone', low: 0.1, high: 2, unit: 'mg/kg/day', max: 80, note: 'PO, 可單次或分次給予。' },
+          { drug: 'Prednisone', low: 0.5, high: 2, unit: 'mg/kg/day', max: 80, note: 'PO, 可單次或分次給予。' },
+          { drug: 'Methylprednisolone', low: 0.5, high: 1.7, unit: 'mg/kg/day', max: null, note: 'IV/PO/IM, 分q12h。' },
+          { drug: 'Hydrocortisone', low: 2.5, high: 10, unit: 'mg/kg/day', max: null, note: 'PO, 分q6-8h。' },
+          { drug: 'Dexamethasone', low: 0.08, high: 0.3, unit: 'mg/kg/day', max: 16, note: 'PO/IV/IM, 分q6-12h。' },
+          { drug: 'Cortisone', low: 2.5, high: 10, unit: 'mg/kg/day', max: null, note: 'PO, 分q6-8h。前驅藥物。' },
+          { drug: 'Betamethasone', low: 0.0175, high: 0.25, unit: 'mg/kg/day', max: null, note: 'PO/IM, 分q6-12h。' }
+        ],
+        'croup': [
+          { drug: 'Dexamethasone', low: 0.6, high: 0.6, unit: 'mg/kg/dose', max: 16, note: 'PO/IV/IM, <strong>單次給藥</strong>。這是哮吼的標準療法。' }
+        ],
+        'nephrotic_syndrome': [
+          { drug: 'Prednisolone', low: 2, high: 2, unit: 'mg/kg/day', max: 80, note: 'PO, 誘導緩解期劑量。' },
+          { drug: 'Prednisone', low: 2, high: 2, unit: 'mg/kg/day', max: 80, note: 'PO, 誘導緩解期劑量。' }
+        ],
+        'pulse_therapy': [
+          { drug: 'Methylprednisolone', low: 10, high: 30, unit: 'mg/kg/day', max: 1000, note: 'IV, 連續1-3天。用於危及生命的嚴重自體免疫疾病。' }
+        ],
+        'cerebral_edema': [
+          { drug: 'Dexamethasone', low: 1, high: 2, unit: 'mg/kg/dose', max: 16, note: 'IV/IM, <strong>起始劑量</strong>。維持劑量為 1-1.5 mg/kg/day。' }
+        ]
+      };
+
+      const weightInput = document.getElementById('weight');
+      const indicationSelector = document.getElementById('indication-selector');
+      const resultsContainer = document.getElementById('results-container');
+      const initialMessage = document.getElementById('initial-message');
+
+      let currentIndication = null;
+
+      function calculateAndDisplay() {
+        const weight = parseFloat(weightInput.value);
+        if (isNaN(weight) || weight <= 0 || !currentIndication) {
+          resultsContainer.innerHTML = '';
+          resultsContainer.appendChild(initialMessage);
+          initialMessage.style.display = 'block';
+          return;
+        }
+
+        initialMessage.style.display = 'none';
+        const drugs = dosageDB[currentIndication];
+        resultsContainer.innerHTML = `<h2 class="text-2xl font-bold mb-4 text-gray-800">計算結果 (體重: ${weight} kg)</h2>`;
+
+        drugs.forEach(drug => {
+          let lowDose = weight * drug.low;
+          let highDose = weight * drug.high;
+          let finalDoseDisplay = '';
+          let appliedMaxDoseNote = '';
+
+          if (drug.max !== null) {
+            if (lowDose > drug.max) {
+              lowDose = drug.max;
+              appliedMaxDoseNote = `<span class="text-red-500 font-semibold">(已達最大劑量)</span>`;
+            }
+            if (highDose > drug.max) {
+              highDose = drug.max;
+            }
+          }
+
+          lowDose = parseFloat(lowDose.toFixed(2));
+          highDose = parseFloat(highDose.toFixed(2));
+
+          if (lowDose === highDose) {
+            finalDoseDisplay = `${lowDose} mg`;
+          } else {
+            finalDoseDisplay = `${lowDose} - ${highDose} mg`;
+          }
+
+          const card = document.createElement('div');
+          card.className = 'result-card p-5';
+          card.innerHTML = `
+                <div class="flex justify-between items-start">
+                    <h3 class="text-xl font-bold text-gray-900">${drug.drug}</h3>
+                    <span class="text-sm font-medium text-blue-600 bg-blue-100 px-2 py-1 rounded-full">${drug.unit.replace('/day', '/每日').replace('/dose', '/單次')}</span>
+                </div>
+                <div class="mt-4">
+                    <p class="text-3xl font-extrabold text-blue-700">${finalDoseDisplay} ${appliedMaxDoseNote}</p>
+                    ${drug.max !== null ? `<p class="text-sm text-gray-500 mt-1">最大劑量: ${drug.max} mg</p>` : ''}
+                </div>
+                <div class="mt-4 pt-4 border-t border-gray-200">
+                    <p class="text-sm text-gray-600">${drug.note}</p>
+                </div>
+            `;
+          resultsContainer.appendChild(card);
+        });
+      }
+
+      indicationSelector.addEventListener('click', (e) => {
+        if (e.target.tagName === 'BUTTON') {
+          document.querySelectorAll('.indication-btn').forEach(btn => btn.classList.remove('active'));
+          e.target.classList.add('active');
+          currentIndication = e.target.dataset.indication;
+          calculateAndDisplay();
+        }
+      });
+
+      weightInput.addEventListener('input', calculateAndDisplay);
+    });
+  </script>
+
+</body>
+
+</html>

@@ -1,0 +1,567 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>互動式BPPV完整指南</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
+  <!-- Chosen Palette: Calm Harmony -->
+  <!-- Application Structure Plan: The SPA uses a fixed sidebar navigation for seamless access to different knowledge modules. The structure is task-oriented, guiding the user from symptom identification ("認識BPPV") to understanding specific treatments ("治療：耳石復位術") and managing recovery ("復健與照護"). This user-centric flow, rather than mirroring the report's academic structure, is designed for patient usability. It starts with a welcoming home page with clear CTAs, progresses to interactive symptom checkers and treatment guides, and ends with FAQs. This non-linear but guided approach empowers users to find relevant information quickly and reduces the cognitive load of a complex medical topic. -->
+  <!-- Visualization & Content Choices: 
+        - BPPV Type Prevalence -> Goal: Inform relative frequency -> Viz: Donut Chart -> Interaction: Hover to see details -> Justification: Intuitive for proportional data -> Library: Chart.js.
+        - Repositioning Maneuvers (Epley, BBQ, Gufoni) -> Goal: Teach complex physical procedures -> Viz: Step-by-step diagrams with text -> Interaction: Click-through steps -> Justification: Breaks down procedures into manageable, self-paced steps, superior to static text for motor learning -> Method: HTML/CSS/JS.
+        - Diagnostic Process -> Goal: Simplify clinical pathway -> Viz: HTML/CSS flowchart -> Interaction: None, purely visual -> Justification: Visually clarifies a sequence of events -> Method: HTML/CSS with Tailwind.
+        - Residual Dizziness Causes -> Goal: Organize complex concepts -> Viz: Tabbed interface -> Interaction: Click tabs to reveal content -> Justification: Segments information to prevent user overwhelm -> Method: HTML/CSS/JS.
+        - All visual elements are built to be responsive and informative, directly supporting the application's educational goals. -->
+  <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+  <style>
+    body {
+      font-family: 'Noto Sans TC', sans-serif;
+    }
+
+    .active-nav {
+      background-color: #0d9488;
+      color: white;
+    }
+
+    .nav-item {
+      transition: all 0.2s ease-in-out;
+    }
+
+    .content-section {
+      display: none;
+    }
+
+    .content-section.active {
+      display: block;
+    }
+
+    .maneuver-illustration {
+      width: 100%;
+      height: 200px;
+      background-color: #f0fdfa;
+      border: 2px dashed #99f6e4;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .head {
+      width: 50px;
+      height: 50px;
+      background-color: #fde68a;
+      border-radius: 50%;
+      position: absolute;
+      border: 2px solid #fbbf24;
+    }
+
+    .body {
+      width: 120px;
+      height: 40px;
+      background-color: #c7d2fe;
+      border-radius: 20px;
+      position: absolute;
+      border: 2px solid #a5b4fc;
+    }
+
+    .bed {
+      width: 80%;
+      height: 20px;
+      background-color: #e5e7eb;
+      position: absolute;
+      bottom: 40px;
+      left: 10%;
+      border-radius: 5px;
+    }
+
+    .arrow {
+      position: absolute;
+      font-size: 2rem;
+      color: #0d9488;
+      animation: bounce 1.5s infinite;
+    }
+
+    @keyframes bounce {
+
+      0%,
+      100% {
+        transform: translateY(-25%);
+        animation-timing-function: cubic-bezier(0.8, 0, 1, 1);
+      }
+
+      50% {
+        transform: translateY(0);
+        animation-timing-function: cubic-bezier(0, 0, 0.2, 1);
+      }
+    }
+
+    .chart-container {
+      position: relative;
+      width: 100%;
+      max-width: 400px;
+      margin-left: auto;
+      margin-right: auto;
+      height: 300px;
+      max-height: 350px;
+    }
+
+    @media (min-width: 640px) {
+      .chart-container {
+        height: 350px;
+      }
+    }
+  </style>
+</head>
+
+<body class="bg-stone-50 text-stone-800">
+
+  <div class="flex flex-col md:flex-row min-h-screen">
+    <nav id="sidebar"
+      class="w-full md:w-64 bg-white md:bg-teal-700 text-stone-800 md:text-stone-100 p-4 md:p-6 flex-shrink-0 shadow-lg md:shadow-none">
+      <h1 class="text-2xl font-bold text-teal-700 md:text-white mb-6">BPPV 互動指南</h1>
+      <ul class="space-y-2">
+        <li><a href="#home" class="nav-item block py-2 px-4 rounded-lg hover:bg-teal-600 hover:text-white active-nav">🏠
+            首頁</a></li>
+        <li><a href="#understand" class="nav-item block py-2 px-4 rounded-lg hover:bg-teal-600 hover:text-white">🤔 認識
+            BPPV</a></li>
+        <li><a href="#diagnose" class="nav-item block py-2 px-4 rounded-lg hover:bg-teal-600 hover:text-white">🩺
+            診斷與分類</a></li>
+        <li><a href="#treat" class="nav-item block py-2 px-4 rounded-lg hover:bg-teal-600 hover:text-white">🛠️
+            治療：耳石復位術</a></li>
+        <li><a href="#rehab" class="nav-item block py-2 px-4 rounded-lg hover:bg-teal-600 hover:text-white">🚶 復健與照護</a>
+        </li>
+        <li><a href="#faq" class="nav-item block py-2 px-4 rounded-lg hover:bg-teal-600 hover:text-white">❓ 常見問題</a>
+        </li>
+      </ul>
+    </nav>
+
+    <main id="main-content" class="flex-1 p-4 sm:p-6 md:p-10 overflow-y-auto">
+      <!-- Home Section -->
+      <section id="home" class="content-section active">
+        <div class="bg-white p-8 rounded-2xl shadow-sm">
+          <h2 class="text-3xl font-bold text-teal-700 mb-4">歡迎來到BPPV互動指南</h2>
+          <p class="text-lg text-stone-600 mb-6">
+            良性陣發性姿勢性眩暈（BPPV），俗稱「耳石脫落症」，是造成天旋地轉最常見的原因。雖然症狀嚇人，但它通常是無害的，而且透過正確的物理治療可以有效處理。本指南將帶您一步步了解這個病症，從症狀、診斷到治療與復健，讓您能更積極地參與自己的康復過程。
+          </p>
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <a href="#understand"
+              class="nav-link-btn bg-teal-600 text-white text-center py-4 px-6 rounded-lg font-semibold hover:bg-teal-700 transition duration-300">我的症狀是BPPV嗎？</a>
+            <a href="#treat"
+              class="nav-link-btn bg-amber-500 text-white text-center py-4 px-6 rounded-lg font-semibold hover:bg-amber-600 transition duration-300">如何治療？</a>
+            <a href="#rehab"
+              class="nav-link-btn bg-indigo-500 text-white text-center py-4 px-6 rounded-lg font-semibold hover:bg-indigo-600 transition duration-300">治療後還頭暈怎麼辦？</a>
+          </div>
+        </div>
+      </section>
+
+      <!-- Understand Section -->
+      <section id="understand" class="content-section">
+        <h2 class="text-3xl font-bold text-teal-700 mb-6">🤔 認識 BPPV (耳石脫落症)</h2>
+        <div class="space-y-8">
+          <div class="bg-white p-8 rounded-2xl shadow-sm">
+            <h3 class="text-2xl font-semibold mb-4 text-stone-700">我的症狀是BPPV嗎？互動式檢查</h3>
+            <p class="mb-4 text-stone-600">BPPV的典型症狀可以用三個關鍵詞概括：「短、動、床」。請根據您的經驗勾選以下描述，這有助於初步判斷，但無法取代專業醫師的診斷。</p>
+            <form id="symptom-checker" class="space-y-3">
+              <label class="flex items-center p-3 bg-stone-100 rounded-lg"><input type="checkbox"
+                  class="h-5 w-5 rounded-md border-gray-300 text-teal-600 focus:ring-teal-500 mr-3">
+                眩暈發作時間很短，通常不超過一分鐘。</label>
+              <label class="flex items-center p-3 bg-stone-100 rounded-lg"><input type="checkbox"
+                  class="h-5 w-5 rounded-md border-gray-300 text-teal-600 focus:ring-teal-500 mr-3">
+                眩暈總是在改變頭部姿勢時發生（如躺下、起床、翻身、抬頭、低頭）。</label>
+              <label class="flex items-center p-3 bg-stone-100 rounded-lg"><input type="checkbox"
+                  class="h-5 w-5 rounded-md border-gray-300 text-teal-600 focus:ring-teal-500 mr-3">
+                眩暈發作時感覺天旋地轉，常在床上發生。</label>
+              <label class="flex items-center p-3 bg-stone-100 rounded-lg"><input type="checkbox"
+                  class="h-5 w-5 rounded-md border-gray-300 text-teal-600 focus:ring-teal-500 mr-3">
+                發作時可能伴隨噁心感，但沒有聽力下降或嚴重頭痛。</label>
+            </form>
+            <div id="symptom-result" class="mt-4 p-4 rounded-lg bg-teal-50 text-teal-800 font-medium hidden"></div>
+          </div>
+
+          <div class="bg-white p-8 rounded-2xl shadow-sm">
+            <h3 class="text-2xl font-semibold mb-4 text-stone-700">為什麼會發生BPPV？</h3>
+            <p class="mb-4 text-stone-600">
+              我們的內耳裡有負責平衡的器官，其中包含被稱為「耳石」的微小晶體。正常情況下，它們附著在特定區域。當這些耳石因老化、頭部撞擊或其他原因脫落，並漂流到不該去的「半規管」時，就會在我們改變姿勢時，向大腦發送錯誤的旋轉訊號，導致劇烈眩暈。
+            </p>
+            <div class="mt-4 p-4 border border-stone-200 rounded-lg">
+              <h4 class="font-bold text-lg mb-2">主要原因與風險因子</h4>
+              <ul class="list-disc list-inside text-stone-600 space-y-1">
+                <li><strong>自發性/退化：</strong>最常見，尤其在50歲以上。</li>
+                <li><strong>頭部外傷：</strong>即使是輕微的撞擊也可能震落耳石。</li>
+                <li><strong>其他內耳疾病：</strong>如梅尼爾氏症或前庭神經炎。</li>
+                <li><strong>全身性因素：</strong>維生素D缺乏、高血壓、偏頭痛等可能增加風險。</li>
+                <li><strong>生活方式：</strong>長期熬夜、壓力大、睡眠不足。</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Diagnose Section -->
+      <section id="diagnose" class="content-section">
+        <h2 class="text-3xl font-bold text-teal-700 mb-6">🩺 診斷與分類</h2>
+        <div class="space-y-8">
+          <div class="bg-white p-8 rounded-2xl shadow-sm">
+            <h3 class="text-2xl font-semibold mb-4 text-stone-700">醫生如何診斷BPPV？</h3>
+            <p class="mb-4 text-stone-600">
+              診斷BPPV不需複雜的儀器，主要依賴醫師執行的「姿勢誘發測試」。醫師會引導您做特定的頭部和身體動作，並觀察您的眼睛是否出現一種稱為「眼震」的不自主跳動。眼震的方向和特性可以幫助醫師精確判斷是哪一側耳朵、哪一根半規管出了問題。
+            </p>
+            <div class="mt-4 p-4 border border-stone-200 rounded-lg text-center">
+              <p class="font-semibold">患者主訴 (短、動、床)</p>
+              <p class="text-3xl my-2">↓</p>
+              <p class="font-semibold">醫師進行姿勢誘發測試</p>
+              <div class="flex justify-around my-2">
+                <span class="bg-amber-100 text-amber-800 p-2 rounded">Dix-Hallpike 測試</span>
+                <span class="bg-indigo-100 text-indigo-800 p-2 rounded">仰臥滾轉測試</span>
+              </div>
+              <p class="text-3xl my-2">↓</p>
+              <p class="font-semibold">觀察眼震特性</p>
+              <p class="text-3xl my-2">↓</p>
+              <p class="font-bold text-teal-600 text-lg">精確診斷BPPV類型</p>
+            </div>
+          </div>
+
+          <div class="bg-white p-8 rounded-2xl shadow-sm">
+            <h3 class="text-2xl font-semibold mb-4 text-stone-700">BPPV的常見類型</h3>
+            <p class="mb-4 text-stone-600">BPPV根據耳石掉入的半規管而分類。後半規管是最常見的類型。了解類型對於選擇正確的治療方法至關重要。</p>
+            <div class="chart-container">
+              <canvas id="bppvTypesChart"></canvas>
+            </div>
+            <div id="chart-info" class="mt-4 text-center text-stone-600">將滑鼠懸停在圖表上以查看詳細資訊。</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Treat Section -->
+      <section id="treat" class="content-section">
+        <h2 class="text-3xl font-bold text-teal-700 mb-6">🛠️ 治療：耳石復位術</h2>
+        <p class="text-lg text-stone-600 mb-6">
+          BPPV的主要治療方式是物理性的「耳石復位術」，完全不需吃藥或打針。醫師會引導您做一系列動作，利用重力將跑錯位置的耳石導回原位。以下介紹幾種最常見的復位術，請注意，這些動作應由專業醫護人員執行或指導。</p>
+        <div class="space-y-8">
+          <div class="bg-white p-8 rounded-2xl shadow-sm">
+            <h3 class="text-2xl font-semibold mb-4 text-stone-700">Epley (艾普利) 氏復位術</h3>
+            <p class="mb-4 text-stone-600">這是治療最常見的「後半規管」BPPV的首選方法，成功率非常高。</p>
+            <div id="epley-maneuver" class="maneuver-visualizer" data-maneuver="epley"></div>
+          </div>
+          <div class="bg-white p-8 rounded-2xl shadow-sm">
+            <h3 class="text-2xl font-semibold mb-4 text-stone-700">BBQ (烤肉串) 翻滾法</h3>
+            <p class="mb-4 text-stone-600">此方法主要用於治療「水平半規管」的BPPV，需要身體進行較大幅度的翻轉。</p>
+            <div id="bbq-maneuver" class="maneuver-visualizer" data-maneuver="bbq"></div>
+          </div>
+          <div class="bg-white p-8 rounded-2xl shadow-sm">
+            <h3 class="text-2xl font-semibold mb-4 text-stone-700">Gufoni (庫馮尼) 氏復位術</h3>
+            <p class="mb-4 text-stone-600">這是治療「水平半規管」BPPV的另一種有效方法，動作相對簡單，特別適合活動不便的患者。</p>
+            <div id="gufoni-maneuver" class="maneuver-visualizer" data-maneuver="gufoni"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Rehab Section -->
+      <section id="rehab" class="content-section">
+        <h2 class="text-3xl font-bold text-teal-700 mb-6">🚶 復健與照護</h2>
+        <p class="text-lg text-stone-600 mb-6">
+          成功的復位術是治療的第一步。許多患者在天旋地轉的感覺消失後，仍可能經歷一段時間的頭暈或不穩感，這被稱為「殘餘頭暈」。本節將探討如何處理這些後續問題，並透過復健完全康復。</p>
+
+        <div class="bg-white p-8 rounded-2xl shadow-sm">
+          <h3 class="text-2xl font-semibold mb-4 text-stone-700">殘餘頭暈：為什麼還會頭暈？</h3>
+          <div id="rehab-tabs" class="mb-4 border-b border-gray-200">
+            <nav class="flex space-x-4" aria-label="Tabs">
+              <button class="tab-btn active-tab" data-target="rd-causes">原因探討</button>
+              <button class="tab-btn" data-target="bd-exercises">Brandt-Daroff運動</button>
+              <button class="tab-btn" data-target="vrt-info">前庭復健(VRT)</button>
+            </nav>
+          </div>
+          <div id="rehab-content">
+            <div id="rd-causes" class="tab-content active">
+              <p class="text-stone-600 mb-4">即使耳石已歸位，大腦仍需要時間來重新適應正常的平衡訊號。殘餘頭暈是常見現象，可能原因包括：</p>
+              <ul class="list-disc list-inside text-stone-600 space-y-2">
+                <li><strong>不完全中樞代償：</strong>大腦在BPPV期間已習慣異常訊號，復位後需要「重新校準」，此過程若延遲就會頭暈。</li>
+                <li><strong>殘留碎屑：</strong>可能有微小耳石碎片仍在半規管內，不足以引發眩暈，但會造成持續不適。</li>
+                <li><strong>耳石器官功能本身不佳：</strong>耳石脫落的根本原因（如橢圓囊功能受損）依然存在。</li>
+                <li><strong>焦慮與心理因素：</strong>對眩暈的恐懼和焦慮會放大不穩感，形成惡性循環。</li>
+              </ul>
+            </div>
+            <div id="bd-exercises" class="tab-content hidden">
+              <p class="mb-4 text-stone-600">
+                Brandt-Daroff運動是一種「適應性」治療，目的在於讓大腦習慣輕微的頭暈訊號，從而降低敏感度。它並非復位術，較適合用於處理殘餘頭暈或無法進行標準復位術的患者。請在醫師指導下進行。</p>
+              <div id="bd-maneuver" class="maneuver-visualizer" data-maneuver="bd"></div>
+            </div>
+            <div id="vrt-info" class="tab-content hidden">
+              <p class="text-stone-600 mb-4">
+                前庭復健治療(VRT)是一套由物理治療師設計的個人化運動計畫，是處理殘餘頭暈最有效的方法。它透過特定運動訓練大腦，以更好地整合來自前庭、視覺和本體感覺的資訊。</p>
+              <h4 class="font-bold text-lg mb-2">VRT訓練內容可能包括：</h4>
+              <ul class="list-disc list-inside text-stone-600 space-y-2">
+                <li><strong>凝視穩定性運動：</strong>在頭部移動時，訓練眼睛保持注視目標。</li>
+                <li><strong>平衡與步態訓練：</strong>如閉眼站立、在不同平面上行走等。</li>
+                <li><strong>適應性運動：</strong>針對性地重複會引發輕微頭暈的動作，以降低大腦的敏感反應。</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- FAQ Section -->
+      <section id="faq" class="content-section">
+        <h2 class="text-3xl font-bold text-teal-700 mb-6">❓ 常見問題</h2>
+        <div class="space-y-4">
+          <div class="bg-white p-6 rounded-lg shadow-sm">
+            <h3 class="text-xl font-semibold mb-2">Q: 治療BPPV需要吃藥嗎？</h3>
+            <p class="text-stone-600">A:
+              不需要。BPPV是物理性問題，藥物無法將耳石歸位。藥物（如止暈藥）僅在極度噁心嘔吐時，為提高復位術耐受度而短期使用。長期服用止暈藥反而會阻礙大腦的自然恢復過程。</p>
+          </div>
+          <div class="bg-white p-6 rounded-lg shadow-sm">
+            <h3 class="text-xl font-semibold mb-2">Q: 復位術後需要注意什麼？</h3>
+            <p class="text-stone-600">A:
+              傳統建議復位後一週內睡覺時墊高枕頭、避免快速轉頭或低頭、避免睡向患側。但新證據顯示這些限制並無顯著額外好處。建議遵循您的醫師給予的個人化建議，並逐漸恢復正常活動。</p>
+          </div>
+          <div class="bg-white p-6 rounded-lg shadow-sm">
+            <h3 class="text-xl font-semibold mb-2">Q: BPPV會復發嗎？如何預防？</h3>
+            <p class="text-stone-600">A:
+              BPPV有可能復發。預防策略著重於管理風險因子，包括：積極治療高血壓等慢性病、確保充足睡眠、學習壓力管理、補充醫師建議的維生素D和鈣質，並在運動或日常活動中注意保護頭部避免撞擊。</p>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+
+      const appData = {
+        maneuvers: {
+          epley: {
+            name: "Epley 氏復位術 (右側為例)",
+            steps: [
+              { desc: "1. 坐正，頭轉向患側 (右) 45度。", style: { head: { top: '30%', left: '45%', transform: 'rotate(45deg)' }, body: { top: '50%', left: '40%' } } },
+              { desc: "2. 快速躺下，頭後仰懸空，保持轉向45度。保持30-60秒。", style: { head: { top: '20%', left: '55%', transform: 'rotate(45deg) rotateX(30deg)' }, body: { top: '60%', left: '45%' } } },
+              { desc: "3. 頭轉向健側 (左) 90度，保持後仰。保持30-60秒。", style: { head: { top: '20%', left: '30%', transform: 'rotate(-45deg) rotateX(30deg)' }, body: { top: '60%', left: '45%' } } },
+              { desc: "4. 身體朝健側 (左) 側翻，臉朝下。保持30-60秒。", style: { head: { top: '50%', left: '25%', transform: 'rotate(-90deg)' }, body: { top: '50%', left: '35%', transform: 'rotate(-90deg)' } } },
+              { desc: "5. 緩慢坐起，頭微前傾。", style: { head: { top: '30%', left: '45%', transform: 'rotate(0deg) rotateX(-15deg)' }, body: { top: '50%', left: '40%' } } }
+            ]
+          },
+          bbq: {
+            name: "BBQ 翻滾法 (右側為例)",
+            steps: [
+              { desc: "1. 仰臥，頭轉向患側 (右) 90度。", style: { head: { top: '40%', left: '60%', transform: 'rotate(90deg)' }, body: { top: '40%', left: '40%' } } },
+              { desc: "2. 頭轉回中線，面朝上。", style: { head: { top: '30%', left: '45%' }, body: { top: '40%', left: '40%' } } },
+              { desc: "3. 頭轉向健側 (左) 90度。", style: { head: { top: '40%', left: '30%', transform: 'rotate(-90deg)' }, body: { top: '40%', left: '40%' } } },
+              { desc: "4. 身體與頭繼續翻轉，呈俯臥姿，臉朝下。", style: { head: { top: '60%', left: '45%', opacity: 0.7 }, body: { top: '50%', left: '40%' } } },
+              { desc: "5. 緩慢坐起。", style: { head: { top: '30%', left: '45%' }, body: { top: '50%', left: '40%' } } }
+            ]
+          },
+          gufoni: {
+            name: "Gufoni 氏復位術 (水平向地性，右患側為例)",
+            steps: [
+              { desc: "1. 坐於床邊。", style: { head: { top: '30%', left: '45%' }, body: { top: '50%', left: '40%' } } },
+              { desc: "2. 快速向健側 (左) 躺下。保持1-2分鐘。", style: { head: { top: '50%', left: '30%', transform: 'rotate(-90deg)' }, body: { top: '50%', left: '40%', transform: 'rotate(-90deg)' } } },
+              { desc: "3. 快速將頭向下轉45度 (臉朝地)。保持1-2分鐘。", style: { head: { top: '60%', left: '25%', transform: 'rotate(-135deg)' }, body: { top: '50%', left: '40%', transform: 'rotate(-90deg)' } } },
+              { desc: "4. 緩慢坐起。", style: { head: { top: '30%', left: '45%' }, body: { top: '50%', left: '40%' } } }
+            ]
+          },
+          bd: {
+            name: "Brandt-Daroff 運動",
+            steps: [
+              { desc: "1. 坐正，頭轉向左45度。", style: { head: { top: '30%', left: '45%', transform: 'rotate(-45deg)' }, body: { top: '50%', left: '40%' } } },
+              { desc: "2. 保持頭轉向，快速向右側躺下。保持30秒。", style: { head: { top: '50%', left: '60%', transform: 'rotate(-45deg)' }, body: { top: '50%', left: '50%', transform: 'rotate(90deg)' } } },
+              { desc: "3. 緩慢坐起，休息30秒。", style: { head: { top: '30%', left: '45%' }, body: { top: '50%', left: '40%' } } },
+              { desc: "4. 頭轉向右45度。", style: { head: { top: '30%', left: '45%', transform: 'rotate(45deg)' }, body: { top: '50%', left: '40%' } } },
+              { desc: "5. 保持頭轉向，快速向左側躺下。保持30秒。", style: { head: { top: '50%', left: '30%', transform: 'rotate(45deg)' }, body: { top: '50%', left: '20%', transform: 'rotate(-90deg)' } } },
+              { desc: "6. 緩慢坐起。此為一循環。", style: { head: { top: '30%', left: '45%' }, body: { top: '50%', left: '40%' } } }
+            ]
+          }
+        },
+        chartData: {
+          labels: ['後半規管 BPPV', '水平半規管 BPPV', '前半規管 BPPV'],
+          data: [85, 13, 2],
+          info: [
+            '最常見類型(約85%)，通常由Epley氏復位術治療。',
+            '第二常見(約15%)，症狀常在左右翻身時更明顯，可由BBQ或Gufoni氏復位術治療。',
+            '最罕見(約2%)，治療方式較為不同。'
+          ]
+        }
+      };
+
+      const mainContent = document.getElementById('main-content');
+      const navLinks = document.querySelectorAll('#sidebar .nav-item');
+      const ctaLinks = document.querySelectorAll('.nav-link-btn');
+      const sections = document.querySelectorAll('.content-section');
+
+      function navigateTo(hash) {
+        navLinks.forEach(link => {
+          if (link.getAttribute('href') === hash) {
+            link.classList.add('active-nav');
+          } else {
+            link.classList.remove('active-nav');
+          }
+        });
+        sections.forEach(section => {
+          if ('#' + section.id === hash) {
+            section.classList.add('active');
+          } else {
+            section.classList.remove('active');
+          }
+        });
+        mainContent.scrollTop = 0;
+      }
+
+      navLinks.forEach(link => {
+        link.addEventListener('click', (e) => {
+          e.preventDefault();
+          const hash = e.currentTarget.getAttribute('href');
+          navigateTo(hash);
+          window.location.hash = hash;
+        });
+      });
+
+      ctaLinks.forEach(link => {
+        link.addEventListener('click', (e) => {
+          e.preventDefault();
+          const hash = e.currentTarget.getAttribute('href');
+          navigateTo(hash);
+          window.location.hash = hash;
+        });
+      });
+
+      const symptomChecker = document.getElementById('symptom-checker');
+      symptomChecker.addEventListener('change', () => {
+        const checkboxes = symptomChecker.querySelectorAll('input[type="checkbox"]');
+        const checkedCount = Array.from(checkboxes).filter(cb => cb.checked).length;
+        const resultDiv = document.getElementById('symptom-result');
+        if (checkedCount > 0) {
+          resultDiv.classList.remove('hidden');
+          if (checkedCount >= 3) {
+            resultDiv.textContent = '您勾選的症狀與BPPV高度相符。建議尋求耳鼻喉科或神經科醫師進行專業診斷。';
+          } else {
+            resultDiv.textContent = '您的一些症狀與BPPV相符。持續觀察並在需要時諮詢醫師是個好主意。';
+          }
+        } else {
+          resultDiv.classList.add('hidden');
+        }
+      });
+
+      const bppvTypesCtx = document.getElementById('bppvTypesChart').getContext('2d');
+      const bppvTypesChart = new Chart(bppvTypesCtx, {
+        type: 'doughnut',
+        data: {
+          labels: appData.chartData.labels,
+          datasets: [{
+            label: 'BPPV 類型分佈',
+            data: appData.chartData.data,
+            backgroundColor: ['rgba(13, 148, 136, 0.7)', 'rgba(245, 158, 11, 0.7)', 'rgba(99, 102, 241, 0.7)'],
+            borderColor: ['rgb(13, 148, 136)', 'rgb(245, 158, 11)', 'rgb(99, 102, 241)'],
+            borderWidth: 1
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: { position: 'top', },
+            tooltip: {
+              callbacks: {
+                label: function (context) {
+                  let label = context.label || '';
+                  if (label) { label += ': '; }
+                  if (context.parsed !== null) { label += context.parsed + '%'; }
+                  return label;
+                }
+              }
+            },
+            title: { display: true, text: 'BPPV 常見類型比例' }
+          },
+          onHover: (event, chartElement) => {
+            const chartInfo = document.getElementById('chart-info');
+            if (chartElement.length) {
+              const index = chartElement[0].index;
+              chartInfo.textContent = appData.chartData.info[index];
+            } else {
+              chartInfo.textContent = '將滑鼠懸停在圖表上以查看詳細資訊。';
+            }
+          }
+        }
+      });
+
+      function createManeuverVisualizer(container) {
+        let currentStep = 0;
+        const maneuverKey = container.dataset.maneuver;
+        const maneuverData = appData.maneuvers[maneuverKey];
+        if (!maneuverData) return;
+
+        function render() {
+          const stepData = maneuverData.steps[currentStep];
+          let headStyle = '';
+          let bodyStyle = '';
+          for (const prop in stepData.style.head) { headStyle += `${prop}: ${stepData.style.head[prop]};`; }
+          for (const prop in stepData.style.body) { bodyStyle += `${prop}: ${stepData.style.body[prop]};`; }
+
+          container.innerHTML = `
+                <div class="p-4 border-b">
+                    <h4 class="font-bold">${maneuverData.name}</h4>
+                    <p id="step-desc" class="text-stone-600 min-h-[48px]">${stepData.desc}</p>
+                </div>
+                <div class="maneuver-illustration">
+                    <div class="bed"></div>
+                    <div class="body" style="${bodyStyle}"></div>
+                    <div class="head" style="${headStyle}"></div>
+                </div>
+                <div class="flex justify-between items-center p-4">
+                    <button id="prev-btn" class="px-4 py-2 bg-stone-200 rounded-lg hover:bg-stone-300 disabled:opacity-50" ${currentStep === 0 ? 'disabled' : ''}>上一步</button>
+                    <span class="text-sm font-medium text-stone-500">步驟 ${currentStep + 1} / ${maneuverData.steps.length}</span>
+                    <button id="next-btn" class="px-4 py-2 bg-teal-600 text-white rounded-lg hover:bg-teal-700 disabled:opacity-50" ${currentStep === maneuverData.steps.length - 1 ? 'disabled' : ''}>下一步</button>
+                </div>
+            `;
+
+          container.querySelector('#prev-btn').addEventListener('click', () => {
+            if (currentStep > 0) {
+              currentStep--;
+              render();
+            }
+          });
+
+          container.querySelector('#next-btn').addEventListener('click', () => {
+            if (currentStep < maneuverData.steps.length - 1) {
+              currentStep++;
+              render();
+            }
+          });
+        }
+        render();
+      }
+
+      document.querySelectorAll('.maneuver-visualizer').forEach(createManeuverVisualizer);
+
+      const rehabTabs = document.getElementById('rehab-tabs');
+      const tabBtns = rehabTabs.querySelectorAll('.tab-btn');
+      const tabContents = document.querySelectorAll('#rehab-content .tab-content');
+
+      tabBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+          tabBtns.forEach(b => b.classList.remove('active-tab'));
+          btn.classList.add('active-tab');
+
+          const targetId = btn.dataset.target;
+          tabContents.forEach(content => {
+            if (content.id === targetId) {
+              content.classList.remove('hidden');
+            } else {
+              content.classList.add('hidden');
+            }
+          });
+        });
+      });
+
+      function initializePage() {
+        const hash = window.location.hash || '#home';
+        navigateTo(hash);
+      }
+
+      initializePage();
+    });
+  </script>
+</body>
+
+</html>

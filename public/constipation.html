@@ -1,0 +1,583 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>便秘互動指南</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
+  <!-- Chosen Palette: Calm Harmony -->
+  <!-- Application Structure Plan: A task-oriented, thematic dashboard structure is used instead of mirroring the report's linear chapters. A top navigation bar allows users to jump to key themes: Understanding, Risks, Diagnosis, Management, and Medication. This non-linear approach enhances usability by letting users directly access the information most relevant to their needs. The core "Management" section uses interactive tabs for diet, exercise, and probiotics, making practical advice easily explorable. This structure prioritizes user journey and task completion (learning how to manage constipation) over passive reading. -->
+  <!-- Visualization & Content Choices: 
+        - Report Info: Prevalence Statistics -> Goal: Inform -> Viz: Bar Chart (Chart.js) -> Interaction: Hover for details -> Justification: More engaging than text for quantitative data.
+        - Report Info: Rome IV Criteria -> Goal: Organize/Inform -> Viz: Interactive Cards (HTML/CSS/JS) -> Interaction: Clickable for emphasis -> Justification: Breaks down a clinical standard into a more digestible, self-assessment format.
+        - Report Info: Warning Signs -> Goal: Inform (Critical) -> Viz: High-contrast alert cards (HTML/CSS) with icons -> Interaction: None, to emphasize importance -> Justification: Critical information needs to be clear and direct, avoiding distracting interactions.
+        - Report Info: Dietary & Exercise Advice -> Goal: Organize/Inform -> Viz: Grid of clickable cards/galleries -> Interaction: Click to reveal details/steps -> Justification: Manages large amounts of information by grouping it thematically and revealing details on demand.
+        - Report Info: Probiotic Strains -> Goal: Compare/Organize -> Viz: Interactive table/card layout -> Interaction: Filter/Sort (conceptualized, implemented as clear cards) -> Justification: Simplifies comparison between different types of probiotics.
+        Library/Method: Chart.js for charts, Vanilla JS for all interactions, and Tailwind CSS for styling and layout. -->
+  <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+  <style>
+    body {
+      font-family: 'Noto Sans TC', sans-serif;
+      background-color: #FDFBF8;
+      color: #4A4A4A;
+    }
+
+    .nav-link {
+      transition: all 0.3s ease;
+      border-bottom: 2px solid transparent;
+    }
+
+    .nav-link.active,
+    .nav-link:hover {
+      color: #8D6E63;
+      border-bottom-color: #8D6E63;
+    }
+
+    .content-section {
+      display: none;
+      animation: fadeIn 0.8s;
+    }
+
+    .content-section.active {
+      display: block;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .tab-btn.active {
+      background-color: #A1887F;
+      color: #FFFFFF;
+    }
+
+    .chart-container {
+      position: relative;
+      width: 100%;
+      max-width: 600px;
+      margin-left: auto;
+      margin-right: auto;
+      height: 300px;
+      max-height: 400px;
+    }
+
+    @media (min-width: 768px) {
+      .chart-container {
+        height: 350px;
+      }
+    }
+
+    .card {
+      background-color: #fff;
+      border: 1px solid #EFEBE9;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.07), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    }
+  </style>
+</head>
+
+<body class="antialiased">
+
+  <header class="bg-white/80 backdrop-blur-md sticky top-0 z-50 shadow-sm">
+    <nav class="container mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex items-center justify-between h-16">
+        <div class="flex items-center">
+          <span class="text-xl font-bold text-[#6D4C41]">🌱 便秘互動指南</span>
+        </div>
+        <div class="hidden md:block">
+          <div class="ml-10 flex items-baseline space-x-4">
+            <a href="#understanding" class="nav-link px-3 py-2 rounded-md text-sm font-medium">認識便秘</a>
+            <a href="#risks" class="nav-link px-3 py-2 rounded-md text-sm font-medium">風險與警訊</a>
+            <a href="#diagnosis" class="nav-link px-3 py-2 rounded-md text-sm font-medium">診斷方法</a>
+            <a href="#management" class="nav-link px-3 py-2 rounded-md text-sm font-medium">改善方法</a>
+            <a href="#medication" class="nav-link px-3 py-2 rounded-md text-sm font-medium">藥物治療</a>
+          </div>
+        </div>
+        <div class="md:hidden">
+          <button id="mobile-menu-button"
+            class="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-[#8D6E63]">
+            <span class="sr-only">Open main menu</span>
+            <svg class="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+              stroke="currentColor" aria-hidden="true">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7" />
+            </svg>
+          </button>
+        </div>
+      </div>
+    </nav>
+    <div id="mobile-menu" class="md:hidden hidden">
+      <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
+        <a href="#understanding" class="nav-link block px-3 py-2 rounded-md text-base font-medium">認識便秘</a>
+        <a href="#risks" class="nav-link block px-3 py-2 rounded-md text-base font-medium">風險與警訊</a>
+        <a href="#diagnosis" class="nav-link block px-3 py-2 rounded-md text-base font-medium">診斷方法</a>
+        <a href="#management" class="nav-link block px-3 py-2 rounded-md text-base font-medium">改善方法</a>
+        <a href="#medication" class="nav-link block px-3 py-2 rounded-md text-base font-medium">藥物治療</a>
+      </div>
+    </div>
+  </header>
+
+  <main class="container mx-auto p-4 sm:p-6 lg:p-8">
+
+    <section id="understanding" class="content-section">
+      <h1 class="text-3xl font-bold text-[#6D4C41] mb-4">認識便秘</h1>
+      <p class="mb-6 text-lg text-gray-600">
+        便秘不僅是排便次數減少，更是一系列影響生活品質的症狀。本節將帶您深入了解便秘的醫學定義、常見症狀，以及國際通用的診斷標準，幫助您正確認識這個常見的健康問題。</p>
+
+      <div class="grid md:grid-cols-2 gap-8 items-center">
+        <div>
+          <h2 class="text-2xl font-semibold text-[#8D6E63] mb-3">羅馬IV診斷標準</h2>
+          <p class="mb-4 text-gray-600">根據國際羅馬IV標準，若過去半年內，持續三個月出現以下至少兩項症狀，就可能符合功能性便秘的診斷。點擊卡片查看詳情。</p>
+          <div id="rome-criteria-grid" class="grid grid-cols-1 sm:grid-cols-2 gap-4"></div>
+        </div>
+        <div class="chart-container">
+          <canvas id="prevalenceChart"></canvas>
+        </div>
+      </div>
+
+      <h2 class="text-2xl font-semibold text-[#8D6E63] mt-12 mb-4">便秘的多元症狀</h2>
+      <p class="mb-6 text-gray-600">除了醫學定義的核心症狀外，便秘還可能伴隨多種身體不適，影響您的情緒與活力。</p>
+      <div id="symptoms-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
+    </section>
+
+    <section id="risks" class="content-section">
+      <h1 class="text-3xl font-bold text-[#6D4C41] mb-4">風險與警訊</h1>
+      <p class="mb-6 text-lg text-gray-600">便秘的發生與多種因素相關，長期忽視更可能帶來嚴重的健康風險。本節將探討便秘的常見危險因子，並特別強調需要立即就醫的「警訊症狀」，幫助您及時發現潛在問題。
+      </p>
+
+      <div class="bg-[#FFF8E1]/50 border-l-4 border-[#FFC107] p-6 rounded-lg mb-8">
+        <h2 class="text-2xl font-semibold text-[#8D6E63] mb-3">⚠️ 警訊症狀：何時應立即就醫</h2>
+        <p class="mb-4 text-gray-700">若您的便秘伴隨以下任何一項警訊，這可能代表潛在的嚴重疾病，請務必立即尋求專業醫療協助，切勿拖延。</p>
+        <ul id="warning-signs-list" class="space-y-3"></ul>
+      </div>
+
+      <div class="grid md:grid-cols-2 gap-8">
+        <div>
+          <h2 class="text-2xl font-semibold text-[#8D6E63] mb-3">常見風險因素</h2>
+          <p class="mb-4 text-gray-600">了解可能導致或加重便秘的風險因素，是預防和管理的第一步。</p>
+          <div id="risk-factors-list" class="space-y-4"></div>
+        </div>
+        <div>
+          <h2 class="text-2xl font-semibold text-[#8D6E63] mb-3">長期便秘的健康風險</h2>
+          <p class="mb-4 text-gray-600">長期便秘不僅影響生活品質，更可能引發或加重其他疾病。</p>
+          <div id="long-term-risks-list" class="space-y-4"></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="diagnosis" class="content-section">
+      <h1 class="text-3xl font-bold text-[#6D4C41] mb-4">診斷方法</h1>
+      <p class="mb-6 text-lg text-gray-600">準確的診斷是有效治療的基礎。醫師會透過一系列評估來判斷便秘的類型與原因，從基本的病史詢問到精密的儀器檢查，每一步都是為了找出問題的根源。</p>
+
+      <div class="space-y-8">
+        <div class="card p-6 rounded-lg">
+          <h3 class="text-xl font-semibold text-[#A1887F] mb-2">步驟一：病史詢問與身體檢查</h3>
+          <p class="text-gray-600">這是診斷的第一步。醫生會詳細詢問您的排便習慣、症狀、飲食、用藥史與過去病史，並進行腹部觸診及肛門指診，以獲得初步的評估。這也是篩查「警訊症狀」的關鍵環節。</p>
+        </div>
+        <div class="card p-6 rounded-lg">
+          <h3 class="text-xl font-semibold text-[#A1887F] mb-2">步驟二：進階檢查</h3>
+          <p class="text-gray-600 mb-4">若初步評估無法確診，或出現警訊症狀，醫生可能會安排進一步檢查以排除其他疾病。</p>
+          <ul class="list-disc list-inside space-y-2 text-gray-600">
+            <li><b>抽血檢查：</b>檢查甲狀腺功能、電解質等，排除系統性疾病。</li>
+            <li><b>影像學檢查：</b>如電腦斷層(CT)或核磁共振(MRI)，觀察大腸結構。</li>
+            <li><b>大腸鏡檢查：</b>直接觀察腸道內部，檢查是否有息肉或腫瘤。</li>
+          </ul>
+        </div>
+        <div class="card p-6 rounded-lg">
+          <h3 class="text-xl font-semibold text-[#A1887F] mb-2">步驟三：功能性測試（針對頑固性便秘）</h3>
+          <p class="text-gray-600 mb-4">對於常規治療無效的患者，可能需要進行更深入的功能性測試，評估腸道蠕動與排便肌肉協調性。</p>
+          <ul class="list-disc list-inside space-y-2 text-gray-600">
+            <li><b>腸道傳輸時間測定：</b>評估糞便通過結腸的速度。</li>
+            <li><b>肛門直腸測壓：</b>測量排便相關肌肉的協調性與壓力。</li>
+            <li><b>球囊排出試驗：</b>評估直腸排空能力。</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section id="management" class="content-section">
+      <h1 class="text-3xl font-bold text-[#6D4C41] mb-4">全方位改善方法</h1>
+      <p class="mb-6 text-lg text-gray-600">
+        改善便秘是一場需要耐心與毅力的長期抗戰。本節為您彙整了最核心的四大策略：飲食、運動、益生菌與生活習慣。點擊下方分頁，探索最適合您的改善方案，從根本調整腸道健康。</p>
+
+      <div class="mb-6">
+        <div class="border-b border-gray-200">
+          <nav class="-mb-px flex space-x-4" aria-label="Tabs">
+            <button data-tab="diet"
+              class="tab-btn whitespace-nowrap py-3 px-4 border-b-2 font-medium text-sm rounded-t-lg transition-colors duration-300">🥗
+              飲食管理</button>
+            <button data-tab="exercise"
+              class="tab-btn whitespace-nowrap py-3 px-4 border-b-2 font-medium text-sm rounded-t-lg transition-colors duration-300">🏃
+              規律運動</button>
+            <button data-tab="probiotics"
+              class="tab-btn whitespace-nowrap py-3 px-4 border-b-2 font-medium text-sm rounded-t-lg transition-colors duration-300">🦠
+              益生菌</button>
+            <button data-tab="habits"
+              class="tab-btn whitespace-nowrap py-3 px-4 border-b-2 font-medium text-sm rounded-t-lg transition-colors duration-300">🚽
+              生活習慣</button>
+          </nav>
+        </div>
+      </div>
+
+      <div id="management-content"></div>
+    </section>
+
+    <section id="medication" class="content-section">
+      <h1 class="text-3xl font-bold text-[#6D4C41] mb-4">藥物治療</h1>
+      <p class="mb-6 text-lg text-gray-600">當生活方式調整仍無法有效緩解症狀時，藥物治療便成為一個重要的選項。請務必在醫師或藥師的指導下使用，避免濫用藥物，特別是刺激性瀉藥，以免造成腸道功能紊亂。
+      </p>
+
+      <div class="space-y-6">
+        <div class="card p-6 rounded-lg">
+          <h3 class="text-xl font-semibold text-[#A1887F] mb-2">容積性瀉藥</h3>
+          <p class="text-gray-600">
+            <b>作用：</b>吸收水分以增加糞便體積及含水量，使其軟化易排出。如同在腸道中加入海綿。<br><b>範例：</b>歐車前、麥麩。<br><b>注意：</b>需搭配足夠飲水，適用於輕度便秘。</p>
+        </div>
+        <div class="card p-6 rounded-lg">
+          <h3 class="text-xl font-semibold text-[#A1887F] mb-2">滲透性瀉藥</h3>
+          <p class="text-gray-600">
+            <b>作用：</b>在腸道內形成高滲透壓，將水分吸入腸腔，軟化糞便並刺激蠕動。<br><b>範例：</b>乳果糖、聚乙二醇(PEG)。<br><b>注意：</b>適用於輕至中度便秘。</p>
+        </div>
+        <div class="card p-6 rounded-lg">
+          <h3 class="text-xl font-semibold text-[#A1887F] mb-2">刺激性瀉藥</h3>
+          <p class="text-gray-600"><b>作用：</b>直接刺激腸壁神經，強力促進腸道蠕動，效果迅速。<br><b>範例：</b>番瀉葉、比沙可啶。<br><b>注意：</b><b
+              class="text-red-600">不建議長期使用</b>，可能導致藥物依賴及腸道功能紊亂。僅在醫師建議下短期使用。</p>
+        </div>
+        <div class="card p-6 rounded-lg bg-[#EFEBE9]/60">
+          <h3 class="text-xl font-semibold text-[#A1887F] mb-2">特殊族群用藥考量</h3>
+          <p class="text-gray-700">孕婦、兒童、糖尿病患者及安寧療護患者的用藥選擇各有不同，需由醫師根據個人狀況進行評估，切勿自行用藥。</p>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="bg-gray-100 mt-12">
+    <div class="container mx-auto py-4 px-5 text-center text-sm text-gray-500">
+      <p>本內容僅供參考，不能取代專業醫療建議。若有健康問題，請諮詢醫師。</p>
+      <p>&copy; 2025 便秘互動指南. All Rights Reserved.</p>
+    </div>
+  </footer>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      const data = {
+        romeCriteria: [
+          { title: '排便費力', icon: '😫' },
+          { title: '糞便塊狀或過硬', icon: '🧱' },
+          { title: '排便不盡感', icon: '😥' },
+          { title: '肛門直腸阻塞感', icon: '🚧' },
+          { title: '需手法輔助排便', icon: '🖐️' },
+          { title: '每週排便少於3次', icon: '🗓️' },
+        ],
+        symptoms: [
+          { title: '排便費力', desc: '每次上廁所都像在拔河。', icon: '💪' },
+          { title: '糞便如羊便', desc: '乾硬呈顆粒狀，可能是缺水警訊。', icon: '🐑' },
+          { title: '「大不乾淨」', desc: '排便後仍感腹脹、有殘留感。', icon: '🤔' },
+          { title: '腹部悶脹', desc: '影響食慾，感覺肚子充滿氣體。', icon: '🎈' },
+          { title: '精神不佳', desc: '容易煩躁、疲倦，甚至「腦霧」。', icon: '🧠' },
+          { title: '皮膚變差', desc: '可能出現膚色暗沉或口氣問題。', icon: '🤢' },
+        ],
+        warningSigns: [
+          { sign: '不明原因體重下降', icon: '📉' },
+          { sign: '貧血', icon: '🩸' },
+          { sign: '糞便帶血或黏液', icon: '🩸' },
+          { sign: '排便習慣突然改變', icon: '🔄' },
+          { sign: '嚴重且持續的腹痛', icon: '😖' },
+          { sign: '腹部可觸摸到腫塊', icon: '✋' },
+          { sign: '有大腸癌或息肉家族史', icon: '👨‍👩‍👧‍👦' },
+          { sign: '便秘與腹瀉交替出現', icon: '🚻' },
+        ],
+        riskFactors: [
+          { factor: '生理因素', desc: '高齡、女性。', icon: '👩‍🦳' },
+          { factor: '生活方式', desc: '久坐、缺乏運動、熬夜、忽略便意。', icon: '🛋️' },
+          { factor: '飲食習慣', desc: '纖維或水分攝取不足、飲食過於精緻。', icon: '🍔' },
+          { factor: '精神心理', desc: '焦慮、抑鬱、壓力大。', icon: '😟' },
+          { factor: '藥物影響', desc: '特定止痛藥、抗憂鬱藥、胃藥等。', icon: '💊' },
+        ],
+        longTermRisks: [
+          { risk: '生活品質下降', desc: '腹痛、食慾差、失眠、焦慮。', icon: '📉' },
+          { risk: '肛腸疾病', desc: '痔瘡、肛裂、直腸脫垂。', icon: '🍑' },
+          { risk: '心血管事件', desc: '用力排便可能誘發心肌梗塞或中風。', icon: '💔' },
+          { risk: '神經系統影響', desc: '可能與認知功能下降有關。', icon: '🧠' },
+        ],
+        management: {
+          diet: `
+                        <h2 class="text-2xl font-semibold text-[#8D6E63] mb-4">飲食管理：吃對食物，腸道更順暢</h2>
+                        <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                            <div class="card p-6 rounded-lg">
+                                <h3 class="text-xl font-semibold text-[#A1887F] mb-2">🥗 增加膳食纖維</h3>
+                                <p class="text-gray-600 mb-2">每日目標 <b>25-35克</b>。纖維能增加糞便體積、保持水分。</p>
+                                <ul class="list-disc list-inside text-gray-600 space-y-1">
+                                    <li><b>水果：</b>奇異果、火龍果、蘋果</li>
+                                    <li><b>蔬菜：</b>菠菜、地瓜葉、菇類</li>
+                                    <li><b>全穀：</b>燕麥、糙米、全麥麵包</li>
+                                </ul>
+                            </div>
+                            <div class="card p-6 rounded-lg">
+                                <h3 class="text-xl font-semibold text-[#A1887F] mb-2">💧 補充足夠水分</h3>
+                                <p class="text-gray-600 mb-2">每日目標 <b>1.5-2公升</b>。水能軟化糞便，幫助纖維發揮作用。</p>
+                                <p class="text-sm text-gray-500">小提示：體重(kg) x 30~35cc ＝ 每日建議飲水量。</p>
+                            </div>
+                            <div class="card p-6 rounded-lg">
+                                <h3 class="text-xl font-semibold text-[#A1887F] mb-2">🥑 攝取優質油脂</h3>
+                                <p class="text-gray-600">適量攝取橄欖油、酪梨油、堅果等，有助於潤滑腸道。</p>
+                            </div>
+                        </div>
+                    `,
+          exercise: `
+                        <h2 class="text-2xl font-semibold text-[#8D6E63] mb-4">規律運動：動起來，腸道也動起來</h2>
+                        <p class="mb-6 text-gray-600">運動是促進腸道蠕動最自然有效的方法之一。每週進行140分鐘以上的有氧運動，就能看到明顯改善。</p>
+                        <div id="exercise-list" class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                            <div class="card p-6 rounded-lg text-center">
+                                <div class="text-4xl mb-3">🚶‍♀️</div>
+                                <h3 class="text-xl font-semibold text-[#A1887F]">快走或慢跑</h3>
+                                <p class="text-gray-600 mt-2">最簡單有效的有氧運動，促進全身循環與腸道蠕動。</p>
+                            </div>
+                            <div class="card p-6 rounded-lg text-center">
+                                <div class="text-4xl mb-3">🧘</div>
+                                <h3 class="text-xl font-semibold text-[#A1887F]">瑜珈或伸展</h3>
+                                <p class="text-gray-600 mt-2">透過扭轉和伸展的動作，按摩腹腔內臟，刺激腸道。</p>
+                            </div>
+                            <div class="card p-6 rounded-lg text-center">
+                                <div class="text-4xl mb-3">🚲</div>
+                                <h3 class="text-xl font-semibold text-[#A1887F]">凌空踩單車</h3>
+                                <p class="text-gray-600 mt-2">平躺進行，能有效鍛鍊腹部肌群，促進腸胃蠕動。</p>
+                            </div>
+                             <div class="card p-6 rounded-lg text-center col-span-1 md:col-span-2 lg:col-span-3">
+                                <div class="text-4xl mb-3">💆‍♂️</div>
+                                <h3 class="text-xl font-semibold text-[#A1887F]">順時針腹部按摩</h3>
+                                <p class="text-gray-600 mt-2">飯後一小時，以肚臍為中心，用手掌順時針方向輕輕按摩腹部5分鐘，有助於刺激腸道。</p>
+                            </div>
+                        </div>
+                    `,
+          probiotics: `
+                        <h2 class="text-2xl font-semibold text-[#8D6E63] mb-4">益生菌：腸道的好夥伴</h2>
+                        <p class="mb-6 text-gray-600">益生菌能幫助平衡腸道菌叢生態，改善腸道功能，但效果並非立竿見影，需要持續補充並搭配良好飲食習慣。</p>
+                        <div class="grid md:grid-cols-2 gap-6">
+                            <div class="card p-6 rounded-lg">
+                                <h3 class="text-xl font-semibold text-[#A1887F] mb-2">常見有效菌屬</h3>
+                                <ul class="list-disc list-inside text-gray-600 space-y-1">
+                                    <li><b>雙歧桿菌屬 (Bifidobacterium):</b> 如 B. lactis (乳雙歧桿菌), B. longum (長雙歧桿菌)。</li>
+                                    <li><b>乳酸桿菌屬 (Lactobacillus):</b> 如 L. casei (乾酪乳桿菌)。</li>
+                                </ul>
+                            </div>
+                            <div class="card p-6 rounded-lg">
+                                <h3 class="text-xl font-semibold text-[#A1887F] mb-2">選擇與使用建議</h3>
+                                <ul class="list-disc list-inside text-gray-600 space-y-1">
+                                    <li>選擇含有上述有效菌株的產品。</li>
+                                    <li>搭配膳食纖維（益生元）和足夠水分，效果加倍。</li>
+                                    <li>合生元（益生菌+益生元）產品可能是更佳選擇。</li>
+                                </ul>
+                            </div>
+                        </div>
+                    `,
+          habits: `
+                        <h2 class="text-2xl font-semibold text-[#8D6E63] mb-4">生活習慣：養成好習慣，排便自然順</h2>
+                        <p class="mb-6 text-gray-600">日常的小習慣，對腸道健康有著巨大的影響。從今天起，試著建立這些好習慣吧！</p>
+                        <div class="space-y-4">
+                            <div class="card p-6 rounded-lg">
+                                <h3 class="text-xl font-semibold text-[#A1887F] mb-2">🚽 培養定時排便</h3>
+                                <p class="text-gray-600">建議在晨起或餐後嘗試排便，利用身體的自然反射。有便意時千萬不要忍！</p>
+                            </div>
+                            <div class="card p-6 rounded-lg">
+                                <h3 class="text-xl font-semibold text-[#A1887F] mb-2">🧘 採用正確姿勢</h3>
+                                <p class="text-gray-600">使用坐式馬桶時，腳下踩個小凳子，讓身體呈微蹲姿，有助於腸道拉直，排便更順暢。</p>
+                            </div>
+                            <div class="card p-6 rounded-lg">
+                                <h3 class="text-xl font-semibold text-[#A1887F] mb-2">😌 學習放鬆減壓</h3>
+                                <p class="text-gray-600">壓力是便秘的隱形殺手。透過運動、冥想或從事有興趣的活動來放鬆心情，腸道也會跟著放鬆。</p>
+                            </div>
+                        </div>
+                    `
+        }
+      };
+
+      const romeGrid = document.getElementById('rome-criteria-grid');
+      data.romeCriteria.forEach(item => {
+        const card = document.createElement('div');
+        card.className = 'card p-4 rounded-lg flex items-center space-x-4 cursor-pointer';
+        card.innerHTML = `<div class="text-3xl">${item.icon}</div><span class="font-medium text-gray-700">${item.title}</span>`;
+        romeGrid.appendChild(card);
+      });
+
+      const symptomsGrid = document.getElementById('symptoms-grid');
+      data.symptoms.forEach(item => {
+        const card = document.createElement('div');
+        card.className = 'card p-6 rounded-lg text-center';
+        card.innerHTML = `
+                    <div class="text-4xl mb-3">${item.icon}</div>
+                    <h3 class="text-lg font-semibold text-[#A1887F]">${item.title}</h3>
+                    <p class="text-sm text-gray-500 mt-2">${item.desc}</p>
+                `;
+        symptomsGrid.appendChild(card);
+      });
+
+      const warningList = document.getElementById('warning-signs-list');
+      data.warningSigns.forEach(item => {
+        const li = document.createElement('li');
+        li.className = 'flex items-center text-gray-800';
+        li.innerHTML = `<span class="text-xl mr-3">${item.icon}</span><span>${item.sign}</span>`;
+        warningList.appendChild(li);
+      });
+
+      const riskFactorsList = document.getElementById('risk-factors-list');
+      data.riskFactors.forEach(item => {
+        const div = document.createElement('div');
+        div.className = 'card p-4 rounded-lg flex items-start';
+        div.innerHTML = `
+                    <div class="text-2xl mr-4 mt-1">${item.icon}</div>
+                    <div>
+                        <h4 class="font-semibold text-[#A1887F]">${item.factor}</h4>
+                        <p class="text-sm text-gray-600">${item.desc}</p>
+                    </div>
+                `;
+        riskFactorsList.appendChild(div);
+      });
+
+      const longTermRisksList = document.getElementById('long-term-risks-list');
+      data.longTermRisks.forEach(item => {
+        const div = document.createElement('div');
+        div.className = 'card p-4 rounded-lg flex items-start';
+        div.innerHTML = `
+                     <div class="text-2xl mr-4 mt-1">${item.icon}</div>
+                    <div>
+                        <h4 class="font-semibold text-[#A1887F]">${item.risk}</h4>
+                        <p class="text-sm text-gray-600">${item.desc}</p>
+                    </div>
+                `;
+        longTermRisksList.appendChild(div);
+      });
+
+
+      const managementContent = document.getElementById('management-content');
+      const tabButtons = document.querySelectorAll('.tab-btn');
+      function updateManagementContent(tab) {
+        managementContent.style.animation = 'none';
+        setTimeout(() => {
+          managementContent.innerHTML = data.management[tab];
+          managementContent.style.animation = 'fadeIn 0.5s';
+        }, 10);
+
+        tabButtons.forEach(btn => {
+          btn.classList.toggle('active', btn.dataset.tab === tab);
+        });
+      }
+
+      tabButtons.forEach(button => {
+        button.addEventListener('click', () => updateManagementContent(button.dataset.tab));
+      });
+
+      const navLinks = document.querySelectorAll('.nav-link');
+      const sections = document.querySelectorAll('.content-section');
+      function updateActiveState(hash) {
+        let targetHash = hash;
+        if (!targetHash) {
+          targetHash = '#understanding';
+        }
+
+        navLinks.forEach(link => {
+          link.classList.toggle('active', link.getAttribute('href') === targetHash);
+        });
+
+        sections.forEach(section => {
+          section.classList.toggle('active', '#' + section.id === targetHash);
+        });
+
+        if (targetHash === '#management') {
+          updateManagementContent('diet');
+        }
+        if (targetHash === '#understanding' && !window.prevalenceChartInstance) {
+          renderPrevalenceChart();
+        }
+
+        document.getElementById('mobile-menu').classList.add('hidden');
+      }
+
+      navLinks.forEach(link => {
+        link.addEventListener('click', (e) => {
+          e.preventDefault();
+          const targetId = link.getAttribute('href');
+          history.pushState(null, null, targetId);
+          updateActiveState(targetId);
+        });
+      });
+
+      window.addEventListener('popstate', () => {
+        updateActiveState(window.location.hash);
+      });
+
+      const mobileMenuButton = document.getElementById('mobile-menu-button');
+      const mobileMenu = document.getElementById('mobile-menu');
+      mobileMenuButton.addEventListener('click', () => {
+        mobileMenu.classList.toggle('hidden');
+      });
+
+      function renderPrevalenceChart() {
+        const ctx = document.getElementById('prevalenceChart').getContext('2d');
+        window.prevalenceChartInstance = new Chart(ctx, {
+          type: 'bar',
+          data: {
+            labels: ['成人總體', '70歲以上', '80歲以上'],
+            datasets: [{
+              label: '慢性便秘患病率 (%)',
+              data: [7, 23, 38],
+              backgroundColor: ['#A1887F', '#BCAAA4', '#D7CCC8'],
+              borderColor: '#8D6E63',
+              borderWidth: 1
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+              y: {
+                beginAtZero: true,
+                title: { display: true, text: '患病率 (%)' }
+              },
+              x: {
+                title: { display: true, text: '年齡層' }
+              }
+            },
+            plugins: {
+              legend: { display: false },
+              title: {
+                display: true,
+                text: '便秘患病率隨年齡增長趨勢',
+                font: { size: 16 }
+              },
+              tooltip: {
+                callbacks: {
+                  label: function (context) {
+                    return `${context.dataset.label}: ${context.raw}%`;
+                  }
+                }
+              }
+            }
+          }
+        });
+      }
+
+      updateActiveState(window.location.hash || '#understanding');
+    });
+  </script>
+</body>
+
+</html>

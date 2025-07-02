@@ -103,11 +103,11 @@
         </div>
 
         <div class="bg-white p-6 rounded-2xl shadow-lg">
-          <h2 class="text-2xl font-bold text-teal-700 mb-6">疫苗互動接種時間軸</h2>
+          <h2 class="text-2xl font-bold text-teal-700 mb-6">疫苗接種時間軸</h2>
           <p class="text-slate-600 mb-4">公費疫苗以<span
               class="inline-block bg-teal-100 text-teal-800 text-sm font-medium px-2.5 py-1 rounded-full">淺綠色</span>標示，自費疫苗則以<span
               class="inline-block bg-pink-100 text-pink-800 text-sm font-medium px-2.5 py-1 rounded-full">粉紅色</span>標示。<br>若疫苗名稱旁有<span
-              class="font-bold underline cursor-help">底線</span>，表示滑鼠懸停可查看更多間隔資訊。</p>
+              class="font-bold underline cursor-help">底線</span>，表示滑鼠懸停可查看更多須間隔時間資訊。</p>
           <div id="timeline-container" class="space-y-4">
             <!-- Timeline items will be injected by JS -->
           </div>
@@ -149,9 +149,9 @@
     </main>
 
     <footer class="text-center mt-12 text-sm text-slate-500">
-      <p>資訊來源：衛生福利部疾病管制署、長庚醫療財團法人等公開資料。本指南僅供參考，最新資訊請以<a href="https://www.cdc.gov.tw" target="_blank"
+      <p>資訊來源：衛生福利部疾病管制署、兒童健康手冊第20版等公開資料。本整理僅供參考，最新資訊請以<a href="https://www.cdc.gov.tw" target="_blank"
           class="text-teal-600 hover:underline">疾管署官方網站</a>為準。</p>
-      <p>最後資料更新日期：2025年7月1日。請注意，疫苗政策可能隨時調整。</p>
+      <p>最後資料更新日期：2025年7月1日。請注意疫苗政策可能隨時調整。</p>
     </footer>
 
   </div>
@@ -160,6 +160,7 @@
     const vaccineData = {
       'B肝疫苗': {
         name: 'B型肝炎疫苗 (Hepatitis B vaccine)',
+        type: '非活化疫苗 (基因重組)',
         disease: '預防B型肝炎病毒感染。',
         schedule: '共3劑：出生24小時內、滿1個月、滿6個月。',
         sideEffects: '接種部位可能出現輕微紅腫，或伴隨發燒、嘔吐，但反應通常輕微且短暫。',
@@ -167,6 +168,7 @@
       },
       '五合一疫苗': {
         name: '五合一疫苗 (DTaP-Hib-IPV)',
+        type: '非活化疫苗',
         disease: '預防白喉、破傷風、非細胞性百日咳、b型嗜血桿菌及不活化小兒麻痺。',
         schedule: '共4劑：出生滿2個月、4個月、6個月、1歲6個月。',
         sideEffects: '副作用輕微且不常見，可能包含噁心、嘔吐、發燒或腹瀉。',
@@ -174,6 +176,7 @@
       },
       '肺炎鏈球菌疫苗': {
         name: '13價結合型肺炎鏈球菌疫苗 (PCV13)',
+        type: '非活化疫苗 (結合型)',
         disease: '預防肺炎鏈球菌引起的肺炎、中耳炎、腦膜炎等。',
         schedule: '共3劑：出生滿2個月、4個月、12-15個月。',
         sideEffects: '接種後的局部反應通常較少，安全性良好。',
@@ -181,6 +184,7 @@
       },
       '卡介苗': {
         name: '卡介苗 (BCG vaccine)',
+        type: '活性減毒疫苗',
         disease: '預防嚴重型結核病。',
         schedule: '共1劑：建議出生滿5-8個月接種。1歲前完成。',
         sideEffects: '接種部位會出現特殊反應：紅色小結節 → 膿泡/潰瘍 → 癒合結疤，過程約2-3個月。偶有同側腋窩淋巴腺腫大。',
@@ -188,13 +192,15 @@
       },
       '水痘疫苗': {
         name: '水痘疫苗 (Varicella vaccine)',
-        disease: '預防由水痘帶狀疱疹病毒引起的水痘。',
+        type: '活性減毒疫苗',
+        disease: '預防由水痘帶状疱疹病毒引起的水痘。',
         schedule: '公費1劑：出生滿12個月。自費第2劑：滿4-6歲。',
         sideEffects: '局部反應通常較為輕微。',
         notes: '公費僅提供第1劑。自費第2劑建議於入學前完成，與第1劑間隔至少3個月。'
       },
       'MMR疫苗': {
         name: '麻疹腮腺炎德國麻疹混合疫苗 (MMR vaccine)',
+        type: '活性減毒疫苗',
         disease: '預防麻疹、腮腺炎、德國麻疹。',
         schedule: '共2劑：出生滿12個月、滿5歲至入小學前。',
         sideEffects: '可能在接種後4-10天出現微發燒(持續2-5天)、疹子、鼻炎或輕微咳嗽。',
@@ -202,6 +208,7 @@
       },
       '日本腦炎疫苗': {
         name: '日本腦炎疫苗 (JE vaccine)',
+        type: '活性減毒疫苗',
         disease: '預防日本腦炎病毒感染。',
         schedule: '共2劑：出生滿15個月、滿27個月。',
         sideEffects: '局部反應少。',
@@ -209,6 +216,7 @@
       },
       'A肝疫苗': {
         name: 'A型肝炎疫苗 (Hepatitis A vaccine)',
+        type: '非活化疫苗',
         disease: '預防A型肝炎病毒感染。',
         schedule: '共2劑：出生滿18個月、滿27個月(間隔至少9個月)。',
         sideEffects: '局部反應少。',
@@ -216,6 +224,7 @@
       },
       '流感疫苗': {
         name: '幼兒流行性感冒疫苗 (Influenza vaccine)',
+        type: '非活化疫苗',
         disease: '預防季節性流感。',
         schedule: '出生滿6個月至入國小前，每年1劑。',
         sideEffects: '局部反應、發燒等。',
@@ -223,6 +232,7 @@
       },
       'DTaP-IPV疫苗': {
         name: '白喉破傷風非細胞性百日咳及不活化小兒麻痺混合疫苗 (DTaP-IPV)',
+        type: '非活化疫苗',
         disease: '預防白喉、破傷風、百日咳及小兒麻痺。',
         schedule: '共1劑：滿5歲至入小學前接種。',
         sideEffects: '通常作為五合一疫苗的加強劑，反應輕微。',
@@ -230,6 +240,7 @@
       },
       'COVID-19疫苗': {
         name: 'COVID-19疫苗 (新冠肺炎疫苗)',
+        type: '新型疫苗 (mRNA/蛋白次單元)',
         disease: '預防新冠肺炎。',
         schedule: '滿6個月以上至未滿6歲幼兒，建議2劑基礎劑。',
         sideEffects: '與成人相似，多為局部疼痛、發燒、疲倦等。',
@@ -237,6 +248,7 @@
       },
       'B肝免疫球蛋白': {
         name: 'B型肝炎免疫球蛋白 (HBIG)',
+        type: '免疫球蛋白 (被動免疫)',
         disease: '提供即時的B型肝炎病毒保護。',
         schedule: '1劑，出生24小時內儘速接種。',
         sideEffects: '局部反應為主。',
@@ -244,6 +256,7 @@
       },
       '輪狀病毒疫苗': {
         name: '輪狀病毒疫苗 (Rotavirus vaccine)',
+        type: '活性減毒疫苗 (口服)',
         disease: '預防輪狀病毒引起的腸胃炎。',
         schedule: '口服，通常2或3劑，出生滿2個月開始，需在6-8個月內完成。',
         sideEffects: '可能輕微腹瀉、嘔吐。',
@@ -486,9 +499,10 @@
           vaccineDetailContent.innerHTML = `
                         <h3 class="text-xl font-bold text-teal-700 mb-2">${data.name}</h3>
                         <div class="space-y-3 text-slate-700">
+                            <p><strong>疫苗種類：</strong><span class="font-semibold text-blue-600 bg-blue-100 px-2 py-1 rounded-full">${data.type}</span></p>
                             <p><strong>主要預防：</strong>${data.disease}</p>
                             <p><strong>建議時程：</strong>${data.schedule}</p>
-                            <p><strong>常見反應：：</strong>${data.sideEffects}</p>
+                            <p><strong>常見反應：</strong>${data.sideEffects}</p>
                             ${data.notes ? `<div class="mt-4 p-3 bg-teal-50 border border-teal-200 rounded-md text-sm"><p><strong>💡 特別提醒：</strong>${data.notes}</p></div>` : ''}
                         </div>
                     `;

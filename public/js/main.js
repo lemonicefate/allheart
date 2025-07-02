@@ -4,6 +4,7 @@
 const buttons = [
     { href: 'amoxicillin-dose-calculator.html', text: '兒童Amoxicillin劑量計算', category: 'tools', color: 'blue' },
     { href: 'pediatric-antibiotic-calculator.html', text: '兒童抗生素計算機', category: 'tools', color: 'blue' },
+    { href: 'public\children-steroid-dose-calculator.html', text: '兒童類固醇計算機', category: 'tools', color: 'blue' },
     { href: 'health-check-analyzer.html', text: '健檢報告數值分析器', category: 'tools', color: 'blue' },
     { href: 'lipid-calculator.html', text: '血脂計算機', category: 'tools', color: 'blue' },
     { href: 'cloud-report-organizer.html', text: '健保雲端報告整理工具', category: 'tools', color: 'blue' },
