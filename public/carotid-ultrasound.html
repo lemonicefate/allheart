@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>頸動脈超音波互動式儀表板</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
+  <!-- Chosen Palette: Soothing Stone & Sage -->
+  <!-- Application Structure Plan: The application is designed as a single-page interactive dashboard. The structure prioritizes user interaction and understanding over the report's linear format. It begins with the most critical clinical tool (Interactive Stenosis Calculator) to immediately engage the user. This is followed by sections explaining the underlying factors: Plaque Risk Assessment and IMT Guide. This top-down approach (from diagnosis to underlying signs) is more intuitive for learning and clinical application. The final section clarifies measurement methodologies (NASCET vs. ECST) as supporting knowledge. This structure allows users to actively explore the relationship between hemodynamic values and stenosis levels, making complex data tangible. -->
+  <!-- Visualization & Content Choices:
+        - Stenosis Grading: Goal=Compare/Inform. Method=Interactive Chart.js bar chart + dynamic text fields controlled by a slider. Interaction=User drags slider to change ICA PSV, which updates the chart and all related diagnostic text in real-time based on the 2023 IAC/SRU criteria. Justification=Transforms a static data table into a powerful educational tool for visualizing diagnostic thresholds. Library=Chart.js.
+        - Plaque Risk: Goal=Organize/Inform. Method=Grid of interactive cards using HTML/Tailwind. Interaction=Clicking on a card reveals detailed information about high-risk plaque features. Justification=Visually represents abstract concepts (echogenicity, texture, surface), making them easier to understand than plain text. Library=Vanilla JS.
+        - IMT Guide: Goal=Inform. Method=A clear, tabbed interface using HTML/Tailwind. Interaction=User clicks on a tab to see the interpretation for that IMT range. Justification=Provides layered information in a compact, easy-to-navigate format. Library=Vanilla JS.
+        - Measurement Methods: Goal=Explain. Method=Side-by-side diagrams built with styled HTML divs. Interaction=Static visual comparison. Justification=Simplifies the complex spatial difference between NASCET and ECST methods visually. Library=HTML/CSS.
+    -->
+  <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+  <style>
+    body {
+      font-family: 'Noto Sans TC', sans-serif;
+    }
+
+    .chart-container {
+      position: relative;
+      width: 100%;
+      max-width: 800px;
+      margin-left: auto;
+      margin-right: auto;
+      height: 300px;
+      max-height: 40vh;
+    }
+
+    @media (min-width: 768px) {
+      .chart-container {
+        height: 400px;
+      }
+    }
+
+    .tab-active {
+      border-color: #10B981;
+      color: #059669;
+      background-color: #D1FAE5;
+    }
+
+    .tab-inactive {
+      border-color: transparent;
+      color: #4B5563;
+    }
+
+    .fade-in {
+      animation: fadeIn 0.5s ease-in-out;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+  </style>
+</head>
+
+<body class="bg-stone-50 text-gray-800">
+
+  <div class="container mx-auto p-4 md:p-8">
+
+    <header class="text-center mb-8 md:mb-12">
+      <h1 class="text-3xl md:text-4xl font-bold text-emerald-800 mb-2">頸動脈超音波互動式解讀儀表板</h1>
+      <p class="text-lg text-gray-600">一個基於 2023 IAC/SRU 最新指引的互動學習工具</p>
+    </header>
+
+    <main class="space-y-12 md:space-y-16">
+
+      <!-- Interactive Stenosis Calculator -->
+      <section id="stenosis-calculator" class="bg-white p-6 md:p-8 rounded-2xl shadow-lg">
+        <div class="mb-6 text-center">
+          <h2 class="text-2xl font-bold text-gray-900 mb-2">內頸動脈 (ICA) 狹窄程度互動分析儀</h2>
+          <p class="text-gray-600 max-w-3xl mx-auto">本工具能讓您直觀地了解內頸動脈的血流速變化如何對應到不同的狹窄程度。請拖動下方的滑桿來調整「收縮期峰值流速
+            (PSV)」，觀察圖表與各項數值的即時變化，以掌握最新的臨床診斷標準。</p>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-5 gap-6 md:gap-8">
+
+          <div class="lg:col-span-3">
+            <div class="chart-container">
+              <canvas id="stenosisChart"></canvas>
+            </div>
+            <div class="mt-6 px-4">
+              <label for="psvSlider" class="block text-center font-semibold text-gray-700 mb-2">拖曳以調整 ICA PSV: <span
+                  id="psvValue" class="text-emerald-600 font-bold text-xl">120</span> cm/s</label>
+              <input id="psvSlider" type="range" min="50" max="400" value="120"
+                class="w-full h-3 bg-gray-200 rounded-lg appearance-none cursor-pointer range-lg">
+            </div>
+          </div>
+
+          <div id="stenosis-results"
+            class="lg:col-span-2 bg-stone-50 p-6 rounded-xl flex flex-col justify-center space-y-4 fade-in">
+            <div>
+              <p class="text-sm font-semibold text-gray-500">狹窄程度 (NASCET %)</p>
+              <p id="stenosis-percentage" class="text-2xl font-bold text-emerald-700">&lt; 50%</p>
+            </div>
+            <div>
+              <p class="text-sm font-semibold text-gray-500">判讀</p>
+              <p id="stenosis-interpretation" class="text-lg font-semibold">輕度狹窄</p>
+            </div>
+            <div class="border-t pt-4 space-y-3">
+              <div class="flex justify-between items-baseline">
+                <span class="text-gray-600">ICA/CCA PSV 比值:</span>
+                <span id="stenosis-ratio" class="font-mono text-lg font-bold">&lt; 2.0</span>
+              </div>
+              <div class="flex justify-between items-baseline">
+                <span class="text-gray-600">ICA EDV (cm/s):</span>
+                <span id="stenosis-edv" class="font-mono text-lg font-bold">&lt; 40</span>
+              </div>
+            </div>
+            <div class="bg-emerald-50 border-l-4 border-emerald-500 text-emerald-800 p-4 rounded-r-lg mt-4">
+              <p id="stenosis-notes" class="text-sm">無可見斑塊或僅有輕度內膜增厚。血流動力學上無顯著意義。</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Plaque Risk Assessment -->
+      <section id="plaque-risk" class="bg-white p-6 md:p-8 rounded-2xl shadow-lg">
+        <div class="mb-6 text-center">
+          <h2 class="text-2xl font-bold text-gray-900 mb-2">動脈粥樣硬化斑塊風險評估</h2>
+          <p class="text-gray-600 max-w-3xl mx-auto">評估中風風險時，「斑塊有多危險」比「狹窄有多嚴重」更為重要。點擊下方卡片，了解不同斑塊特徵如何預示其穩定性與引發中風的潛在風險。
+          </p>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div
+            class="plaque-card p-6 rounded-xl border-2 border-gray-200 hover:border-amber-400 hover:shadow-md transition-all cursor-pointer"
+            onclick="togglePlaqueInfo(this)">
+            <div class="flex items-center mb-3">
+              <div class="w-12 h-12 rounded-full bg-gray-700 mr-4 flex-shrink-0"></div>
+              <h3 class="text-xl font-bold">低回音/回音透亮</h3>
+            </div>
+            <p class="text-gray-600">斑塊在超音波下呈現暗色，點此查看詳情。</p>
+            <div class="plaque-info hidden mt-4 text-sm bg-amber-50 p-4 rounded-lg">
+              <p><strong>臨床意義：</strong>通常與富含脂質的壞死核心或斑塊內出血有關，被視為<strong
+                  class="text-red-600">不穩定、高風險</strong>的關鍵特徵。這類斑塊結構脆弱，更容易破裂並形成血栓。</p>
+            </div>
+          </div>
+          <div
+            class="plaque-card p-6 rounded-xl border-2 border-gray-200 hover:border-amber-400 hover:shadow-md transition-all cursor-pointer"
+            onclick="togglePlaqueInfo(this)">
+            <div class="flex items-center mb-3">
+              <div class="w-12 h-12 rounded-full bg-gradient-to-br from-gray-300 to-gray-600 mr-4 flex-shrink-0"></div>
+              <h3 class="text-xl font-bold">異質性</h3>
+            </div>
+            <p class="text-gray-600">斑塊內部回音混雜不均，點此查看詳情。</p>
+            <div class="plaque-info hidden mt-4 text-sm bg-amber-50 p-4 rounded-lg">
+              <p><strong>臨床意義：</strong>代表斑塊內部含有多種成分（如脂質、纖維、鈣化、出血），結構不穩定，是<strong
+                  class="text-red-600">不穩定的徵象</strong>之一。異質性斑塊的應力分佈不均，容易在薄弱處破裂。</p>
+            </div>
+          </div>
+          <div
+            class="plaque-card p-6 rounded-xl border-2 border-gray-200 hover:border-amber-400 hover:shadow-md transition-all cursor-pointer"
+            onclick="togglePlaqueInfo(this)">
+            <div class="flex items-center mb-3">
+              <div class="w-12 h-12 rounded-full bg-gray-400 mr-4 flex-shrink-0"
+                style="border-top: 4px solid #999; border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;"></div>
+              <h3 class="text-xl font-bold">表面不規則/潰瘍</h3>
+            </div>
+            <p class="text-gray-600">斑塊表面凹凸不平或形成坑洞，點此查看詳情。</p>
+            <div class="plaque-info hidden mt-4 text-sm bg-amber-50 p-4 rounded-lg">
+              <p><strong>臨床意義：</strong>這是斑塊<strong
+                  class="text-red-600">極度不穩定</strong>的主要標誌。潰瘍表面是血栓形成和碎屑脫落的溫床，極易導致遠端血管栓塞，引發中風或短暫性腦缺血發作 (TIA)。</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- IMT Guide -->
+      <section id="imt-guide" class="bg-white p-6 md:p-8 rounded-2xl shadow-lg">
+        <div class="mb-6 text-center">
+          <h2 class="text-2xl font-bold text-gray-900 mb-2">頸動脈內中層厚度 (IMT) 指南</h2>
+          <p class="text-gray-600 max-w-3xl mx-auto">
+            IMT是評估早期動脈粥樣硬化的生物標記。雖然其在臨床風險評估中的角色有爭議，但了解其數值意義仍有助於全面評估心血管健康。請選擇IMT範圍查看對應的臨床意義。</p>
+        </div>
+        <div>
+          <div class="border-b border-gray-200">
+            <nav class="-mb-px flex space-x-4" aria-label="Tabs">
+              <button onclick="changeTab(this, 'imt-normal')"
+                class="imt-tab tab-active whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm">
+                &lt; 0.9 mm (正常)
+              </button>
+              <button onclick="changeTab(this, 'imt-thickened')"
+                class="imt-tab tab-inactive whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm">
+                0.9 - 1.5 mm (增厚)
+              </button>
+              <button onclick="changeTab(this, 'imt-plaque')"
+                class="imt-tab tab-inactive whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm">
+                &gt; 1.5 mm (斑塊)
+              </button>
+            </nav>
+          </div>
+          <div id="imt-content" class="mt-6">
+            <div id="imt-normal" class="imt-panel fade-in">
+              <h3 class="font-bold text-lg text-green-700">正常範圍</h3>
+              <p class="mt-2 text-gray-700">此範圍內的IMT值表示動脈管壁厚度正常，心血管事件風險相對較低。這是一個理想的健康狀態，但仍需維持良好的生活習慣以預防未來的變化。</p>
+            </div>
+            <div id="imt-thickened" class="imt-panel hidden fade-in">
+              <h3 class="font-bold text-lg text-yellow-700">內中層增厚</h3>
+              <p class="mt-2 text-gray-700">此數值提示存在早期、亞臨床的動脈粥樣硬化。雖然尚未形成斑塊，但已是心血管風險增加的警訊。這通常是需要開始積極控制風險因子（如血壓、血脂、血糖）的階段。
+              </p>
+            </div>
+            <div id="imt-plaque" class="imt-panel hidden fade-in">
+              <h3 class="font-bold text-lg text-red-700">斑塊形成</h3>
+              <p class="mt-2 text-gray-700">IMT局部厚度超過1.5mm被定義為斑塊形成。這代表明確的動脈粥樣硬化，心血管風險顯著增高。此時評估的重點會轉向斑塊的穩定性與造成的狹窄程度。</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Methods Explained -->
+      <section id="methods-explained" class="bg-white p-6 md:p-8 rounded-2xl shadow-lg">
+        <div class="mb-6 text-center">
+          <h2 class="text-2xl font-bold text-gray-900 mb-2">狹窄度量化標準：NASCET vs ECST</h2>
+          <p class="text-gray-600 max-w-3xl mx-auto">超音波的診斷標準是與血管攝影的「黃金標準」進行比對驗證的。歷史上有兩種主要的計算方法：NASCET 和
+            ECST。理解其差異對於準確解讀報告至關重要。</p>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+          <div class="text-center p-4 border rounded-lg">
+            <h3 class="text-xl font-bold mb-4">NASCET 方法</h3>
+            <div class="relative w-48 h-48 mx-auto flex items-center justify-center">
+              <div class="absolute w-4 h-full bg-gray-300 rounded-full" style="transform: rotate(20deg);"></div>
+              <div class="absolute w-4 h-full bg-gray-300 rounded-full" style="transform: rotate(-20deg);"></div>
+              <div
+                class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-8 h-8 bg-white border-2 border-red-500 rounded-full flex items-center justify-center font-bold text-red-500">
+                A</div>
+              <div
+                class="absolute top-8 left-1/2 -translate-x-1/2 w-12 h-12 bg-gray-200 border-2 border-blue-500 rounded-full flex items-center justify-center font-bold text-blue-500">
+                B</div>
+            </div>
+            <p class="mt-4 text-gray-600">狹窄處(A)與<strong class="text-blue-600">遠端正常血管(B)</strong>比較。</p>
+            <p class="font-mono mt-2 bg-gray-100 p-2 rounded">(1 - A/B) x 100%</p>
+          </div>
+          <div class="text-center p-4 border rounded-lg">
+            <h3 class="text-xl font-bold mb-4">ECST 方法</h3>
+            <div class="relative w-48 h-48 mx-auto flex items-center justify-center">
+              <div class="absolute w-24 h-full bg-gray-300 rounded-full"
+                style="clip-path: polygon(0 0, 100% 0, 100% 100%, 0% 100%);"></div>
+              <div
+                class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-24 h-24 border-2 border-dashed border-purple-500 rounded-full flex items-center justify-center">
+                <span class="font-bold text-purple-500 -translate-y-12">C</span>
+              </div>
+              <div
+                class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-8 h-8 bg-white border-2 border-red-500 rounded-full flex items-center justify-center font-bold text-red-500">
+                A</div>
+
+            </div>
+            <p class="mt-4 text-gray-600">狹窄處(A)與<strong class="text-purple-600">同處估計原始管徑(C)</strong>比較。</p>
+            <p class="font-mono mt-2 bg-gray-100 p-2 rounded">(1 - A/C) x 100%</p>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="mt-12 md:mt-16 text-center text-gray-500 text-sm">
+      <p>&copy; 2025 互動式醫療資訊儀表板。內容僅供教學參考，不能取代專業醫療診斷。</p>
+      <p>資訊來源：頸動脈雙功能超音波專家報告。採用 2023 IAC/SRU 共識標準。</p>
+    </footer>
+
+  </div>
+
+  <script>
+    const stenosisData = [
+      { level: '< 50%', percentage: '< 50%', psv: { max: 179 }, edv: '< 40', ratio: '< 2.0', interpretation: '輕度狹窄', notes: '可見斑塊，但血流動力學上無顯著意義。通常建議藥物治療與風險因子控制。' },
+      { level: '50-69%', percentage: '50-69%', psv: { min: 180, max: 230 }, edv: '40 - 100', ratio: '2.0 - 4.0', interpretation: '中度狹窄', notes: '管腔顯著狹窄。對於有症狀的患者，可能需考慮介入治療。' },
+      { level: '≥ 70%', percentage: '≥ 70% 至次全阻塞', psv: { min: 231 }, edv: '> 100', ratio: '> 4.0', interpretation: '重度狹窄', notes: '管腔嚴重狹窄，常伴有彩色血流混疊。中風風險顯著增高，通常強烈建議介入治療。' },
+    ];
+
+    const psvSlider = document.getElementById('psvSlider');
+    const psvValue = document.getElementById('psvValue');
+
+    const stenosisPercentage = document.getElementById('stenosis-percentage');
+    const stenosisInterpretation = document.getElementById('stenosis-interpretation');
+    const stenosisRatio = document.getElementById('stenosis-ratio');
+    const stenosisEdv = document.getElementById('stenosis-edv');
+    const stenosisNotes = document.getElementById('stenosis-notes');
+    const resultsContainer = document.getElementById('stenosis-results');
+
+    let stenosisChart;
+
+    function updateStenosisInfo(psv) {
+      let data;
+      if (psv < 180) {
+        data = stenosisData[0];
+      } else if (psv >= 180 && psv <= 230) {
+        data = stenosisData[1];
+      } else {
+        data = stenosisData[2];
+      }
+
+      resultsContainer.classList.remove('fade-in');
+      void resultsContainer.offsetWidth; // Trigger reflow
+      resultsContainer.classList.add('fade-in');
+
+      stenosisPercentage.textContent = data.percentage;
+      stenosisInterpretation.textContent = data.interpretation;
+      stenosisRatio.textContent = data.ratio;
+      stenosisEdv.textContent = data.edv;
+      stenosisNotes.textContent = data.notes;
+    }
+
+    function setupChart() {
+      const ctx = document.getElementById('stenosisChart').getContext('2d');
+      stenosisChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: ['ICA PSV (cm/s)'],
+          datasets: [{
+            label: '目前流速',
+            data: [120],
+            backgroundColor: ['#10B981'],
+            borderColor: ['#059669'],
+            borderWidth: 2,
+            borderRadius: 5,
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          scales: {
+            y: {
+              beginAtZero: true,
+              max: 420,
+              title: {
+                display: true,
+                text: '流速 (cm/s)'
+              }
+            }
+          },
+          plugins: {
+            legend: {
+              display: false
+            },
+            annotation: {
+              annotations: {
+                line1: {
+                  type: 'line',
+                  yMin: 180,
+                  yMax: 180,
+                  borderColor: 'rgb(255, 99, 132)',
+                  borderWidth: 2,
+                  borderDash: [6, 6],
+                  label: {
+                    content: '50% 狹窄閾值 (180 cm/s)',
+                    enabled: true,
+                    position: 'start',
+                    backgroundColor: 'rgba(255, 99, 132, 0.7)'
+                  }
+                },
+                line2: {
+                  type: 'line',
+                  yMin: 230,
+                  yMax: 230,
+                  borderColor: 'rgb(217, 54, 54)',
+                  borderWidth: 2,
+                  borderDash: [6, 6],
+                  label: {
+                    content: '70% 狹窄閾值 (230 cm/s)',
+                    enabled: true,
+                    position: 'end',
+                    backgroundColor: 'rgba(217, 54, 54, 0.7)'
+                  }
+                }
+              }
+            },
+            tooltip: {
+              enabled: false
+            }
+          }
+        }
+      });
+      // Chart.js v3 doesn't bundle the annotation plugin by default.
+      // As we cannot add more CDN links, the annotation part won't work but the code is kept for completeness.
+      // The visual representation will rely on the dynamic text and the bar itself.
+      // A simplified visual guide will be the color change.
+    }
+
+    psvSlider.addEventListener('input', (e) => {
+      const currentPsv = parseInt(e.target.value);
+      psvValue.textContent = currentPsv;
+
+      updateStenosisInfo(currentPsv);
+
+      stenosisChart.data.datasets[0].data[0] = currentPsv;
+      if (currentPsv < 180) {
+        stenosisChart.data.datasets[0].backgroundColor = ['#10B981'];
+        stenosisChart.data.datasets[0].borderColor = ['#059669'];
+      } else if (currentPsv <= 230) {
+        stenosisChart.data.datasets[0].backgroundColor = ['#F59E0B'];
+        stenosisChart.data.datasets[0].borderColor = ['#D97706'];
+      } else {
+        stenosisChart.data.datasets[0].backgroundColor = ['#EF4444'];
+        stenosisChart.data.datasets[0].borderColor = ['#DC2626'];
+      }
+      stenosisChart.update('none');
+    });
+
+    function togglePlaqueInfo(card) {
+      const info = card.querySelector('.plaque-info');
+      info.classList.toggle('hidden');
+    }
+
+    const imtTabs = document.querySelectorAll('.imt-tab');
+    const imtPanels = document.querySelectorAll('.imt-panel');
+
+    function changeTab(selectedTab, panelId) {
+      imtTabs.forEach(tab => {
+        tab.classList.remove('tab-active');
+        tab.classList.add('tab-inactive');
+      });
+      selectedTab.classList.add('tab-active');
+      selectedTab.classList.remove('tab-inactive');
+
+      imtPanels.forEach(panel => {
+        if (panel.id === panelId) {
+          panel.classList.remove('hidden');
+        } else {
+          panel.classList.add('hidden');
+        }
+      });
+    }
+
+    window.onload = () => {
+      setupChart();
+      updateStenosisInfo(parseInt(psvSlider.value));
+    };
+  </script>
+</body>
+
+</html>
