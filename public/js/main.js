@@ -7,7 +7,7 @@ const buttons = [
     { href: 'children-steroid-dose-calculator.html', text: '兒童類固醇計算機', category: 'tools', color: 'blue' },
     { href: 'health-check-analyzer.html', text: '健檢報告數值分析器', category: 'tools', color: 'blue' },
     { href: 'lipid-calculator.html', text: '血脂計算機', category: 'tools', color: 'blue' },
-    { href: 'cloud-report-organizer.html', text: '健保雲端報告整理工具', category: 'tools', color: 'blue' },
+    { href: 'cloud-report-organizer.html', text: '健保雲端報告整理工具2.0', category: 'tools', color: 'blue' },
     { href: 'timer-for-bppv.html', text: 'BPPV復位計時工具', category: 'tools', color: 'blue' },
 
     { href: 'nasal-spray.html', text: '鼻噴劑', category: 'ent', color: 'orange' },
@@ -15,11 +15,13 @@ const buttons = [
     { href: 'osas.html', text: '睡眠呼吸中止症候群', category: 'ent', color: 'orange' },
     { href: 'trigeminal-neuralgia.html', text: '三叉神經痛', category: 'ent', color: 'orange' },
     { href: 'vertigo.html', text: '眩暈', category: 'ent', color: 'orange' },
+    { href: 'carotid-ultrasound.html', text: '頸動脈超音波', category: 'ent', color: 'orange' },
     { href: 'papilloma-hpv.html', text: '乳突瘤與HPV病毒/疫苗', category: 'ent', color: 'orange' },
 
 
     { href: 'my-plate-education.html', text: 'My Plate 餐盤衛教', category: 'disease', color: 'green' },
     { href: 'constipation.html', text: '便祕', category: 'disease', color: 'green' },
+    { href: 'insomnia.html', text: '失眠', category: 'disease', color: 'green' },
     { href: 'mounjaro.html', text: '猛健樂', category: 'disease', color: 'green' },
     
     
