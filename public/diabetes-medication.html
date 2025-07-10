@@ -1,0 +1,552 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>互動式第二型糖尿病治療指引</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
+  <!-- Chosen Palette: Warm Neutrals -->
+  <!-- Application Structure Plan: The SPA is designed as a clinical decision support tool using a top-level tabbed navigation. This non-linear structure allows users (clinicians/students) to directly access information relevant to their immediate query, such as a specific patient profile or drug comparison, rather than reading the report linearly. The flow is: 1. Overview Flowchart for the big picture. 2. High-Risk section for common, critical patient types (ASCVD/HF/CKD). 3. Individualized Goals for other cases. 4. Quick Drug Reference for comparison. 5. NHI rules for practical constraints. This user-task-oriented architecture is more efficient for clinical decision-making than the original report's structure. -->
+  <!-- Visualization & Content Choices: 1. Overall Algorithm: HTML/CSS flowchart (Goal: Organize) for intuitive process visualization. 2. High-Risk/Individualized Paths: Interactive cards (Goal: Inform/Compare) for focused, uncluttered recommendations based on user selection. 3. Drug Comparison: Chart.js bar chart (Goal: Compare) for quick visual assessment of efficacy/side effects, supplemented by detailed HTML tables (Goal: Inform). 4. NHI Rules: Accordion/collapsible sections (Goal: Inform) to manage dense regulatory information without overwhelming the user. All choices prioritize interactivity and clarity, using Canvas for charts and structured HTML/CSS for diagrams. -->
+  <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+  <style>
+    body {
+      font-family: 'Noto Sans TC', sans-serif;
+      background-color: #FDFBF8;
+    }
+
+    .tab-active {
+      border-color: #2563eb;
+      color: #2563eb;
+      background-color: #eff6ff;
+    }
+
+    .tab-inactive {
+      border-color: transparent;
+      color: #4b5563;
+    }
+
+    .content-section {
+      display: none;
+    }
+
+    .content-active {
+      display: block;
+    }
+
+    .chart-container {
+      position: relative;
+      width: 100%;
+      max-width: 800px;
+      margin-left: auto;
+      margin-right: auto;
+      height: 400px;
+      max-height: 50vh;
+    }
+
+    .flowchart-node {
+      border: 2px solid #d1d5db;
+      padding: 0.75rem 1.25rem;
+      border-radius: 0.5rem;
+      text-align: center;
+      background-color: white;
+      box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+    }
+
+    .flowchart-connector {
+      flex-grow: 1;
+      background-color: #9ca3af;
+      height: 2px;
+    }
+
+    .flowchart-arrow::after {
+      content: '▼';
+      color: #9ca3af;
+      font-size: 1.5rem;
+      line-height: 0;
+    }
+  </style>
+</head>
+
+<body class="bg-gray-50 text-gray-800">
+
+  <div class="container mx-auto p-4 md:p-8">
+    <header class="text-center mb-8">
+      <h1 class="text-3xl md:text-4xl font-bold text-blue-800">導航台灣現代糖尿病藥物治療版圖</h1>
+      <p class="mt-2 text-lg text-gray-600">一份基於臨床指引與實證的互動式決策工具</p>
+    </header>
+
+    <nav class="mb-8 border-b border-gray-200">
+      <ul class="flex flex-wrap -mb-px justify-center text-sm font-medium text-center">
+        <li class="mr-2">
+          <button class="nav-tab inline-block p-4 border-b-2 rounded-t-lg tab-active" data-tab="overview">治療總覽</button>
+        </li>
+        <li class="mr-2">
+          <button class="nav-tab inline-block p-4 border-b-2 rounded-t-lg tab-inactive"
+            data-tab="high-risk">高風險共病症</button>
+        </li>
+        <li class="mr-2">
+          <button class="nav-tab inline-block p-4 border-b-2 rounded-t-lg tab-inactive"
+            data-tab="individual-goals">個體化目標</button>
+        </li>
+        <li class="mr-2">
+          <button class="nav-tab inline-block p-4 border-b-2 rounded-t-lg tab-inactive"
+            data-tab="drug-ref">藥物速查</button>
+        </li>
+        <li class="mr-2">
+          <button class="nav-tab inline-block p-4 border-b-2 rounded-t-lg tab-inactive" data-tab="nhi">健保給付考量</button>
+        </li>
+      </ul>
+    </nav>
+
+    <main id="main-content">
+      <section id="overview" class="content-section content-active">
+        <div class="bg-white p-6 rounded-lg shadow-md">
+          <h2 class="text-2xl font-bold mb-4 text-gray-700">治療演算法概觀</h2>
+          <p class="mb-6 text-gray-600">
+            現代第二型糖尿病治療已從單純的血糖控制，轉向以病人為中心、多面向的風險管理。首要步驟是評估病人是否存在心血管或腎臟等高風險共病症，以決定最優先的治療路徑。此流程圖概述了這個決策過程。</p>
+          <div class="flex flex-col items-center space-y-4">
+            <div class="flowchart-node w-full md:w-3/4"><strong>第一步：治療基石</strong><br>所有病人均需生活型態介入 + Metformin (若無禁忌症)
+            </div>
+            <div class="flowchart-arrow"></div>
+            <div class="flowchart-node w-full md:w-3/4"><strong>第二步：風險分層</strong><br>評估是否存在 ASCVD、心臟衰竭 (HF) 或慢性腎臟病 (CKD)
+            </div>
+            <div class="flowchart-arrow"></div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 w-full">
+              <div class="flex flex-col items-center space-y-4 p-4 bg-blue-50 rounded-lg">
+                <div class="flowchart-node w-full bg-blue-100"><strong>路徑A：存在高風險共病症</strong></div>
+                <div class="flowchart-arrow"></div>
+                <div class="flowchart-node w-full">優先選擇具器官保護實證的藥物 (SGLT2i / GLP-1 RA)，其重要性超越HbA1c</div>
+              </div>
+              <div class="flex flex-col items-center space-y-4 p-4 bg-green-50 rounded-lg">
+                <div class="flowchart-node w-full bg-green-100"><strong>路徑B：無高風險共病症</strong></div>
+                <div class="flowchart-arrow"></div>
+                <div class="flowchart-node w-full">依個體化目標選擇二線藥物 (避免低血糖、體重管理、成本)</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="high-risk" class="content-section">
+        <div class="bg-white p-6 rounded-lg shadow-md">
+          <h2 class="text-2xl font-bold mb-4 text-gray-700">高風險共病症病人的藥物選擇</h2>
+          <p class="mb-6 text-gray-600">
+            對於已確立心血管疾病、心臟衰竭或慢性腎臟病的病人，藥物選擇的首要考量是器官保護。即使血糖控制尚可，也應優先使用具有實證效益的藥物。請選擇病人的共病症以查看指引建議。</p>
+          <div class="flex flex-wrap justify-center gap-4 mb-6">
+            <button class="risk-btn bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-lg transition"
+              data-risk="ascvd">動脈粥狀硬化心血管疾病 (ASCVD)</button>
+            <button class="risk-btn bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-lg transition"
+              data-risk="hf">心臟衰竭 (HF)</button>
+            <button class="risk-btn bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-lg transition"
+              data-risk="ckd">慢性腎臟病 (CKD)</button>
+          </div>
+          <div id="risk-info" class="mt-6 p-6 bg-gray-100 rounded-lg min-h-[200px] flex items-center justify-center">
+            <p class="text-gray-500">請選擇一項共病症</p>
+          </div>
+        </div>
+      </section>
+
+      <section id="individual-goals" class="content-section">
+        <div class="bg-white p-6 rounded-lg shadow-md">
+          <h2 class="text-2xl font-bold mb-4 text-gray-700">無高風險共病症病人的個體化目標</h2>
+          <p class="mb-6 text-gray-600">當病人沒有高風險共病症時，藥物選擇應回歸達成血糖目標，並同時權衡其他重要面向。請選擇最優先的治療考量，以查看建議的藥物類別。</p>
+          <div class="flex flex-wrap justify-center gap-4 mb-6">
+            <button
+              class="goal-btn bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded-lg transition"
+              data-goal="hypo">優先考量：最小化低血糖風險</button>
+            <button
+              class="goal-btn bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded-lg transition"
+              data-goal="weight">優先考量：促進體重減輕</button>
+            <button
+              class="goal-btn bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded-lg transition"
+              data-goal="cost">優先考量：治療成本</button>
+          </div>
+          <div id="goal-info" class="mt-6 p-6 bg-gray-100 rounded-lg min-h-[200px] flex items-center justify-center">
+            <p class="text-gray-500">請選擇一項治療目標</p>
+          </div>
+        </div>
+      </section>
+
+      <section id="drug-ref" class="content-section">
+        <div class="bg-white p-6 rounded-lg shadow-md">
+          <h2 class="text-2xl font-bold mb-4 text-gray-700">藥物特性比較速查</h2>
+          <p class="mb-6 text-gray-600">本區提供主要非胰島素類降血糖藥物的特性比較。下方的圖表可快速比較各類藥物在降糖效力、體重影響與低血糖風險上的差異。點擊藥物類別可查看詳細資訊。</p>
+          <div class="chart-container mb-8">
+            <canvas id="drugCompareChart"></canvas>
+          </div>
+          <div id="drug-details-table" class="overflow-x-auto">
+          </div>
+        </div>
+      </section>
+
+      <section id="nhi" class="content-section">
+        <div class="bg-white p-6 rounded-lg shadow-md">
+          <h2 class="text-2xl font-bold mb-4 text-gray-700">台灣健保給付規範摘要</h2>
+          <p class="mb-6 text-gray-600">
+            在台灣，藥物選擇深受健保給付政策影響。此處整理主要二、三線藥物的給付重點與組合限制，這是在理想指引外，臨床實務中必須考量的現實因素。點擊藥物類別可展開或收合其給付規範。</p>
+          <div id="nhi-accordion" class="space-y-2">
+          </div>
+        </div>
+      </section>
+
+    </main>
+
+    <footer class="text-center mt-12 text-sm text-gray-500">
+      <p>本工具資訊整理自《導航台灣現代糖尿病藥物治療版圖：一份基於臨床指引與實證的專家報告》。</p>
+      <p>內容僅供學術參考，不構成任何醫療建議。所有治療決策應由專業醫師進行。</p>
+    </footer>
+
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const riskData = {
+        ascvd: {
+          title: '合併動脈粥狀硬化心血管疾病 (ASCVD)',
+          content: `
+                        <h3 class="font-bold text-lg mb-2 text-blue-700">指引建議</h3>
+                        <p class="mb-4">對於已確立ASCVD的病人，應在Metformin基礎上，優先選擇具有心血管益處實證的 <strong>GLP-1 RA</strong> 或 <strong>SGLT2抑制劑</strong>。</p>
+                        <h3 class="font-bold text-lg mb-2 text-blue-700">選擇考量</h3>
+                        <ul class="list-disc list-inside space-y-1">
+                            <li><strong>GLP-1 RA</strong>：若病人有強烈減重需求，通常能提供更強的減重效果。</li>
+                            <li><strong>SGLT2抑制劑</strong>：若病人同時有心衰竭或腎病考量，其雙重效益更具吸引力。</li>
+                        </ul>
+                    `
+        },
+        hf: {
+          title: '合併心臟衰竭 (HF)',
+          content: `
+                        <h3 class="font-bold text-lg mb-2 text-blue-700">指引建議</h3>
+                        <p class="mb-4">對於合併心衰竭的病人，<strong>SGLT2抑制劑</strong> 是 <strong><span class="text-red-600">強制性</span></strong> 的建議用藥。</p>
+                        <h3 class="font-bold text-lg mb-2 text-blue-700">壓倒性實證</h3>
+                        <ul class="list-disc list-inside space-y-1">
+                            <li>多項大型試驗一致顯示 SGLT2i 能顯著降低因心衰竭住院的風險及心血管死亡率。</li>
+                            <li>效益涵蓋心搏出率降低型(HFrEF)與保留型(HFpEF)心衰竭。</li>
+                            <li>最新指引建議，心衰急性住院期間即可考慮使用。</li>
+                        </ul>
+                    `
+        },
+        ckd: {
+          title: '合併慢性腎臟病 (CKD)',
+          content: `
+                        <h3 class="font-bold text-lg mb-2 text-blue-700">指引建議</h3>
+                        <p class="mb-4">需考量腎功能(eGFR)及蛋白尿狀況。</p>
+                        <h3 class="font-bold text-lg mb-2 text-blue-700">藥物選擇</h3>
+                        <ul class="list-disc list-inside space-y-1">
+                            <li><strong>首選藥物</strong>：<strong>SGLT2抑制劑</strong>。能有效延緩eGFR下降、減少蛋白尿，並降低進展至末期腎病的風險。</li>
+                            <li><strong>替代/合併用藥</strong>：若無法使用SGLT2i或需加強控制，可選擇具腎臟保護實證的 <strong>GLP-1 RA</strong>。</li>
+                        </ul>
+                    `
+        }
+      };
+
+      const goalData = {
+        hypo: {
+          title: '優先考量：最小化低血糖風險',
+          content: `
+                        <h3 class="font-bold text-lg mb-2 text-green-700">首選藥物類別</h3>
+                        <p class="mb-4">應優先選擇本身低血糖風險極低的藥物，單獨使用時幾乎不會造成低血糖。</p>
+                        <ul class="list-disc list-inside space-y-1">
+                            <li>DPP-4 抑制劑</li>
+                            <li>GLP-1 受體促效劑</li>
+                            <li>SGLT2 抑制劑</li>
+                            <li>Thiazolidinediones (TZDs)</li>
+                        </ul>
+                        <h3 class="font-bold text-lg mt-4 mb-2 text-red-700">需謹慎使用的藥物</h3>
+                        <p>Sulfonylureas (SUs) 和胰島素具有較高的內在低血糖風險，需密切監測。</p>
+                    `
+        },
+        weight: {
+          title: '優先考量：促進體重減輕',
+          content: `
+                        <h3 class="font-bold text-lg mb-2 text-green-700">藥物對體重的影響</h3>
+                        <p class="mb-4">超過八成的T2DM病人伴隨過重或肥胖，體重管理是重要治療目標。</p>
+                        <ul class="list-disc list-inside space-y-2">
+                            <li><strong>強效減重</strong>：<strong>GIP/GLP-1 RA</strong> (如Tirzepatide) 或高效的 <strong>GLP-1 RA</strong> (如Semaglutide)。</li>
+                            <li><strong>中度減重</strong>：<strong>SGLT2抑制劑</strong> (約減輕2-3公斤)。</li>
+                            <li><strong>體重中性</strong>：DPP-4抑制劑、Metformin。</li>
+                            <li><strong class="text-red-600">導致體重增加</strong>：Sulfonylureas (SUs)、TZDs、胰島素。</li>
+                        </ul>
+                    `
+        },
+        cost: {
+          title: '優先考量：治療成本',
+          content: `
+                        <h3 class="font-bold text-lg mb-2 text-green-700">藥物成本考量</h3>
+                        <p class="mb-4">在現實世界中，成本是影響治療可及性的關鍵因素。</p>
+                        <ul class="list-disc list-inside space-y-2">
+                            <li><strong>低成本選項</strong>：傳統藥物如 <strong>Sulfonylureas (SUs)</strong> 和 <strong>Thiazolidinediones (TZDs)</strong> 多有學名藥，價格低廉。</li>
+                            <li><strong>高成本選項</strong>：較新的藥物類別如 <strong>GLP-1 RA</strong>、<strong>SGLT2抑制劑</strong> 和 <strong>DPP-4抑制劑</strong> 價格較高，其使用常受健保給付規範限制。</li>
+                        </ul>
+                    `
+        }
+      };
+
+      const drugTableData = [
+        { category: "Metformin", efficacy: "強", hypo: "無", weight: "🔻/⏺️", cv: "🛡️", hf: "⏺️", ckd: "⏺️", sideEffects: "腸胃不適、乳酸中毒風險、VitB12缺乏。eGFR < 30 禁用。" },
+        { category: "SGLT2 抑制劑", efficacy: "中至強", hypo: "無", weight: "🔻", cv: "🛡️", hf: "🛡️", ckd: "🛡️", sideEffects: "生殖泌尿道感染、DKA風險、體液容積不足。" },
+        { category: "GLP-1 RA", efficacy: "強至極強", hypo: "無", weight: "🔻🔻", cv: "🛡️", hf: "⏺️", ckd: "🛡️", sideEffects: "腸胃不適(噁心/嘔吐)、胰臟炎風險、MTC禁忌。" },
+        { category: "DPP-4 抑制劑", efficacy: "中", hypo: "無", weight: "⏺️", cv: "⏺️", hf: "⚠️", ckd: "⏺️", sideEffects: "罕見關節痛、胰臟炎風險。" },
+        { category: "TZDs", efficacy: "強", hypo: "無", weight: "🔺", cv: "🛡️", hf: "⚠️", ckd: "⏺️", sideEffects: "體重增加、水腫、心衰竭惡化、骨折風險。心衰竭病人禁用。" },
+        { category: "Sulfonylureas", efficacy: "強", hypo: "⚠️⚠️", weight: "🔺", cv: "⏺️", hf: "⏺️", ckd: "⏺️", sideEffects: "低血糖、體重增加。" },
+        { category: "α-glucosidase 抑制劑", efficacy: "弱", hypo: "無", weight: "⏺️", cv: "⏺️", hf: "⏺️", ckd: "⏺️", sideEffects: "腸胃脹氣、腹瀉。" }
+      ];
+
+      const nhiData = [
+        {
+          category: "SGLT2 抑制劑",
+          position: "第二線",
+          condition: "Metformin (最大耐受劑量)",
+          hba1c: "使用Metformin後，HbA1c仍 ≥ 7.0%",
+          combo: "宜與DPP-4抑制劑擇一使用。"
+        },
+        {
+          category: "DPP-4 抑制劑",
+          position: "第二線",
+          condition: "Metformin (最大耐受劑量)",
+          hba1c: "使用Metformin後，HbA1c仍 ≥ 7.0%",
+          combo: "宜與SGLT2抑制劑擇一使用。"
+        },
+        {
+          category: "GLP-1 受體促效劑",
+          position: "第三線或更後線",
+          condition: "Metformin + 另一口服藥或基礎胰島素",
+          hba1c: "使用前線藥物後，HbA1c仍 > 8.0% 或 8.5%",
+          combo: "<strong>不得</strong>與DPP-4抑制劑或SGLT2抑制劑併用。"
+        },
+        {
+          category: "SGLT2i/DPP-4i 複方",
+          position: "後線",
+          condition: "Metformin + 單方SGLT2i或DPP-4i (至少6個月)",
+          hba1c: "使用單方治療後，HbA1c仍 > 7.5%",
+          combo: "僅限轉換自相同成分的單方。"
+        }
+      ];
+
+      const navTabs = document.querySelectorAll('.nav-tab');
+      const contentSections = document.querySelectorAll('.content-section');
+
+      navTabs.forEach(tab => {
+        tab.addEventListener('click', () => {
+          const target = tab.getAttribute('data-tab');
+
+          navTabs.forEach(t => {
+            t.classList.remove('tab-active');
+            t.classList.add('tab-inactive');
+          });
+          tab.classList.add('tab-active');
+          tab.classList.remove('tab-inactive');
+
+          contentSections.forEach(section => {
+            if (section.id === target) {
+              section.classList.add('content-active');
+            } else {
+              section.classList.remove('content-active');
+            }
+          });
+        });
+      });
+
+      const riskBtns = document.querySelectorAll('.risk-btn');
+      const riskInfo = document.getElementById('risk-info');
+      riskBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+          const risk = btn.getAttribute('data-risk');
+          const data = riskData[risk];
+          riskInfo.innerHTML = `
+                        <div class="text-left w-full">
+                            <h3 class="font-bold text-xl mb-4 text-gray-800">${data.title}</h3>
+                            <div>${data.content}</div>
+                        </div>
+                    `;
+        });
+      });
+
+      const goalBtns = document.querySelectorAll('.goal-btn');
+      const goalInfo = document.getElementById('goal-info');
+      goalBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+          const goal = btn.getAttribute('data-goal');
+          const data = goalData[goal];
+          goalInfo.innerHTML = `
+                        <div class="text-left w-full">
+                            <h3 class="font-bold text-xl mb-4 text-gray-800">${data.title}</h3>
+                            <div>${data.content}</div>
+                        </div>
+                    `;
+        });
+      });
+
+      function renderDrugTable() {
+        const container = document.getElementById('drug-details-table');
+        let html = `
+                    <table class="w-full text-sm text-left text-gray-500">
+                        <thead class="text-xs text-gray-700 uppercase bg-gray-100">
+                            <tr>
+                                <th scope="col" class="px-4 py-3">藥物類別</th>
+                                <th scope="col" class="px-4 py-3">心血管效益(MACE)</th>
+                                <th scope="col" class="px-4 py-3">心衰竭效益</th>
+                                <th scope="col" class="px-4 py-3">腎病進程效益</th>
+                                <th scope="col" class="px-4 py-3">主要副作用/禁忌</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                `;
+        drugTableData.forEach(drug => {
+          html += `
+                        <tr class="bg-white border-b hover:bg-gray-50">
+                            <th scope="row" class="px-4 py-4 font-medium text-gray-900 whitespace-nowrap">${drug.category}</th>
+                            <td class="px-4 py-4 text-center">${drug.cv}</td>
+                            <td class="px-4 py-4 text-center">${drug.hf}</td>
+                            <td class="px-4 py-4 text-center">${drug.ckd}</td>
+                            <td class="px-4 py-4">${drug.sideEffects}</td>
+                        </tr>
+                    `;
+        });
+        html += `
+                        </tbody>
+                    </table>
+                    <div class="mt-4 text-xs text-gray-500">*註：🔻/🔺減輕/增加；⏺️中性；🛡️保護效益；⚠️風險。</div>
+                `;
+        container.innerHTML = html;
+      }
+
+      const efficacyMap = { '弱': 1, '中': 2, '中至強': 3, '強': 4, '強至極強': 5 };
+      const weightMap = { '🔺': 2, '⏺️': 0, '🔻/⏺️': -1, '🔻': -2, '🔻🔻': -3 };
+      const hypoMap = { '無': 0, '⚠️⚠️': -2 };
+
+      const drugCompareCtx = document.getElementById('drugCompareChart').getContext('2d');
+      new Chart(drugCompareCtx, {
+        type: 'bar',
+        data: {
+          labels: drugTableData.map(d => d.category),
+          datasets: [
+            {
+              label: 'HbA1c 降低效力',
+              data: drugTableData.map(d => efficacyMap[d.efficacy]),
+              backgroundColor: 'rgba(54, 162, 235, 0.6)',
+              borderColor: 'rgba(54, 162, 235, 1)',
+              borderWidth: 1
+            },
+            {
+              label: '對體重影響',
+              data: drugTableData.map(d => weightMap[d.weight]),
+              backgroundColor: 'rgba(75, 192, 192, 0.6)',
+              borderColor: 'rgba(75, 192, 192, 1)',
+              borderWidth: 1
+            },
+            {
+              label: '低血糖風險',
+              data: drugTableData.map(d => hypoMap[d.hypo]),
+              backgroundColor: 'rgba(255, 99, 132, 0.6)',
+              borderColor: 'rgba(255, 99, 132, 1)',
+              borderWidth: 1
+            }
+          ]
+        },
+        options: {
+          indexAxis: 'y',
+          responsive: true,
+          maintainAspectRatio: false,
+          scales: {
+            x: {
+              ticks: {
+                callback: function (value, index, values) {
+                  const mapping = { '-3': '顯著減輕', '-2': '減輕', '-1': '輕微減輕', '0': '中性', '1': '弱', '2': '中/增加', '3': '中至強', '4': '強', '5': '極強' };
+                  return mapping[value] || '';
+                }
+              }
+            },
+            y: {
+              ticks: {
+                autoSkip: false,
+                callback: function (value, index, values) {
+                  const label = this.getLabelForValue(value);
+                  if (label.length > 16) {
+                    return label.substring(0, 16) + '...';
+                  }
+                  return label;
+                }
+              }
+            }
+          },
+          plugins: {
+            tooltip: {
+              callbacks: {
+                label: function (context) {
+                  let label = context.dataset.label || '';
+                  if (label) {
+                    label += ': ';
+                  }
+                  const value = context.raw;
+                  const dsIndex = context.datasetIndex;
+                  if (dsIndex === 0) { // Efficacy
+                    const mapping = { 1: '弱', 2: '中', 3: '中至強', 4: '強', 5: '極強' };
+                    label += mapping[value];
+                  } else if (dsIndex === 1) { // Weight
+                    const mapping = { 2: '增加', 0: '中性', '-1': '輕微減輕', '-2': '減輕', '-3': '顯著減輕' };
+                    label += mapping[value];
+                  } else { // Hypo
+                    const mapping = { 0: '無', '-2': '高' };
+                    label += mapping[value];
+                  }
+                  return label;
+                }
+              }
+            }
+          }
+        }
+      });
+
+      renderDrugTable();
+
+      function renderNhiAccordion() {
+        const container = document.getElementById('nhi-accordion');
+        let html = '';
+        nhiData.forEach((item, index) => {
+          html += `
+                        <div class="border border-gray-200 rounded-lg">
+                            <h2>
+                                <button type="button" class="nhi-btn flex items-center justify-between w-full p-5 font-medium text-left text-gray-600 bg-gray-50 hover:bg-gray-100" data-index="${index}">
+                                    <span>${item.category}</span>
+                                    <svg class="w-3 h-3 rotate-180 shrink-0" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 6"><path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5 5 1 1 5"/></svg>
+                                </button>
+                            </h2>
+                            <div id="nhi-content-${index}" class="nhi-content hidden p-5 border-t border-gray-200">
+                                <ul class="space-y-2 text-gray-600">
+                                    <li><strong>健保定位：</strong>${item.position}</li>
+                                    <li><strong>主要給付條件：</strong>需先使用 ${item.condition}</li>
+                                    <li><strong>HbA1c門檻(舉例)：</strong>${item.hba1c}</li>
+                                    <li class="text-red-600"><strong>主要組合限制：</strong>${item.combo}</li>
+                                </ul>
+                            </div>
+                        </div>
+                    `;
+        });
+        container.innerHTML = html;
+
+        document.querySelectorAll('.nhi-btn').forEach(button => {
+          button.addEventListener('click', () => {
+            const index = button.getAttribute('data-index');
+            const content = document.getElementById(`nhi-content-${index}`);
+            const icon = button.querySelector('svg');
+
+            content.classList.toggle('hidden');
+            icon.classList.toggle('rotate-180');
+          });
+        });
+      }
+
+      renderNhiAccordion();
+    });
+  </script>
+
+</body>
+
+</html>

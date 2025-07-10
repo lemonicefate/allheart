@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>健保雲端檢驗報告整理工具 (2.0 - 專用版)</title>
+    <title>健保雲端檢驗報告整理工具 (2.5 - 專用版)</title>
     <style>
         body {
             font-family: 'Segoe UI', 'Microsoft JhengHei', 'PingFang TC', sans-serif;
@@ -68,6 +68,7 @@
             display: flex;
             gap: 10px;
             flex-wrap: wrap;
+            align-items: center;
         }
 
         .action-button {
@@ -93,6 +94,14 @@
             background-color: #1e7e34;
         }
 
+        .action-button.dedupe {
+            background-color: #6f42c1;
+        }
+
+        .action-button.dedupe:hover {
+            background-color: #5a359a;
+        }
+
         .action-button.clear {
             background-color: #dc3545;
             margin-left: auto;
@@ -100,6 +109,20 @@
 
         .action-button.clear:hover {
             background-color: #c82333;
+        }
+
+        .button-group-bottom {
+            margin-top: 15px;
+            display: flex;
+            justify-content: flex-start;
+        }
+
+        .action-button.timeline {
+            background-color: #fd7e14;
+        }
+
+        .action-button.timeline:hover {
+            background-color: #e86a00;
         }
 
         .privacy-notice {
@@ -135,30 +158,39 @@
 </head>
 
 <body>
-
     <div class="container">
-        <h1>健保雲端檢驗報告整理工具 (2.0 - 專用版)</h1>
+        <h1>健保雲端檢驗報告整理工具 (2.5 - 專用版)</h1>
         <p class="privacy-notice">⚠️ 所有資料皆在您的電腦本機處理，不會上傳至任何網路，請安心使用。</p>
-
         <div>
             <h2>1. 貼上「檢驗報告」原始資料</h2>
             <textarea id="inputData" placeholder="請將從健保雲端系統複製的「檢驗報告」完整文字貼於此處..."></textarea>
             <div class="button-group">
                 <button class="action-button" onclick="processData()">整理與分析</button>
-                <button class="action-button copy" onclick="copyResult()">一鍵複製結果</button>
+                <button class="action-button copy" onclick="copyResult('outputResult')">複製整理結果</button>
+                <button class="action-button dedupe" onclick="removeDuplicates()">去除重複項目</button>
                 <button class="action-button clear" onclick="clearAll()">全部清除</button>
             </div>
+
             <h2>2. 整理後結果</h2>
             <div id="outputResult" class="output-area"></div>
+            <div class="button-group-bottom">
+                <button class="action-button timeline" onclick="timelineSort()">時間軸整理</button>
+            </div>
+
+            <h2>3. 時間軸整理</h2>
+            <div id="timelineResult" class="output-area"></div>
+            <div class="button-group-bottom">
+                <button class="action-button copy" onclick="copyResult('timelineResult')">複製時間軸結果</button>
+            </div>
+
         </div>
     </div>
-
     <script>
+        // 全域變數，用於儲存由 parseLabData 解析出的結構化資料
+        let _labData = {};
+
         /**
          * Pre-processes raw text by merging broken lines into logical single lines.
-         * A new logical line is identified by a starting number pattern.
-         * @param {string} rawText The raw text from the textarea.
-         * @returns {string[]} An array of cleaned, logical lines.
          */
         function preProcessAndCleanLines(rawText) {
             const rawLines = rawText.split('\n');
@@ -166,45 +198,48 @@
             let currentLine = "";
 
             for (const line of rawLines) {
-                // A new record is identified by a line starting with a number (item index).
                 if (/^\d+\s/.test(line.trim())) {
                     if (currentLine) {
-                        // Push the previously assembled line, replacing multiple whitespaces with a single space.
                         cleanedLines.push(currentLine.replace(/\s+/g, ' ').trim());
                     }
-                    // Start a new line.
                     currentLine = line;
                 } else {
-                    // This is a continuation of the previous line, append it with a space.
                     currentLine += " " + line;
                 }
             }
-            // Push the last assembled line.
             if (currentLine) {
                 cleanedLines.push(currentLine.replace(/\s+/g, ' ').trim());
             }
             return cleanedLines;
         }
 
+        /**
+         * Main function to process the raw input data and display it sorted by date.
+         */
         function processData() {
             const rawText = document.getElementById('inputData').value;
             const outputDiv = document.getElementById('outputResult');
+
+            // 清空舊資料
+            _labData = {};
+            document.getElementById('timelineResult').innerHTML = '';
 
             if (!rawText.trim()) {
                 outputDiv.innerHTML = '請先貼上資料。';
                 return;
             }
-
             const processedOutput = parseLabData(rawText);
             outputDiv.innerHTML = processedOutput.trim() || '無法解析資料，請確認格式是否正確。';
         }
 
+        /**
+         * Parses the lab data text, generates HTML output, and stores structured data globally.
+         */
         function parseLabData(labText) {
             if (!labText.trim()) return '';
 
             const lines = preProcessAndCleanLines(labText);
             const dataByDate = {};
-
             const lineRegex = /^\d+\s*(\d{2,3}\/\d{2}\/\d{2})(.+?)(\d+\.?\d+)\s*([a-zA-Z%^/μ\d.\s]+?)(\[.*\])(.*)$/;
 
             lines.forEach(line => {
@@ -212,7 +247,6 @@
                 if (!match) return;
 
                 let [, date, nameBlock, result, unitBlock, reference, rest] = match;
-
                 let itemName = nameBlock.split(')').pop().trim();
                 itemName = itemName.split('(').pop().trim();
                 if (!itemName || itemName.length < 2) {
@@ -230,7 +264,6 @@
                         break;
                     }
                 }
-
                 if (searchStartIndex > 0) {
                     const sourceCandidate = rest.substring(searchStartIndex);
                     const endMatch = sourceCandidate.match(/住院|門診|\d{8,}/);
@@ -249,7 +282,6 @@
                 }
 
                 let unit = unitBlock.replace(unitBlock, unitBlock.split(/\s/)[0]).trim();
-
                 let highLowMark = '', cssClass = '', isAbnormal = false;
                 const valueNum = parseFloat(result);
                 const rangeStr = reference.replace(/[\[\]]/g, ' ').trim();
@@ -297,10 +329,13 @@
                 return dateB - dateA;
             });
 
+            // 將解析好的資料存到全域變數
+            _labData = dataByDate;
+
             let htmlOutput = '';
             sortedDates.forEach(date => {
                 const data = dataByDate[date];
-                htmlOutput += `<div class="date-header">${date} (${data.hospital})</div>`;
+                htmlOutput += `<div class="date-header">${date} (${data.hospital})</div>\n`;
 
                 data.items.forEach(item => {
                     let lineContent = `${item.name} ${item.value} ${item.unit} ${item.reference} ${item.method}`;
@@ -315,8 +350,15 @@
             return htmlOutput;
         }
 
-        function copyResult() {
-            const resultDiv = document.getElementById('outputResult');
+        /**
+         * Copies the text content of a specified result area to the clipboard.
+         */
+        function copyResult(elementId) {
+            const resultDiv = document.getElementById(elementId);
+            if (!resultDiv || !resultDiv.innerHTML.trim()) {
+                alert('此區塊沒有內容可以複製。');
+                return;
+            }
             const tempDiv = document.createElement('div');
             tempDiv.innerHTML = resultDiv.innerHTML.replace(/<\/div>|<br>/g, '\n').replace(/<[^>]+>/g, '');
             const textToCopy = tempDiv.innerText.trim();
@@ -330,6 +372,9 @@
             }
         }
 
+        /**
+         * Fallback copy method for older browsers.
+         */
         function fallbackCopy(text) {
             const textArea = document.createElement('textarea');
             textArea.value = text;
@@ -349,12 +394,116 @@
             document.body.removeChild(textArea);
         }
 
+        /**
+         * Clears all input and output areas.
+         */
         function clearAll() {
             document.getElementById('inputData').value = '';
             document.getElementById('outputResult').innerHTML = '';
+            document.getElementById('timelineResult').innerHTML = '';
+            _labData = {}; // 清除暫存的資料
         }
-    </script>
 
+        /**
+         * Removes consecutive duplicate lines from the output area.
+         */
+        function removeDuplicates() {
+            const outputDiv = document.getElementById('outputResult');
+            const originalHtml = outputDiv.innerHTML;
+
+            if (!originalHtml.trim()) {
+                alert('結果區是空的，沒有內容可以處理。');
+                return;
+            }
+
+            const lines = originalHtml.split('\n');
+            const uniqueLines = [];
+            let tempDiv = document.createElement('div');
+
+            if (lines.length > 0) {
+                uniqueLines.push(lines[0]);
+            }
+
+            for (let i = 1; i < lines.length; i++) {
+                const prevLineHtml = lines[i - 1];
+                const currentLineHtml = lines[i];
+
+                tempDiv.innerHTML = prevLineHtml;
+                const prevText = tempDiv.textContent.trim();
+
+                tempDiv.innerHTML = currentLineHtml;
+                const currentText = tempDiv.textContent.trim();
+
+                if (currentText === '' || prevText !== currentText) {
+                    uniqueLines.push(currentLineHtml);
+                }
+            }
+
+            tempDiv = null;
+
+            outputDiv.innerHTML = uniqueLines.join('\n');
+            alert('重複項目已移除！');
+        }
+
+        /**
+         * Re-sorts the data by item name from the global _labData object and displays a timeline.
+         */
+        function timelineSort() {
+            const timelineOutputDiv = document.getElementById('timelineResult');
+
+            if (Object.keys(_labData).length === 0) {
+                alert('沒有可供整理的資料。請先「整理與分析」。');
+                return;
+            }
+
+            const itemData = {};
+
+            // 1. 從全域變數 _labData 重新組織資料，改以項目名稱為 key
+            for (const date in _labData) {
+                const dailyItems = _labData[date].items;
+                dailyItems.forEach(item => {
+                    const key = `${item.name} (${item.unit})`;
+                    if (!itemData[key]) {
+                        itemData[key] = [];
+                    }
+                    itemData[key].push({
+                        date: date,
+                        value: item.value,
+                        cssClass: item.cssClass
+                    });
+                });
+            }
+
+            // 2. 產生時間軸 HTML
+            let timelineHtml = '';
+            const sortedItemNames = Object.keys(itemData).sort();
+
+            const convertMinguoToDate = (minguoDate) => {
+                const parts = minguoDate.split('/');
+                if (parts.length !== 3) return new Date(0);
+                const year = parseInt(parts[0], 10) + 1911;
+                const month = parseInt(parts[1], 10) - 1;
+                const day = parseInt(parts[2], 10);
+                return new Date(year, month, day);
+            };
+
+            sortedItemNames.forEach(name => {
+                timelineHtml += `<div><strong>${name}:</strong> `;
+
+                const sortedResults = itemData[name].sort((a, b) => convertMinguoToDate(a.date) - convertMinguoToDate(b.date));
+
+                const resultsHtml = sortedResults.map(res =>
+                    `<span class="${res.cssClass}">${res.value}(${res.date})</span>`
+                ).join(' → ');
+
+                timelineHtml += resultsHtml + '</div>\n';
+            });
+
+            timelineOutputDiv.innerHTML = timelineHtml.trim();
+            alert('已產生時間軸檢視！');
+        }
+
+    </script>
 </body>
 
 </html>
