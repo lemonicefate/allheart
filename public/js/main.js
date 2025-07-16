@@ -1,62 +1,135 @@
-// main.js
+// main.js - 主要頁面邏輯
 
-// 1. 定義所有按鈕的資料
-const buttons = [
-    { href: 'amoxicillin-dose-calculator.html', text: '兒童Amoxicillin劑量計算', category: 'tools', color: 'blue' },
-    { href: 'pediatric-antibiotic-calculator.html', text: '兒童抗生素計算機', category: 'tools', color: 'blue' },
-    { href: 'children-steroid-dose-calculator.html', text: '兒童類固醇計算機', category: 'tools', color: 'blue' },
-    { href: 'health-check-analyzer.html', text: '健檢報告數值分析器', category: 'tools', color: 'blue' },
-    { href: 'lipid-calculator.html', text: '血脂計算機', category: 'tools', color: 'blue' },
-    { href: 'cloud-report-organizer.html', text: '健保雲端報告整理工具2.0', category: 'tools', color: 'blue' },
-    { href: 'timer-for-bppv.html', text: 'BPPV復位計時工具', category: 'tools', color: 'blue' },
-
-    { href: 'nasal-spray.html', text: '鼻噴劑', category: 'ent', color: 'orange' },
-    { href: 'inferior-turbinate-rfa.html', text: '下鼻甲RFA', category: 'ent', color: 'orange' },
-    { href: 'osas.html', text: '睡眠呼吸中止症候群', category: 'ent', color: 'orange' },
-    { href: 'trigeminal-neuralgia.html', text: '三叉神經痛', category: 'ent', color: 'orange' },
-    { href: 'vertigo.html', text: '眩暈', category: 'ent', color: 'orange' },
-    { href: 'carotid-ultrasound.html', text: '頸動脈超音波', category: 'ent', color: 'orange' },
-    { href: 'papilloma-hpv.html', text: '乳突瘤與HPV病毒/疫苗', category: 'ent', color: 'orange' },
-
-
-    { href: 'my-plate-education.html', text: 'My Plate 餐盤衛教', category: 'disease', color: 'green' },
-    { href: 'constipation.html', text: '便祕', category: 'disease', color: 'green' },
-    { href: 'insomnia.html', text: '失眠', category: 'disease', color: 'green' },
-    { href: 'mounjaro.html', text: '猛健樂', category: 'disease', color: 'green' },
-    
-    
-    { href: 'hyperthyroidism.html', text: '甲狀腺亢進', category: 'internal-medicine', color: 'yellow' },
-    { href: 'diabetes-education.html', text: '糖尿病衛教', category: 'internal-medicine', color: 'yellow' },
-    { href: 'hypertension.html', text: '高血壓衛教', category: 'internal-medicine', color: 'yellow' },
-    { href: 'thyroid-medication-pregnancy.html', text: '懷孕甲狀腺用藥', category: 'internal-medicine', color: 'yellow' },
-    { href: 'smoking-cessation-meds.html', text: '戒菸用藥', category: 'internal-medicine', color: 'yellow' },
-
-    { href: 'children-vaccine.html', text: '兒童公費/自費疫苗統整', category: 'infection-disease', color: 'purple' },
-    { href: 'covid-medication.html', text: 'COVID及用藥', category: 'infection-disease', color: 'purple' },
-    { href: 'measles.html', text: '麻疹', category: 'infection-disease', color: 'purple' },
-    { href: 'pneumococcus-vaccine.html', text: '肺炎鏈球菌及疫苗', category: 'infection-disease', color: 'purple' },
-    { href: 'enterovirus.html', text: '腸病毒', category: 'infection-disease', color: 'purple' },
-    { href: 'vzv.html', text: '帶狀皰疹(皮蛇)及疫苗', category: 'infection-disease', color: 'purple' },
-
-];  
+// 1. 初始化工具管理器
+let toolsManager;
 
 // 2. 頁面載入完成後執行
 document.addEventListener('DOMContentLoaded', () => {
-    // 迴圈遍歷所有按鈕資料
-    buttons.forEach(button => {
+    // 初始化工具管理器
+    toolsManager = new ToolsManager();
+    
+    // 獲取所有工具資料
+    const buttons = toolsManager.getAllTools();
+    
+    // 渲染所有工具卡片
+    renderTools(buttons);
+    
+    // 添加淡入動畫
+    animateCards();
+});
+
+// 3. 渲染工具卡片的函數
+function renderTools(buttons) {
+    buttons.forEach((button, index) => {
         // 找到這個按鈕應該被放到哪個 grid 裡
-        const gridId = `${button.category}-grid`; // 例如 'tools-grid', 'ent-grid'
+        const gridId = `${button.category}-grid`;
         const gridContainer = document.getElementById(gridId);
 
         if (gridContainer) {
-            // 3. 建立按鈕的 HTML 字串
-            const buttonHTML = `
-                <a href="${button.href}" class="bg-${button.color}-50 p-6 rounded-md border border-gray-200 shadow-sm hover:shadow-md hover:bg-${button.color}-100 hover:scale-105 transition-all duration-300">
-                    <h3 class="text-lg font-semibold text-black">${button.text}</h3>
-                </a>
-            `;
-            // 4. 將建立好的 HTML 插入到對應的 grid 容器中
+            // 建立按鈕的 HTML 字串
+            const buttonHTML = createToolCard(button, index);
+            // 將建立好的 HTML 插入到對應的 grid 容器中
             gridContainer.insertAdjacentHTML('beforeend', buttonHTML);
         }
     });
-});
+}
+
+// 4. 創建工具卡片 HTML 的函數
+function createToolCard(button, index) {
+    return `
+        <a href="${button.href}" 
+           class="card-hover group relative bg-white rounded-2xl p-6 shadow-lg border border-gray-100 hover:border-${button.color}-200 transition-all duration-300 overflow-hidden"
+           style="animation-delay: ${index * 0.1}s"
+           title="${button.description || button.text}">
+            
+            <!-- 背景漸層效果 -->
+            <div class="absolute inset-0 bg-gradient-to-br from-${button.color}-50 to-${button.color}-100 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+            
+            <!-- 內容 -->
+            <div class="relative z-10">
+                <!-- 圖標區域 -->
+                <div class="flex items-center justify-center w-16 h-16 bg-${button.color}-100 rounded-xl mb-4 group-hover:bg-${button.color}-200 transition-colors duration-300">
+                    <i class="fas ${button.icon} text-2xl text-${button.color}-600 group-hover:text-${button.color}-700"></i>
+                </div>
+                
+                <!-- 標題 -->
+                <h3 class="text-lg font-bold text-gray-800 group-hover:text-${button.color}-800 transition-colors duration-300 leading-tight">
+                    ${button.text}
+                </h3>
+                
+                <!-- 描述（如果有的話） -->
+                ${button.description && button.description !== button.text ? 
+                    `<p class="text-sm text-gray-600 mt-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                        ${button.description}
+                    </p>` : ''
+                }
+                
+                <!-- 箭頭圖標 -->
+                <div class="flex justify-end mt-4">
+                    <i class="fas fa-arrow-right text-${button.color}-500 opacity-0 group-hover:opacity-100 transform translate-x-2 group-hover:translate-x-0 transition-all duration-300"></i>
+                </div>
+            </div>
+            
+            <!-- 裝飾性元素 -->
+            <div class="absolute -top-4 -right-4 w-24 h-24 bg-${button.color}-200 rounded-full opacity-10 group-hover:opacity-20 transition-opacity duration-300"></div>
+        </a>
+    `;
+}
+
+// 5. 卡片動畫函數
+function animateCards() {
+    const cards = document.querySelectorAll('.card-hover');
+    cards.forEach((card, index) => {
+        setTimeout(() => {
+            card.style.opacity = '0';
+            card.style.transform = 'translateY(20px)';
+            card.style.transition = 'opacity 0.6s ease-out, transform 0.6s ease-out';
+            
+            requestAnimationFrame(() => {
+                card.style.opacity = '1';
+                card.style.transform = 'translateY(0)';
+            });
+        }, index * 100);
+    });
+}
+
+// 6. 動態新增工具的函數（供開發者使用）
+function addNewTool(category, toolData) {
+    if (toolsManager.addTool(category, toolData)) {
+        // 重新渲染該分類的工具
+        refreshCategory(category);
+        console.log(`成功新增工具: ${toolData.text}`);
+        return true;
+    }
+    return false;
+}
+
+// 7. 重新渲染特定分類的函數
+function refreshCategory(category) {
+    const gridContainer = document.getElementById(`${category}-grid`);
+    if (gridContainer) {
+        // 清空現有內容
+        gridContainer.innerHTML = '';
+        
+        // 重新渲染該分類的工具
+        const categoryTools = toolsManager.getToolsByCategory(category);
+        const categoryColor = toolsManager.categories[category].color;
+        
+        categoryTools.forEach((tool, index) => {
+            const toolWithCategory = {
+                ...tool,
+                category: category,
+                color: categoryColor
+            };
+            const buttonHTML = createToolCard(toolWithCategory, index);
+            gridContainer.insertAdjacentHTML('beforeend', buttonHTML);
+        });
+        
+        // 重新添加動畫
+        animateCards();
+    }
+}
+
+// 8. 導出函數供全域使用
+window.addNewTool = addNewTool;
+window.refreshCategory = refreshCategory;

@@ -90,16 +90,6 @@
 </head>
 <body class="text-gray-800">
 
-    <nav class="sticky top-0 z-50 bg-white shadow-md py-3">
-        <div class="container mx-auto px-4 flex flex-wrap justify-center items-center space-x-2 md:space-x-4">
-            <a href="#intro" class="nav-item text-sm md:text-base">🚀 總覽</a>
-            <a href="#steroid" class="nav-item text-sm md:text-base">🛡️ 類固醇型</a>
-            <a href="#vasoconstrictor" class="nav-item text-sm md:text-base">⚡ 去充血劑</a>
-            <a href="#comparison" class="nav-item text-sm md:text-base">⚖️ 兩者比較</a>
-            <a href="#safety" class="nav-item text-sm md:text-base">💡 安全用藥</a>
-        </div>
-    </nav>
-
     <div class="container mx-auto p-4 md:p-8">
         <header class="text-center mb-12">
             <h1 class="text-4xl md:text-5xl font-bold mb-4 section-title">鼻噴劑大解密</h1>
@@ -544,5 +534,23 @@
     });
 
 </script>
+
+    <!-- 必要的 JavaScript 文件 -->
+
+    <!-- 初始化頂部欄和側邊欄 -->
+    
+    <!-- 必要的 JavaScript 文件 -->
+    <script src="js/tools-config.js"></script>
+    <script src="components/header-sidebar.js"></script>
+
+    <!-- 初始化頂部欄和側邊欄 -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            initHeaderSidebar({
+                currentPage: 'nasal-spray',
+                pageTitle: '醫療工具百寶箱'
+            });
+        });
+    </script>
 </body>
 </html>

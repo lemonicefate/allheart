@@ -170,7 +170,6 @@
             });
         });
 
-
         // 事件委派：監聽結果容器內的點擊事件，用於展開/收合卡片
         resultsContainer.addEventListener('click', (event) => {
             const header = event.target.closest('.result-header');
@@ -630,6 +629,24 @@
             return { title: `Acyclovir (Virless ${drugUnitMg}mg) (膠囊)`, content, note };
         }
 
+    </script>
+
+    <!-- 必要的 JavaScript 文件 -->
+
+    <!-- 初始化頂部欄和側邊欄 -->
+    
+    <!-- 必要的 JavaScript 文件 -->
+    <script src="js/tools-config.js"></script>
+    <script src="components/header-sidebar.js"></script>
+
+    <!-- 初始化頂部欄和側邊欄 -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            initHeaderSidebar({
+                currentPage: 'pediatric-antibiotic-calculator',
+                pageTitle: '醫療工具百寶箱'
+            });
+        });
     </script>
 </body>
 </html>

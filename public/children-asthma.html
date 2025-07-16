@@ -49,14 +49,7 @@
 
     <!-- Tabs Navigation -->
     <div class="mb-8 border-b border-slate-300">
-      <nav class="flex flex-wrap -mb-px" aria-label="Tabs">
-        <button class="tab-btn tab-active text-lg font-medium px-4 py-3 border-b-2" data-tab="under5">
-          <span class="mr-2">🧒</span>5歲(含)以下兒童
-        </button>
-        <button class="tab-btn tab-inactive text-lg font-medium px-4 py-3 border-b-2" data-tab="over6">
-          <span class="mr-2">🧑</span>6歲以上兒童及青少年
-        </button>
-      </nav>
+      
     </div>
 
     <!-- Tab Content -->
@@ -151,36 +144,18 @@
 
   </div>
 
-  <script>
-    document.addEventListener('DOMContentLoaded', () => {
-      const tabs = document.querySelectorAll('.tab-btn');
-      const tabContents = document.querySelectorAll('.tab-content');
+    <!-- 必要的 JavaScript 文件 -->
+    <script src="js/tools-config.js"></script>
+    <script src="components/header-sidebar.js"></script>
 
-      tabs.forEach(tab => {
-        tab.addEventListener('click', () => {
-          // Deactivate all tabs
-          tabs.forEach(item => {
-            item.classList.remove('tab-active');
-            item.classList.add('tab-inactive');
-          });
-          // Activate clicked tab
-          tab.classList.add('tab-active');
-          tab.classList.remove('tab-inactive');
-
-          const target = tab.getAttribute('data-tab');
-          // Hide all tab contents
-          tabContents.forEach(content => {
-            if (content.id === target) {
-              content.classList.remove('hidden');
-            } else {
-              content.classList.add('hidden');
-            }
-          });
+    <!-- 初始化頂部欄和側邊欄 -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            initHeaderSidebar({
+                currentPage: 'children-asthma',
+                pageTitle: '醫療工具百寶箱'
+            });
         });
-      });
-    });
-  </script>
-
+    </script>
 </body>
-
 </html>

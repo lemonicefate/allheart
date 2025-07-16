@@ -504,6 +504,23 @@
         }
 
     </script>
-</body>
 
+    <!-- 必要的 JavaScript 文件 -->
+
+    <!-- 初始化頂部欄和側邊欄 -->
+    
+    <!-- 必要的 JavaScript 文件 -->
+    <script src="js/tools-config.js"></script>
+    <script src="components/header-sidebar.js"></script>
+
+    <!-- 初始化頂部欄和側邊欄 -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            initHeaderSidebar({
+                currentPage: 'cloud-report-organizer',
+                pageTitle: '醫療工具百寶箱'
+            });
+        });
+    </script>
+</body>
 </html>

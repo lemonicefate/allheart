@@ -2,7 +2,7 @@
 
 This website provides a variety of health information and practical tools, designed to provide visual aids and streamline the consultation process.
 
-## [Homepage](index.html)
+## [Homepage](public/index.html)
 
 ### Health Calculators
 

@@ -1,0 +1,25 @@
+<!-- 複製以下代碼到每個頁面的 </body> 前 -->
+
+<!-- 必要的 JavaScript 文件 -->
+<script src="js/tools-config.js"></script>
+<script src="components/header-sidebar.js"></script>
+
+<!-- 初始化頂部欄和側邊欄 -->
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        initHeaderSidebar({
+            currentPage: 'PAGE_ID_HERE',  // 替換為對應的頁面 ID
+            pageTitle: '誠心醫療體系的醫療工具箱'
+        });
+    });
+</script>
+
+<!-- 
+頁面 ID 對照表：
+- amoxicillin-dose-calculator.html → 'amoxicillin-dose-calculator'
+- anemia.html → 'anemia'
+- diabetes-education.html → 'diabetes-education'
+- hypertension.html → 'hypertension'
+- asthma-control.html → 'asthma-control'
+... (其他頁面類推，去掉 .html 後綴)
+-->

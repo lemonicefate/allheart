@@ -203,20 +203,6 @@
 </head>
 <body class="antialiased text-gray-800">
 
-    <nav class="sticky-nav hidden md:block">
-        <div class="container mx-auto px-4">
-            <div class="flex justify-center space-x-4">
-                <a href="#severe-symptoms" class="nav-button">重症警示</a>
-                <a href="#timing" class="nav-button">治療時機</a>
-                <a href="#risk-factors" class="nav-button">風險因子</a>
-                <a href="#oral-drugs" class="nav-button">口服藥物</a>
-                <a href="#contraindications-table" class="nav-button">禁忌速查</a>
-                <a href="#ddi" class="nav-button">藥物交互作用</a>
-                <a href="#taichung-pharmacies" class="nav-button">臺中領藥機構</a>
-            </div>
-        </div>
-    </nav>
-
     <header class="bg-gradient-to-r from-primary to-secondary py-12 sm:py-16 text-center">
         <div class="container mx-auto px-4">
             <h1 class="text-3xl sm:text-4xl md:text-5xl font-bold mb-4 text-slate-900">台灣COVID-19抗病毒藥物使用指引摘要</h1>
@@ -722,6 +708,23 @@
             });
         });
 
+    </script>
+    <!-- 必要的 JavaScript 文件 -->
+
+    <!-- 初始化頂部欄和側邊欄 -->
+    
+    <!-- 必要的 JavaScript 文件 -->
+    <script src="js/tools-config.js"></script>
+    <script src="components/header-sidebar.js"></script>
+
+    <!-- 初始化頂部欄和側邊欄 -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            initHeaderSidebar({
+                currentPage: 'covid-medication',
+                pageTitle: '醫療工具百寶箱'
+            });
+        });
     </script>
 </body>
 </html>

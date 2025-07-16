@@ -270,14 +270,6 @@
         </header>
 
         <!-- Tab Navigation -->
-        <nav class="tab-nav" aria-label="主要導覽">
-            <button class="tab-button active" onclick="openPage('page-home')">首頁</button>
-            <button class="tab-button" onclick="openPage('page-nasal-causes')">鼻塞的原因</button>
-            <button class="tab-button" onclick="openPage('page-details')">手術詳情</button>
-            <button class="tab-button" onclick="openPage('page-comparison')">方案比較</button>
-            <button class="tab-button" onclick="openPage('page-faq')">常見問答</button>
-            <button class="tab-button" onclick="openPage('page-process')">費用與流程</button>
-        </nav>
 
         <!-- Page Content Wrapper -->
         <main>
@@ -703,6 +695,23 @@
             }
         });
     </script>
-</body>
 
+    <!-- 必要的 JavaScript 文件 -->
+
+    <!-- 初始化頂部欄和側邊欄 -->
+    
+    <!-- 必要的 JavaScript 文件 -->
+    <script src="js/tools-config.js"></script>
+    <script src="components/header-sidebar.js"></script>
+
+    <!-- 初始化頂部欄和側邊欄 -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            initHeaderSidebar({
+                currentPage: 'inferior-turbinate-rfa',
+                pageTitle: '醫療工具百寶箱'
+            });
+        });
+    </script>
+</body>
 </html>

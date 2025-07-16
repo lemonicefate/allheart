@@ -126,6 +126,23 @@
     // 頁面載入時初始化計時器
     window.onload = resetTimer;
   </script>
-</body>
 
+    <!-- 必要的 JavaScript 文件 -->
+
+    <!-- 初始化頂部欄和側邊欄 -->
+    
+    <!-- 必要的 JavaScript 文件 -->
+    <script src="js/tools-config.js"></script>
+    <script src="components/header-sidebar.js"></script>
+
+    <!-- 初始化頂部欄和側邊欄 -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            initHeaderSidebar({
+                currentPage: 'timer-for-bppv',
+                pageTitle: '醫療工具百寶箱'
+            });
+        });
+    </script>
+</body>
 </html>

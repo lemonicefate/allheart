@@ -84,12 +84,7 @@
         <div class="flex items-center">
           <span class="text-xl md:text-2xl font-bold text-blue-600">肺炎鏈球菌疫苗互動指南</span>
         </div>
-        <nav class="hidden md:flex space-x-8">
-          <a href="#threat" class="text-gray-600 hover:text-blue-600 transition">認識威脅</a>
-          <a href="#vaccines" class="text-gray-600 hover:text-blue-600 transition">疫苗比較</a>
-          <a href="#plan" class="text-gray-600 hover:text-blue-600 transition">您的接種計畫</a>
-          <a href="#faq" class="text-gray-600 hover:text-blue-600 transition">接種實務</a>
-        </nav>
+        
       </div>
     </div>
   </header>
@@ -143,16 +138,7 @@
         市面上的疫苗主要分為「結合型」和「多醣體」兩大類。理解它們的差異是制定最佳防護策略的關鍵，現代策略強調「先求質（結合型），再求量（多醣體）」。</p>
       <div class="bg-white rounded-lg shadow-lg p-4 sm:p-6 lg:p-8">
         <div class="mb-6 border-b border-gray-200">
-          <nav class="flex -mb-px" id="vaccineTabs">
-            <button data-vaccine="PCV13"
-              class="vaccine-tab tab-active py-4 px-6 text-center border-b-2 font-medium text-sm transition">PCV13</button>
-            <button data-vaccine="PPV23"
-              class="vaccine-tab tab-inactive py-4 px-6 text-center border-b-2 font-medium text-sm transition">PPV23</button>
-            <button data-vaccine="PCV15"
-              class="vaccine-tab tab-inactive py-4 px-6 text-center border-b-2 font-medium text-sm transition">PCV15</button>
-            <button data-vaccine="PCV20"
-              class="vaccine-tab tab-inactive py-4 px-6 text-center border-b-2 font-medium text-sm transition">PCV20</button>
-          </nav>
+          
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
@@ -261,248 +247,18 @@
     </div>
   </footer>
 
-  <script>
-    document.addEventListener('DOMContentLoaded', function () {
+    <!-- 必要的 JavaScript 文件 -->
+    <script src="js/tools-config.js"></script>
+    <script src="components/header-sidebar.js"></script>
 
-      const vaccineData = {
-        PCV13: {
-          name: 'PCV13 (13價結合型疫苗)',
-          description: '以能誘導高品質、高強度且持久的免疫反應而聞名，能產生關鍵的「免疫記憶」。是台灣嬰幼兒常規接種與成人高風險族群建議中的核心疫苗。',
-          features: { coverage: 13, quality: 90, duration: 85 }
-        },
-        PPV23: {
-          name: 'PPV23 (23價多醣體疫苗)',
-          description: '涵蓋血清型最廣，但其誘導的免疫反應強度與持久性均不如結合型疫苗，且無法產生有效免疫記憶。主要用於成人，作為擴大保護光譜的輔助角色。',
-          features: { coverage: 23, quality: 60, duration: 50 }
-        },
-        PCV15: {
-          name: 'PCV15 (15價結合型疫苗)',
-          description: '新一代結合型疫苗，在PCV13基礎上額外增加2種血清型(22F, 33F)，以應對「血清型置換」現象。目前在台灣部分院所可自費接種。',
-          features: { coverage: 15, quality: 92, duration: 88 }
-        },
-        PCV20: {
-          name: 'PCV20 (20價結合型疫苗)',
-          description: '最新一代結合型疫苗，提供更廣泛的結合型疫苗保護。目前在台灣尚未引進。其免疫反應品質與持久性預期與其他結合型疫苗相當。',
-          features: { coverage: 20, quality: 95, duration: 90 }
-        }
-      };
-
-      const vaccineDetailsContainer = document.getElementById('vaccineDetails');
-      const vaccineTabs = document.querySelectorAll('.vaccine-tab');
-      const vaccineChartCanvas = document.getElementById('vaccineChart').getContext('2d');
-      let vaccineChart;
-
-      function renderVaccineDetails(vaccineKey) {
-        const data = vaccineData[vaccineKey];
-        vaccineDetailsContainer.innerHTML = `
-                    <h3 class="text-2xl font-bold mb-3 text-gray-900">${data.name}</h3>
-                    <p class="text-gray-600 mb-4">${data.description}</p>
-                    <div class="space-y-2">
-                        <div class="flex items-center"><span class="font-semibold w-28">疫苗技術:</span> <span class="px-2 py-1 bg-blue-100 text-blue-800 rounded-md text-sm">${data.name.includes('結合型') ? '結合型' : '多醣體'}</span></div>
-                        <div class="flex items-center"><span class="font-semibold w-28">涵蓋血清型:</span> <span class="font-bold text-lg">${data.features.coverage} 種</span></div>
-                        <div class="flex items-center"><span class="font-semibold w-28">免疫記憶:</span> <span class="font-bold ${data.name.includes('結合型') ? 'text-green-600' : 'text-red-600'}">${data.name.includes('結合型') ? '可產生' : '無法有效產生'}</span></div>
-                    </div>
-                `;
-      }
-
-      function renderChart(vaccineKey) {
-        const data = vaccineData[vaccineKey];
-        const chartData = {
-          labels: ['涵蓋廣度 (血清型數量)', '保護力品質', '保護持久性'],
-          datasets: [{
-            label: data.name,
-            data: [data.features.coverage, data.features.quality, data.features.duration],
-            backgroundColor: 'rgba(59, 130, 246, 0.6)',
-            borderColor: 'rgba(59, 130, 246, 1)',
-            borderWidth: 1,
-            barThickness: 40,
-          }]
-        };
-
-        const chartOptions = {
-          responsive: true,
-          maintainAspectRatio: false,
-          indexAxis: 'y',
-          scales: {
-            x: {
-              beginAtZero: true,
-              max: 100,
-              ticks: {
-                callback: function (value, index, values) {
-                  if (this.getLabelForValue(value).includes('血清型')) return value;
-                  return value + '%';
-                }
-              }
-            },
-            y: {
-              ticks: {
-                font: {
-                  size: 14,
-                }
-              }
-            }
-          },
-          plugins: {
-            legend: {
-              display: false
-            },
-            tooltip: {
-              callbacks: {
-                label: function (context) {
-                  let label = context.dataset.label || '';
-                  if (label) {
-                    label += ': ';
-                  }
-                  if (context.parsed.x !== null) {
-                    if (context.label.includes('血清型')) {
-                      label += `${context.parsed.x} 種`;
-                    } else {
-                      label += `${context.parsed.x}% (示意)`;
-                    }
-                  }
-                  return label;
-                }
-              }
-            }
-          }
-        };
-
-        if (vaccineChart) {
-          vaccineChart.data = chartData;
-          vaccineChart.update();
-        } else {
-          vaccineChart = new Chart(vaccineChartCanvas, {
-            type: 'bar',
-            data: chartData,
-            options: chartOptions,
-          });
-        }
-      }
-
-      vaccineTabs.forEach(tab => {
-        tab.addEventListener('click', () => {
-          vaccineTabs.forEach(t => t.classList.replace('tab-active', 'tab-inactive'));
-          tab.classList.replace('tab-inactive', 'tab-active');
-          const vaccineKey = tab.dataset.vaccine;
-          renderVaccineDetails(vaccineKey);
-          renderChart(vaccineKey);
+    <!-- 初始化頂部欄和側邊欄 -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            initHeaderSidebar({
+                currentPage: 'pneumococcus-vaccine',
+                pageTitle: '醫療工具百寶箱'
+            });
         });
-      });
-
-      // Initial render
-      renderVaccineDetails('PCV13');
-      renderChart('PCV13');
-
-      // Recommendation Logic
-      const ageGroupContainer = document.getElementById('ageGroup');
-      const historyStep = document.getElementById('historyStep');
-      const historyContainer = document.getElementById('vaccineHistory');
-      const resultContainer = document.getElementById('recommendationResult');
-      let selectedAge = null;
-      let selectedHistory = null;
-
-      function createRecommendationHtml(title, steps) {
-        let stepsHtml = steps.map((step, index) => `
-                    <div class="flex items-center">
-                        <div class="step-bubble">${index + 1}</div>
-                        <div class="ml-4">
-                            <h4 class="font-bold">${step.action}</h4>
-                            <p class="text-sm text-gray-600">${step.details}</p>
-                        </div>
-                    </div>
-                `).join('<div class="arrow-right hidden md:block"></div>');
-
-        return `
-                    <div class="plan-card p-6 rounded-lg">
-                        <h3 class="text-xl font-bold mb-4 text-blue-800">${title}</h3>
-                        <div class="flex flex-col md:flex-row items-start md:items-center space-y-4 md:space-y-0">
-                           ${stepsHtml}
-                        </div>
-                    </div>
-                    <p class="text-xs text-gray-500 mt-2 text-center">此為根據疾管署公開資料的建議，實際狀況請諮詢醫師。</p>
-                `;
-      }
-
-      function updateRecommendation() {
-        if (!selectedAge) {
-          resultContainer.innerHTML = '';
-          return;
-        }
-
-        if (selectedAge === 'infant') {
-          historyStep.classList.add('hidden');
-          resultContainer.innerHTML = createRecommendationHtml(
-            "嬰幼兒公費接種建議 (2+1劑)",
-            [
-              { action: '第一劑', details: '出生滿 2 個月' },
-              { action: '第二劑', details: '出生滿 4 個月' },
-              { action: '追加劑', details: '出生滿 12-15 個月' }
-            ]
-          );
-          return;
-        }
-
-        historyStep.classList.remove('hidden');
-        if (!selectedHistory) {
-          resultContainer.innerHTML = '';
-          return;
-        }
-
-        let title = selectedAge === 'senior' ? '65歲以上長者接種建議' : '19-64歲高風險族群接種建議';
-        let recommendationHtml = '';
-        const interval = selectedAge === 'senior' ? '至少1年' : '至少8週';
-        const highRiskNote = selectedAge === 'senior' ? `(高風險對象可縮短至${interval})` : '';
-
-        switch (selectedHistory) {
-          case 'none':
-            recommendationHtml = createRecommendationHtml(title, [
-              { action: '接種 1 劑 PCV13/15', details: '建立高品質、長期的免疫基礎' },
-              { action: '接種 1 劑 PPV23', details: `間隔${interval}後 ${highRiskNote}，擴大保護範圍` }
-            ]);
-            break;
-          case 'ppv23':
-            recommendationHtml = createRecommendationHtml(title, [
-              { action: '接種 1 劑 PCV13/15', details: `與前一劑PPV23間隔至少1年後，補強免疫記憶與保護力品質` }
-            ]);
-            break;
-          case 'pcv':
-            recommendationHtml = createRecommendationHtml(title, [
-              { action: '接種 1 劑 PPV23', details: `與前一劑PCV13/15間隔${interval}後 ${highRiskNote}，擴大保護範圍` }
-            ]);
-            break;
-          case 'both':
-            recommendationHtml = createRecommendationHtml("您已完成現行建議", [
-              { action: '已完成序貫接種', details: '目前無需再追加，請持續注意最新的公衛建議' }
-            ]);
-            break;
-        }
-        resultContainer.innerHTML = recommendationHtml;
-      }
-
-      ageGroupContainer.addEventListener('click', (e) => {
-        if (e.target.tagName === 'BUTTON') {
-          selectedAge = e.target.dataset.age;
-          selectedHistory = null;
-
-          document.querySelectorAll('#ageGroup button').forEach(btn => btn.classList.remove('bg-blue-600', 'text-white', 'border-blue-600'));
-          e.target.classList.add('bg-blue-600', 'text-white', 'border-blue-600');
-
-          document.querySelectorAll('#vaccineHistory button').forEach(btn => btn.classList.remove('bg-blue-600', 'text-white', 'border-blue-600'));
-
-          updateRecommendation();
-        }
-      });
-
-      historyContainer.addEventListener('click', (e) => {
-        if (e.target.tagName === 'BUTTON') {
-          selectedHistory = e.target.dataset.history;
-          document.querySelectorAll('#vaccineHistory button').forEach(btn => btn.classList.remove('bg-blue-600', 'text-white', 'border-blue-600'));
-          e.target.classList.add('bg-blue-600', 'text-white', 'border-blue-600');
-          updateRecommendation();
-        }
-      });
-    });
-  </script>
+    </script>
 </body>
-
 </html>

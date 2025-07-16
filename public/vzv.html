@@ -97,17 +97,7 @@
 
         <section id="vzv-details" class="mb-16">
             <div class="border-b border-gray-200">
-                <nav class="-mb-px flex space-x-8" aria-label="Tabs">
-                    <button onclick="changeTab(event, 'varicella')" class="tab-button whitespace-nowrap py-4 px-1 border-b-2 font-medium text-lg border-indigo-500 text-indigo-600" aria-current="page">
-                        水痘
-                    </button>
-                    <button onclick="changeTab(event, 'shingles')" class="tab-button whitespace-nowrap py-4 px-1 border-b-2 font-medium text-lg border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300">
-                        帶狀疱疹
-                    </button>
-                    <button onclick="changeTab(event, 'vaccine-choice')" class="tab-button whitespace-nowrap py-4 px-1 border-b-2 font-medium text-lg border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300">
-                        疫苗如何選擇
-                    </button>
-                </nav>
+                
             </div>
 
             <div class="mt-8">
@@ -141,7 +131,6 @@
                         </div>
                     </section>
 
-                    
                     <section id="complications" class="mb-16">
                         <h2 class="text-3xl font-bold text-center mb-8 text-[#003F5C]">不只是「出水痘」：水痘的潛在威脅</h2>
                         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -214,7 +203,6 @@
                              <p class="mt-6 text-center text-gray-600">結論：兩劑方案能將突破性感染風險降低約 <span class="font-bold text-xl text-[#003F5C]">3.3倍</span>，並提供更全面、更持久的保護。</p>
                         </div>
                     </section>
-                    
 
                     <section id="vaccine-guidelines" class="mb-16">
                         <h2 class="text-3xl font-bold text-center mb-12 text-[#003F5C]">水痘疫苗接種須知</h2>
@@ -616,6 +604,24 @@
                 });
             }
         }
+    </script>
+
+    <!-- 必要的 JavaScript 文件 -->
+
+    <!-- 初始化頂部欄和側邊欄 -->
+    
+    <!-- 必要的 JavaScript 文件 -->
+    <script src="js/tools-config.js"></script>
+    <script src="components/header-sidebar.js"></script>
+
+    <!-- 初始化頂部欄和側邊欄 -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            initHeaderSidebar({
+                currentPage: 'vzv',
+                pageTitle: '醫療工具百寶箱'
+            });
+        });
     </script>
 </body>
 </html>

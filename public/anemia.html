@@ -1,15 +1,47 @@
 <!DOCTYPE html>
-<html lang="zh-TW">
+<html lang="zh-TW" class="scroll-smooth">
 
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>貧血全方位互動指南</title>
+  <title>貧血全方位互動指南 - 醫療工具百寶箱</title>
+  <meta name="description" content="全面的貧血診斷與治療指南，包含互動式診斷流程和詳細的疾病資訊。">
+  
+  <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- Chart.js -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  
+  <!-- Font Awesome -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+  
+  <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
+  
+  <!-- Tailwind Config -->
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            primary: {
+              50: '#eff6ff',
+              100: '#dbeafe',
+              500: '#3b82f6',
+              600: '#2563eb',
+              700: '#1d4ed8',
+              800: '#1e40af',
+              900: '#1e3a8a'
+            }
+          }
+        }
+      }
+    }
+  </script>
   <!-- Chosen Palette: Warm Neutrals with Soft Terracotta Accents -->
   <!-- Application Structure Plan: A 4-tab SPA designed to guide the user from general knowledge to specific actions. Tab 1 (Overview) establishes foundational concepts and symptom awareness. Tab 2 (Diagnostic Journey) features an interactive HTML/CSS flowchart that visually simulates the clinical decision-making process based on MCV, making the complex logic from the report digestible and engaging. Tab 3 (Anemia Types) uses expandable cards to present detailed information on various anemias, preventing cognitive overload. Tab 4 (Treatment & Prevention) provides actionable advice, including an enhanced dietary guide and crucial principles like transfusion and genetic counseling. This task-oriented structure is more user-friendly than a linear report, allowing users to explore content based on their immediate questions. -->
   <!-- Visualization & Content Choices: Report's diagnostic logic -> Goal: Organize/Guide -> Viz: Interactive HTML/CSS flowchart with clickable nodes to reveal diagnostic paths. Justification: Visually simplifies a complex decision tree. Report's IDA vs. Thalassemia lab data -> Goal: Compare -> Viz: Dynamic horizontal bar chart (Chart.js/Canvas) to visually contrast key values. Justification: More intuitive and impactful than a static table. Report's detailed info on each anemia type -> Goal: Inform -> Viz: Expandable HTML info cards. Justification: Manages information density and allows focused learning. Report's dietary info -> Goal: Inform/Action -> Viz: Structured HTML grid with icons. Justification: Clear, scannable, and practical. -->
@@ -128,20 +160,24 @@
   </style>
 </head>
 
-<body class="antialiased">
+<body class="bg-gray-50 dark:bg-gray-900 transition-colors duration-300">
+    <!-- 頂部導航欄 -->
 
-  <div class="container mx-auto p-4 md:p-6 max-w-7xl">
+    <!-- 側邊欄遮罩 (移動端) -->
+
+    <!-- 側邊欄 -->
+
+    <!-- 主內容區 -->
+    <main>
+        <div class="p-6 lg:p-8">
+            <!-- 麵包屑導航 -->
+
+            <!-- 原有內容區域 -->
+            <div class="container mx-auto max-w-7xl bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6">
     <header class="text-center mb-8">
       <h1 class="text-4xl md:text-5xl font-bold text-[#C75D2F]">貧血全方位互動指南</h1>
       <p class="mt-3 text-lg text-gray-600">一個基於臨床實證的貧血探索、理解與管理工具</p>
     </header>
-
-    <nav class="flex flex-wrap justify-center gap-2 md:gap-4 mb-8 bg-white p-3 rounded-xl shadow-sm sticky top-2 z-10">
-      <button data-tab="overview" class="nav-btn px-4 py-2 rounded-lg text-gray-700">總覽與症狀</button>
-      <button data-tab="diagnosis" class="nav-btn px-4 py-2 rounded-lg text-gray-700">互動診斷流程</button>
-      <button data-tab="types" class="nav-btn px-4 py-2 rounded-lg text-gray-700">貧血類型詳解</button>
-      <button data-tab="management" class="nav-btn px-4 py-2 rounded-lg text-gray-700">治療與預防</button>
-    </nav>
 
     <main id="app-content">
       <!-- Section 1: Overview -->
@@ -401,114 +437,18 @@
     </footer>
   </div>
 
-  <script>
-    document.addEventListener('DOMContentLoaded', function () {
-      const navButtons = document.querySelectorAll('.nav-btn');
-      const contentSections = document.querySelectorAll('.content-section');
-      const typeCards = document.querySelectorAll('.type-card');
-      const flowchartNodes = {
-        micro: document.getElementById('mcv-micro'),
-        normo: document.getElementById('mcv-normo'),
-        macro: document.getElementById('mcv-macro')
-      };
-      const flowchartPaths = {
-        micro: document.getElementById('micro-path'),
-        normo: document.getElementById('normo-path'),
-        macro: document.getElementById('macro-path')
-      };
-      let microcyticChartInstance = null;
+    <!-- 必要的 JavaScript 文件 -->
+    <script src="js/tools-config.js"></script>
+    <script src="components/header-sidebar.js"></script>
 
-      function switchTab(tabId) {
-        navButtons.forEach(btn => btn.classList.toggle('active', btn.dataset.tab === tabId));
-        contentSections.forEach(section => section.classList.toggle('active', section.id === tabId));
-      }
-
-      navButtons.forEach(button => {
-        button.addEventListener('click', () => switchTab(button.dataset.tab));
-      });
-
-      typeCards.forEach(card => {
-        card.addEventListener('click', () => {
-          const detailsId = card.id ? card.id + '-details' : card.dataset.card + '-details';
-          document.getElementById(detailsId)?.classList.toggle('open');
+    <!-- 初始化頂部欄和側邊欄 -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            initHeaderSidebar({
+                currentPage: 'anemia',
+                pageTitle: '醫療工具百寶箱'
+            });
         });
-      });
-
-      function handleFlowchartClick(pathToShow) {
-        Object.values(flowchartNodes).forEach(node => node.classList.remove('active'));
-        Object.values(flowchartPaths).forEach(path => path.classList.remove('active'));
-
-        if (pathToShow) {
-          flowchartNodes[pathToShow].classList.add('active');
-          flowchartPaths[pathToShow].classList.add('active');
-          if (pathToShow === 'micro') {
-            createMicrocyticChart();
-          }
-        }
-      }
-
-      flowchartNodes.micro.addEventListener('click', () => handleFlowchartClick('micro'));
-      flowchartNodes.normo.addEventListener('click', () => handleFlowchartClick('normo'));
-      flowchartNodes.macro.addEventListener('click', () => handleFlowchartClick('macro'));
-
-      function createMicrocyticChart() {
-        const ctx = document.getElementById('microcyticChart');
-        if (!ctx || microcyticChartInstance) return;
-
-        const data = {
-          labels: ['血清鐵蛋白 (Ferritin)', '總鐵結合能 (TIBC)', '紅血球分布寬度 (RDW)', '血紅素A2比例 (HbA2)'],
-          datasets: [{
-            label: '缺鐵性貧血 (IDA)',
-            data: [10, 85, 80, 5],
-            backgroundColor: 'rgba(225, 120, 79, 0.6)',
-            borderColor: '#E1784F',
-            borderWidth: 1.5
-          }, {
-            label: '乙型輕型海洋性貧血',
-            data: [70, 15, 10, 90],
-            backgroundColor: 'rgba(75, 192, 192, 0.6)',
-            borderColor: 'rgb(75, 192, 192)',
-            borderWidth: 1.5
-          }]
-        };
-
-        const tooltips = {
-          callbacks: {
-            label: function (context) {
-              let label = context.dataset.label || '';
-              if (label) { label += ': '; }
-              const param = context.label;
-              if (param.includes('Ferritin')) label += context.dataset.label.includes('IDA') ? '非常低' : '正常或升高';
-              else if (param.includes('TIBC')) label += context.dataset.label.includes('IDA') ? '升高' : '正常';
-              else if (param.includes('RDW')) label += context.dataset.label.includes('IDA') ? '升高' : '正常';
-              else if (param.includes('HbA2')) label += context.dataset.label.includes('IDA') ? '正常' : '升高 (>3.5%)';
-              return label;
-            }
-          }
-        };
-
-        microcyticChartInstance = new Chart(ctx, {
-          type: 'bar',
-          data: data,
-          options: {
-            indexAxis: 'y',
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-              title: { display: true, text: '小球性貧血關鍵鑑別指標', font: { size: 16 } },
-              tooltip: tooltips,
-              legend: { position: 'bottom' }
-            },
-            scales: { x: { display: false, max: 100 }, y: { beginAtZero: true } }
-          }
-        });
-      }
-
-      switchTab('overview');
-      navButtons[0].classList.add('active');
-    });
-  </script>
-
+    </script>
 </body>
-
 </html>

@@ -1,15 +1,47 @@
 <!DOCTYPE html>
-<html lang="zh-Hant">
+<html lang="zh-TW" class="scroll-smooth">
 
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>最新氣喘治療指南：讓您呼吸不再卡卡</title>
+  <title>最新氣喘治療指南：讓您呼吸不再卡卡 - 醫療工具百寶箱</title>
+  <meta name="description" content="全面的氣喘控制指南，包含最新治療方法、藥物使用和日常管理建議。">
+  
+  <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- Chart.js -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  
+  <!-- Font Awesome -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+  
+  <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
+  
+  <!-- Tailwind Config -->
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            primary: {
+              50: '#eff6ff',
+              100: '#dbeafe',
+              500: '#3b82f6',
+              600: '#2563eb',
+              700: '#1d4ed8',
+              800: '#1e40af',
+              900: '#1e3a8a'
+            }
+          }
+        }
+      }
+    }
+  </script>
   <style>
     body {
       font-family: 'Noto Sans TC', sans-serif;
@@ -69,8 +101,20 @@
   </style>
 </head>
 
-<body class="bg-slate-50 text-slate-800">
-  <div class="container mx-auto p-4 md:p-8">
+<body class="bg-gray-50 dark:bg-gray-900 transition-colors duration-300">
+    <!-- 頂部導航欄 -->
+
+    <!-- 側邊欄遮罩 (移動端) -->
+
+    <!-- 側邊欄 -->
+
+    <!-- 主內容區 -->
+    <main>
+        <div class="p-6 lg:p-8">
+            <!-- 麵包屑導航 -->
+
+            <!-- 原有內容區域 -->
+            <div class="container mx-auto max-w-6xl bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6">
 
     <header class="text-center mb-12">
       <h1 class="text-4xl md:text-5xl font-bold text-[#003f5c] mb-4">最新氣喘治療指南：讓您呼吸不再卡卡</h1>
@@ -259,151 +303,18 @@
     </footer>
   </div>
 
-  <script>
-    document.addEventListener('DOMContentLoaded', function () {
-      const tooltipTitleCallback = (tooltipItems) => {
-        const item = tooltipItems[0];
-        let label = item.chart.data.labels[item.dataIndex];
-        if (Array.isArray(label)) {
-          return label.join(' ');
-        }
-        return label;
-      };
+    <!-- 必要的 JavaScript 文件 -->
+    <script src="js/tools-config.js"></script>
+    <script src="components/header-sidebar.js"></script>
 
-      const sharedChartOptions = {
-        responsive: true,
-        maintainAspectRatio: false,
-        plugins: {
-          legend: {
-            labels: {
-              color: '#003f5c',
-              font: {
-                family: "'Noto Sans TC', sans-serif"
-              }
-            }
-          },
-          tooltip: {
-            callbacks: {
-              title: tooltipTitleCallback
-            },
-            titleFont: {
-              family: "'Noto Sans TC', sans-serif"
-            },
-            bodyFont: {
-              family: "'Noto Sans TC', sans-serif"
-            }
-          }
-        },
-        scales: {
-          x: {
-            ticks: {
-              color: '#2f4b7c',
-              font: {
-                family: "'Noto Sans TC', sans-serif"
-              }
-            },
-            grid: {
-              display: false
-            }
-          },
-          y: {
-            ticks: {
-              color: '#2f4b7c',
-              font: {
-                family: "'Noto Sans TC', sans-serif"
-              }
-            },
-            grid: {
-              color: '#e2e8f0'
-            }
-          }
-        }
-      };
-
-      const sabaParadoxCtx = document.getElementById('sabaParadoxChart').getContext('2d');
-      new Chart(sabaParadoxCtx, {
-        type: 'line',
-        data: {
-          labels: ['初期', '數週後', '數月後', '長期'],
-          datasets: [{
-            label: 'SABA 使用者的主觀感受',
-            data: [100, 80, 60, 40],
-            borderColor: '#ffa600',
-            backgroundColor: '#ffa60033',
-            fill: false,
-            tension: 0.1
-          }, {
-            label: 'SABA 使用者的未來風險',
-            data: [10, 30, 70, 100],
-            borderColor: '#f95d6a',
-            backgroundColor: '#f95d6a33',
-            fill: true,
-            tension: 0.1
-          }, {
-            label: 'ICS/LABA 使用者的未來風險',
-            data: [15, 12, 10, 8],
-            borderColor: '#2f4b7c',
-            backgroundColor: '#2f4b7c33',
-            fill: true,
-            tension: 0.1,
-            borderDash: [5, 5]
-          }]
-        },
-        options: {
-          ...sharedChartOptions,
-          scales: {
-            x: { ...sharedChartOptions.scales.x },
-            y: {
-              ...sharedChartOptions.scales.y,
-              title: { display: true, text: '相對程度', color: '#665191' }
-            }
-          }
-        }
-      });
-
-      
-      new Chart(childGrowthCtx, {
-        type: 'line',
-        data: {
-          labels: ['6歲', '8歲', '10歲', '12歲', '14歲'],
-          datasets: [{
-            label: '正常生長',
-            data: [115, 128, 140, 151, 163],
-            borderColor: '#2f4b7c',
-            fill: false,
-            tension: 0.1,
-            borderDash: [5, 5]
-          }, {
-            label: '未控制的氣喘',
-            data: [114, 125, 134, 142, 150],
-            borderColor: '#f95d6a',
-            fill: false,
-            tension: 0.1
-          }, {
-            label: '經ICS治療的氣喘',
-            data: [114.5, 127, 139, 150, 161.5],
-            borderColor: '#ff7c43',
-            fill: false,
-            tension: 0.1
-          }]
-        },
-        options: {
-          ...sharedChartOptions,
-          scales: {
-            x: { ...sharedChartOptions.scales.x },
-            y: {
-              ...sharedChartOptions.scales.y,
-              title: { display: true, text: '身高 (公分)', color: '#665191' }
-            }
-          },
-          plugins: {
-            ...sharedChartOptions.plugins,
-            legend: { ...sharedChartOptions.plugins.legend, position: 'bottom' }
-          }
-        }
-      });
-    });
-  </script>
+    <!-- 初始化頂部欄和側邊欄 -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            initHeaderSidebar({
+                currentPage: 'asthma-control',
+                pageTitle: '醫療工具百寶箱'
+            });
+        });
+    </script>
 </body>
-
 </html>

@@ -120,26 +120,8 @@
 <body class="bg-stone-50 text-stone-800">
 
   <div class="flex flex-col md:flex-row min-h-screen">
-    <nav id="sidebar"
-      class="w-full md:w-64 bg-white md:bg-teal-700 text-stone-800 md:text-stone-100 p-4 md:p-6 flex-shrink-0 shadow-lg md:shadow-none">
-      <h1 class="text-2xl font-bold text-teal-700 md:text-white mb-6">BPPV 互動指南</h1>
-      <ul class="space-y-2">
-        <li><a href="#home" class="nav-item block py-2 px-4 rounded-lg hover:bg-teal-600 hover:text-white active-nav">🏠
-            首頁</a></li>
-        <li><a href="#understand" class="nav-item block py-2 px-4 rounded-lg hover:bg-teal-600 hover:text-white">🤔 認識
-            BPPV</a></li>
-        <li><a href="#diagnose" class="nav-item block py-2 px-4 rounded-lg hover:bg-teal-600 hover:text-white">🩺
-            診斷與分類</a></li>
-        <li><a href="#treat" class="nav-item block py-2 px-4 rounded-lg hover:bg-teal-600 hover:text-white">🛠️
-            治療：耳石復位術</a></li>
-        <li><a href="#rehab" class="nav-item block py-2 px-4 rounded-lg hover:bg-teal-600 hover:text-white">🚶 復健與照護</a>
-        </li>
-        <li><a href="#faq" class="nav-item block py-2 px-4 rounded-lg hover:bg-teal-600 hover:text-white">❓ 常見問題</a>
-        </li>
-      </ul>
-    </nav>
 
-    <main id="main-content" class="flex-1 p-4 sm:p-6 md:p-10 overflow-y-auto">
+    <main class="flex-1 p-4 sm:p-6 md:p-10 overflow-y-auto">
       <!-- Home Section -->
       <section id="home" class="content-section active">
         <div class="bg-white p-8 rounded-2xl shadow-sm">
@@ -269,11 +251,7 @@
         <div class="bg-white p-8 rounded-2xl shadow-sm">
           <h3 class="text-2xl font-semibold mb-4 text-stone-700">殘餘頭暈：為什麼還會頭暈？</h3>
           <div id="rehab-tabs" class="mb-4 border-b border-gray-200">
-            <nav class="flex space-x-4" aria-label="Tabs">
-              <button class="tab-btn active-tab" data-target="rd-causes">原因探討</button>
-              <button class="tab-btn" data-target="bd-exercises">Brandt-Daroff運動</button>
-              <button class="tab-btn" data-target="vrt-info">前庭復健(VRT)</button>
-            </nav>
+            
           </div>
           <div id="rehab-content">
             <div id="rd-causes" class="tab-content active">
@@ -328,240 +306,18 @@
     </main>
   </div>
 
-  <script>
-    document.addEventListener('DOMContentLoaded', () => {
+    <!-- 必要的 JavaScript 文件 -->
+    <script src="js/tools-config.js"></script>
+    <script src="components/header-sidebar.js"></script>
 
-      const appData = {
-        maneuvers: {
-          epley: {
-            name: "Epley 氏復位術 (右側為例)",
-            steps: [
-              { desc: "1. 坐正，頭轉向患側 (右) 45度。", style: { head: { top: '30%', left: '45%', transform: 'rotate(45deg)' }, body: { top: '50%', left: '40%' } } },
-              { desc: "2. 快速躺下，頭後仰懸空，保持轉向45度。保持30-60秒。", style: { head: { top: '20%', left: '55%', transform: 'rotate(45deg) rotateX(30deg)' }, body: { top: '60%', left: '45%' } } },
-              { desc: "3. 頭轉向健側 (左) 90度，保持後仰。保持30-60秒。", style: { head: { top: '20%', left: '30%', transform: 'rotate(-45deg) rotateX(30deg)' }, body: { top: '60%', left: '45%' } } },
-              { desc: "4. 身體朝健側 (左) 側翻，臉朝下。保持30-60秒。", style: { head: { top: '50%', left: '25%', transform: 'rotate(-90deg)' }, body: { top: '50%', left: '35%', transform: 'rotate(-90deg)' } } },
-              { desc: "5. 緩慢坐起，頭微前傾。", style: { head: { top: '30%', left: '45%', transform: 'rotate(0deg) rotateX(-15deg)' }, body: { top: '50%', left: '40%' } } }
-            ]
-          },
-          bbq: {
-            name: "BBQ 翻滾法 (右側為例)",
-            steps: [
-              { desc: "1. 仰臥，頭轉向患側 (右) 90度。", style: { head: { top: '40%', left: '60%', transform: 'rotate(90deg)' }, body: { top: '40%', left: '40%' } } },
-              { desc: "2. 頭轉回中線，面朝上。", style: { head: { top: '30%', left: '45%' }, body: { top: '40%', left: '40%' } } },
-              { desc: "3. 頭轉向健側 (左) 90度。", style: { head: { top: '40%', left: '30%', transform: 'rotate(-90deg)' }, body: { top: '40%', left: '40%' } } },
-              { desc: "4. 身體與頭繼續翻轉，呈俯臥姿，臉朝下。", style: { head: { top: '60%', left: '45%', opacity: 0.7 }, body: { top: '50%', left: '40%' } } },
-              { desc: "5. 緩慢坐起。", style: { head: { top: '30%', left: '45%' }, body: { top: '50%', left: '40%' } } }
-            ]
-          },
-          gufoni: {
-            name: "Gufoni 氏復位術 (水平向地性，右患側為例)",
-            steps: [
-              { desc: "1. 坐於床邊。", style: { head: { top: '30%', left: '45%' }, body: { top: '50%', left: '40%' } } },
-              { desc: "2. 快速向健側 (左) 躺下。保持1-2分鐘。", style: { head: { top: '50%', left: '30%', transform: 'rotate(-90deg)' }, body: { top: '50%', left: '40%', transform: 'rotate(-90deg)' } } },
-              { desc: "3. 快速將頭向下轉45度 (臉朝地)。保持1-2分鐘。", style: { head: { top: '60%', left: '25%', transform: 'rotate(-135deg)' }, body: { top: '50%', left: '40%', transform: 'rotate(-90deg)' } } },
-              { desc: "4. 緩慢坐起。", style: { head: { top: '30%', left: '45%' }, body: { top: '50%', left: '40%' } } }
-            ]
-          },
-          bd: {
-            name: "Brandt-Daroff 運動",
-            steps: [
-              { desc: "1. 坐正，頭轉向左45度。", style: { head: { top: '30%', left: '45%', transform: 'rotate(-45deg)' }, body: { top: '50%', left: '40%' } } },
-              { desc: "2. 保持頭轉向，快速向右側躺下。保持30秒。", style: { head: { top: '50%', left: '60%', transform: 'rotate(-45deg)' }, body: { top: '50%', left: '50%', transform: 'rotate(90deg)' } } },
-              { desc: "3. 緩慢坐起，休息30秒。", style: { head: { top: '30%', left: '45%' }, body: { top: '50%', left: '40%' } } },
-              { desc: "4. 頭轉向右45度。", style: { head: { top: '30%', left: '45%', transform: 'rotate(45deg)' }, body: { top: '50%', left: '40%' } } },
-              { desc: "5. 保持頭轉向，快速向左側躺下。保持30秒。", style: { head: { top: '50%', left: '30%', transform: 'rotate(45deg)' }, body: { top: '50%', left: '20%', transform: 'rotate(-90deg)' } } },
-              { desc: "6. 緩慢坐起。此為一循環。", style: { head: { top: '30%', left: '45%' }, body: { top: '50%', left: '40%' } } }
-            ]
-          }
-        },
-        chartData: {
-          labels: ['後半規管 BPPV', '水平半規管 BPPV', '前半規管 BPPV'],
-          data: [85, 13, 2],
-          info: [
-            '最常見類型(約85%)，通常由Epley氏復位術治療。',
-            '第二常見(約15%)，症狀常在左右翻身時更明顯，可由BBQ或Gufoni氏復位術治療。',
-            '最罕見(約2%)，治療方式較為不同。'
-          ]
-        }
-      };
-
-      const mainContent = document.getElementById('main-content');
-      const navLinks = document.querySelectorAll('#sidebar .nav-item');
-      const ctaLinks = document.querySelectorAll('.nav-link-btn');
-      const sections = document.querySelectorAll('.content-section');
-
-      function navigateTo(hash) {
-        navLinks.forEach(link => {
-          if (link.getAttribute('href') === hash) {
-            link.classList.add('active-nav');
-          } else {
-            link.classList.remove('active-nav');
-          }
+    <!-- 初始化頂部欄和側邊欄 -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            initHeaderSidebar({
+                currentPage: 'bppv',
+                pageTitle: '醫療工具百寶箱'
+            });
         });
-        sections.forEach(section => {
-          if ('#' + section.id === hash) {
-            section.classList.add('active');
-          } else {
-            section.classList.remove('active');
-          }
-        });
-        mainContent.scrollTop = 0;
-      }
-
-      navLinks.forEach(link => {
-        link.addEventListener('click', (e) => {
-          e.preventDefault();
-          const hash = e.currentTarget.getAttribute('href');
-          navigateTo(hash);
-          window.location.hash = hash;
-        });
-      });
-
-      ctaLinks.forEach(link => {
-        link.addEventListener('click', (e) => {
-          e.preventDefault();
-          const hash = e.currentTarget.getAttribute('href');
-          navigateTo(hash);
-          window.location.hash = hash;
-        });
-      });
-
-      const symptomChecker = document.getElementById('symptom-checker');
-      symptomChecker.addEventListener('change', () => {
-        const checkboxes = symptomChecker.querySelectorAll('input[type="checkbox"]');
-        const checkedCount = Array.from(checkboxes).filter(cb => cb.checked).length;
-        const resultDiv = document.getElementById('symptom-result');
-        if (checkedCount > 0) {
-          resultDiv.classList.remove('hidden');
-          if (checkedCount >= 3) {
-            resultDiv.textContent = '您勾選的症狀與BPPV高度相符。建議尋求耳鼻喉科或神經科醫師進行專業診斷。';
-          } else {
-            resultDiv.textContent = '您的一些症狀與BPPV相符。持續觀察並在需要時諮詢醫師是個好主意。';
-          }
-        } else {
-          resultDiv.classList.add('hidden');
-        }
-      });
-
-      const bppvTypesCtx = document.getElementById('bppvTypesChart').getContext('2d');
-      const bppvTypesChart = new Chart(bppvTypesCtx, {
-        type: 'doughnut',
-        data: {
-          labels: appData.chartData.labels,
-          datasets: [{
-            label: 'BPPV 類型分佈',
-            data: appData.chartData.data,
-            backgroundColor: ['rgba(13, 148, 136, 0.7)', 'rgba(245, 158, 11, 0.7)', 'rgba(99, 102, 241, 0.7)'],
-            borderColor: ['rgb(13, 148, 136)', 'rgb(245, 158, 11)', 'rgb(99, 102, 241)'],
-            borderWidth: 1
-          }]
-        },
-        options: {
-          responsive: true,
-          maintainAspectRatio: false,
-          plugins: {
-            legend: { position: 'top', },
-            tooltip: {
-              callbacks: {
-                label: function (context) {
-                  let label = context.label || '';
-                  if (label) { label += ': '; }
-                  if (context.parsed !== null) { label += context.parsed + '%'; }
-                  return label;
-                }
-              }
-            },
-            title: { display: true, text: 'BPPV 常見類型比例' }
-          },
-          onHover: (event, chartElement) => {
-            const chartInfo = document.getElementById('chart-info');
-            if (chartElement.length) {
-              const index = chartElement[0].index;
-              chartInfo.textContent = appData.chartData.info[index];
-            } else {
-              chartInfo.textContent = '將滑鼠懸停在圖表上以查看詳細資訊。';
-            }
-          }
-        }
-      });
-
-      function createManeuverVisualizer(container) {
-        let currentStep = 0;
-        const maneuverKey = container.dataset.maneuver;
-        const maneuverData = appData.maneuvers[maneuverKey];
-        if (!maneuverData) return;
-
-        function render() {
-          const stepData = maneuverData.steps[currentStep];
-          let headStyle = '';
-          let bodyStyle = '';
-          for (const prop in stepData.style.head) { headStyle += `${prop}: ${stepData.style.head[prop]};`; }
-          for (const prop in stepData.style.body) { bodyStyle += `${prop}: ${stepData.style.body[prop]};`; }
-
-          container.innerHTML = `
-                <div class="p-4 border-b">
-                    <h4 class="font-bold">${maneuverData.name}</h4>
-                    <p id="step-desc" class="text-stone-600 min-h-[48px]">${stepData.desc}</p>
-                </div>
-                <div class="maneuver-illustration">
-                    <div class="bed"></div>
-                    <div class="body" style="${bodyStyle}"></div>
-                    <div class="head" style="${headStyle}"></div>
-                </div>
-                <div class="flex justify-between items-center p-4">
-                    <button id="prev-btn" class="px-4 py-2 bg-stone-200 rounded-lg hover:bg-stone-300 disabled:opacity-50" ${currentStep === 0 ? 'disabled' : ''}>上一步</button>
-                    <span class="text-sm font-medium text-stone-500">步驟 ${currentStep + 1} / ${maneuverData.steps.length}</span>
-                    <button id="next-btn" class="px-4 py-2 bg-teal-600 text-white rounded-lg hover:bg-teal-700 disabled:opacity-50" ${currentStep === maneuverData.steps.length - 1 ? 'disabled' : ''}>下一步</button>
-                </div>
-            `;
-
-          container.querySelector('#prev-btn').addEventListener('click', () => {
-            if (currentStep > 0) {
-              currentStep--;
-              render();
-            }
-          });
-
-          container.querySelector('#next-btn').addEventListener('click', () => {
-            if (currentStep < maneuverData.steps.length - 1) {
-              currentStep++;
-              render();
-            }
-          });
-        }
-        render();
-      }
-
-      document.querySelectorAll('.maneuver-visualizer').forEach(createManeuverVisualizer);
-
-      const rehabTabs = document.getElementById('rehab-tabs');
-      const tabBtns = rehabTabs.querySelectorAll('.tab-btn');
-      const tabContents = document.querySelectorAll('#rehab-content .tab-content');
-
-      tabBtns.forEach(btn => {
-        btn.addEventListener('click', () => {
-          tabBtns.forEach(b => b.classList.remove('active-tab'));
-          btn.classList.add('active-tab');
-
-          const targetId = btn.dataset.target;
-          tabContents.forEach(content => {
-            if (content.id === targetId) {
-              content.classList.remove('hidden');
-            } else {
-              content.classList.add('hidden');
-            }
-          });
-        });
-      });
-
-      function initializePage() {
-        const hash = window.location.hash || '#home';
-        navigateTo(hash);
-      }
-
-      initializePage();
-    });
-  </script>
+    </script>
 </body>
-
 </html>

@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>組件系統測試頁面</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        primary: {
+                            50: '#eff6ff',
+                            100: '#dbeafe',
+                            500: '#3b82f6',
+                            600: '#2563eb',
+                            700: '#1d4ed8',
+                            800: '#1e40af',
+                            900: '#1e3a8a'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-gray-50 dark:bg-gray-900 transition-colors duration-300">
+    
+    <div class="p-8">
+        <div class="max-w-4xl mx-auto">
+            <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-8 border border-gray-200 dark:border-gray-700">
+                <h1 class="text-3xl font-bold text-gray-900 dark:text-white mb-6">
+                    <i class="fas fa-flask text-blue-600 mr-3"></i>
+                    組件系統測試頁面
+                </h1>
+                
+                <div class="space-y-6">
+                    <div class="bg-blue-50 dark:bg-blue-900/20 p-6 rounded-lg">
+                        <h2 class="text-xl font-semibold text-blue-800 dark:text-blue-200 mb-4">
+                            <i class="fas fa-check-circle mr-2"></i>
+                            測試項目
+                        </h2>
+                        <ul class="space-y-2 text-blue-700 dark:text-blue-300">
+                            <li><i class="fas fa-arrow-right mr-2"></i>頂部導航欄是否正確顯示</li>
+                            <li><i class="fas fa-arrow-right mr-2"></i>側邊欄是否正確顯示</li>
+                            <li><i class="fas fa-arrow-right mr-2"></i>明暗模式切換是否正常</li>
+                            <li><i class="fas fa-arrow-right mr-2"></i>分類按鈕跳轉功能是否正常</li>
+                            <li><i class="fas fa-arrow-right mr-2"></i>響應式設計是否正常</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="bg-green-50 dark:bg-green-900/20 p-6 rounded-lg">
+                        <h2 class="text-xl font-semibold text-green-800 dark:text-green-200 mb-4">
+                            <i class="fas fa-lightbulb mr-2"></i>
+                            測試說明
+                        </h2>
+                        <p class="text-green-700 dark:text-green-300 leading-relaxed">
+                            這個頁面使用統一的組件系統。如果您看到頂部導航欄和側邊欄正常顯示，
+                            且能夠正常切換明暗模式，說明組件系統工作正常。
+                        </p>
+                    </div>
+                    
+                    <div class="bg-yellow-50 dark:bg-yellow-900/20 p-6 rounded-lg">
+                        <h2 class="text-xl font-semibold text-yellow-800 dark:text-yellow-200 mb-4">
+                            <i class="fas fa-exclamation-triangle mr-2"></i>
+                            如果發現問題
+                        </h2>
+                        <p class="text-yellow-700 dark:text-yellow-300 leading-relaxed">
+                            請檢查瀏覽器控制台是否有錯誤信息，並確認 tools-config.js 和 header-sidebar.js 文件已正確載入。
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 必要的 JavaScript 文件 -->
+    <script src="js/tools-config.js"></script>
+    <script src="components/header-sidebar.js"></script>
+
+    <!-- 初始化頂部欄和側邊欄 -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            initHeaderSidebar({
+                currentPage: 'test-components',
+                pageTitle: '組件系統測試'
+            });
+        });
+    </script>
+</body>
+</html>

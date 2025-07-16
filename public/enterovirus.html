@@ -233,164 +233,18 @@
 
   </div>
 
-  <script>
-    document.addEventListener('DOMContentLoaded', () => {
+    <!-- 必要的 JavaScript 文件 -->
+    <script src="js/tools-config.js"></script>
+    <script src="components/header-sidebar.js"></script>
 
-      const PALETTE = {
-        red: '#FF6B6B',
-        yellow: '#FFD166',
-        green: '#06D6A0',
-        blue: '#118AB2',
-        darkBlue: '#073B4C'
-      };
-
-      function wrapLabel(str, maxWidth) {
-        if (str.length <= maxWidth) {
-          return str;
-        }
-        const words = str.split(' ');
-        let lines = [];
-        let currentLine = '';
-        for (const word of words) {
-          if ((currentLine + word).length > maxWidth) {
-            lines.push(currentLine.trim());
-            currentLine = '';
-          }
-          currentLine += word + ' ';
-        }
-        lines.push(currentLine.trim());
-        return lines.filter(line => line.length > 0);
-      }
-
-      const tooltipTitleCallback = (tooltipItems) => {
-        const item = tooltipItems[0];
-        let label = item.chart.data.labels[item.dataIndex];
-        return Array.isArray(label) ? label.join(' ') : label;
-      };
-
-      function createSeasonalityChart() {
-        const ctx = document.getElementById('seasonalityChart').getContext('2d');
-        new Chart(ctx, {
-          type: 'line',
-          data: {
-            labels: ['1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月', '9月', '10月', '11月', '12月'],
-            datasets: [{
-              label: '腸病毒就診人次趨勢',
-              data: [2000, 1800, 3500, 6000, 8500, 11000, 15000, 14500, 12000, 7000, 4000, 2500],
-              borderColor: PALETTE.red,
-              backgroundColor: 'rgba(255, 107, 107, 0.2)',
-              fill: true,
-              tension: 0.4
-            }]
-          },
-          options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-              legend: { display: false },
-              tooltip: {
-                callbacks: { title: tooltipTitleCallback }
-              }
-            },
-            scales: {
-              y: {
-                beginAtZero: true,
-                title: { display: true, text: '就診人次(估計)' }
-              }
-            }
-          }
+    <!-- 初始化頂部欄和側邊欄 -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            initHeaderSidebar({
+                currentPage: 'enterovirus',
+                pageTitle: '醫療工具百寶箱'
+            });
         });
-      }
-
-      function createRiskGroupChart() {
-        const ctx = document.getElementById('riskGroupChart').getContext('2d');
-        new Chart(ctx, {
-          type: 'doughnut',
-          data: {
-            labels: ['5歲以下重症高風險群', '其他年齡層'],
-            datasets: [{
-              label: '風險分佈',
-              data: [90, 10],
-              backgroundColor: [PALETTE.red, PALETTE.yellow],
-              borderColor: '#ffffff',
-              borderWidth: 4,
-            }]
-          },
-          options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-              legend: { position: 'bottom' },
-              tooltip: {
-                callbacks: {
-                  title: tooltipTitleCallback,
-                  label: function (context) {
-                    let label = context.dataset.label || '';
-                    if (label) {
-                      label += ': ';
-                    }
-                    if (context.parsed !== null) {
-                      label += context.label + '佔比';
-                    }
-                    return label;
-                  }
-                }
-              }
-            },
-            cutout: '60%'
-          }
-        });
-      }
-
-      function createVaccineComparisonChart() {
-        const ctx = document.getElementById('vaccineComparisonChart').getContext('2d');
-        const labels = ['注射部位疼痛', '發燒', '食慾降低', '疲勞/嗜睡'];
-
-        new Chart(ctx, {
-          type: 'bar',
-          data: {
-            labels: labels.map(label => wrapLabel(label, 16)),
-            datasets: [
-              {
-                label: '國光/安特羅',
-                data: [21.57, 10.34, 12.52, 10.74],
-                backgroundColor: PALETTE.green,
-                borderColor: PALETTE.green,
-                borderWidth: 1
-              },
-              {
-                label: '高端疫苗',
-                data: [23.3, 23.1, 18.9, 12.4],
-                backgroundColor: PALETTE.blue,
-                borderColor: PALETTE.blue,
-                borderWidth: 1
-              }
-            ]
-          },
-          options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-              legend: { position: 'top' },
-              tooltip: {
-                callbacks: { title: tooltipTitleCallback }
-              }
-            },
-            scales: {
-              y: {
-                beginAtZero: true,
-                title: { display: true, text: '發生率 (%)' }
-              }
-            }
-          }
-        });
-      }
-
-      createSeasonalityChart();
-      createRiskGroupChart();
-      createVaccineComparisonChart();
-    });
-  </script>
+    </script>
 </body>
-
 </html>

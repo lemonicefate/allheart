@@ -260,7 +260,6 @@
                 </div>
             </div>
 
-
             <div class="card md:col-span-2 lg:col-span-3">
                 <h2 class="text-2xl font-bold text-[#004F8B] mb-4">治療之路：有哪些方法可以改善？</h2>
                 <p class="mb-6 text-gray-600">治療方案多元，醫師會根據您的嚴重程度、阻塞位置與個人狀況，與您共同制定最適合的計畫。以下是主要的治療光譜。</p>
@@ -337,143 +336,17 @@
         <p class="text-xs text-gray-400 mt-2">資料來源：睡眠呼吸中止症候群衛教指南</p>
     </footer>
 
+    <!-- 必要的 JavaScript 文件 -->
+    <script src="js/tools-config.js"></script>
+    <script src="components/header-sidebar.js"></script>
+
+    <!-- 初始化頂部欄和側邊欄 -->
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            const primaryColor = '#0073BC';
-            const secondaryColor = '#00A1E4';
-            const darkColor = '#004F8B';
-            const textColor = '#4D4D4D';
-
-            const tooltipTitleCallback = function(tooltipItems) {
-                const item = tooltipItems[0];
-                let label = item.chart.data.labels[item.dataIndex];
-                if (Array.isArray(label)) {
-                    return label.join(' ');
-                }
-                return label;
-            };
-
-            const defaultChartOptions = {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                    legend: {
-                        position: 'top',
-                         labels: {
-                            color: textColor,
-                            font: {
-                                family: "'Noto Sans TC', sans-serif"
-                            }
-                        }
-                    },
-                    tooltip: {
-                        callbacks: {
-                            title: tooltipTitleCallback
-                        },
-                        titleFont: {
-                            family: "'Noto Sans TC', sans-serif"
-                        },
-                        bodyFont: {
-                            family: "'Noto Sans TC', sans-serif"
-                        }
-                    }
-                },
-                scales: {
-                    x: {
-                        ticks: { color: textColor, font: { family: "'Noto Sans TC', sans-serif" } },
-                        grid: { display: false }
-                    },
-                    y: {
-                        ticks: { color: textColor, font: { family: "'Noto Sans TC', sans-serif" } },
-                        grid: { color: '#e0e0e0' }
-                    }
-                }
-            };
-            
-            function wrapLabel(label, maxLength = 16) {
-                if (label.length <= maxLength) return label;
-                const words = label.split(' ');
-                const lines = [];
-                let currentLine = '';
-                for (const word of words) {
-                    if ((currentLine + ' ' + word).length > maxLength) {
-                        lines.push(currentLine);
-                        currentLine = word;
-                    } else {
-                        currentLine += (currentLine ? ' ' : '') + word;
-                    }
-                }
-                lines.push(currentLine);
-                return lines;
-            }
-
-
-            new Chart(document.getElementById('risksChart'), {
-                type: 'bar',
-                data: {
-                    labels: ['高血壓', '心臟病', '中風', '糖尿病'],
-                    datasets: [{
-                        label: '相對風險增加',
-                        data: [2.5, 2, 1.8, 1.5],
-                        backgroundColor: [secondaryColor, primaryColor, darkColor, '#00C4D4'],
-                        borderColor: '#ffffff',
-                        borderWidth: 2
-                    }]
-                },
-                options: {
-                    ...defaultChartOptions,
-                    indexAxis: 'y',
-                    plugins: { ...defaultChartOptions.plugins, legend: { display: false } },
-                     scales: {
-                        x: {
-                             ...defaultChartOptions.scales.x,
-                             title: {
-                                display: true,
-                                text: '倍數',
-                                color: textColor
-                             }
-                        },
-                        y: defaultChartOptions.scales.y
-                    }
-                }
+            initHeaderSidebar({
+                currentPage: 'osas',
+                pageTitle: '醫療工具百寶箱'
             });
-            
-             new Chart(document.getElementById('heredityChart'), {
-                type: 'doughnut',
-                data: {
-                    labels: ['有家族史', '無家族史'],
-                    datasets: [{
-                        label: '遺傳傾向',
-                        data: [33, 67], 
-                        backgroundColor: [darkColor, '#e5e7eb'],
-                        borderColor: '#ffffff',
-                        borderWidth: 4,
-                    }]
-                },
-                options: {
-                    ...defaultChartOptions,
-                    cutout: '60%',
-                     plugins: {
-                        ...defaultChartOptions.plugins,
-                        tooltip: {
-                             callbacks: {
-                                title: tooltipTitleCallback,
-                                label: function(context) {
-                                    let label = context.dataset.label || '';
-                                    if (label) {
-                                        label += ': ';
-                                    }
-                                    if (context.parsed !== null) {
-                                        label += context.parsed + '%';
-                                    }
-                                    return label;
-                                }
-                            }
-                        }
-                    }
-                }
-            });
-
         });
     </script>
 </body>

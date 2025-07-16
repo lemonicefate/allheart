@@ -255,7 +255,6 @@
       </div>
     </section>
 
-
     <section id="treatment-comparison" class="mb-12 p-6 bg-white rounded-lg shadow-md">
       <h2 class="text-2xl font-bold text-center text-[#003f5c] mb-2">權衡各種治療方案</h2>
       <p class="text-center max-w-3xl mx-auto text-slate-600 mb-8">
@@ -363,8 +362,6 @@
       }
     };
 
-    
-
     const causesChartCtx = document.getElementById('causesChart').getContext('2d');
     new Chart(causesChartCtx, {
       type: 'pie',
@@ -440,6 +437,22 @@
     });
   </script>
 
-</body>
+    <!-- 必要的 JavaScript 文件 -->
 
+    <!-- 初始化頂部欄和側邊欄 -->
+    
+    <!-- 必要的 JavaScript 文件 -->
+    <script src="js/tools-config.js"></script>
+    <script src="components/header-sidebar.js"></script>
+
+    <!-- 初始化頂部欄和側邊欄 -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            initHeaderSidebar({
+                currentPage: 'trigeminal-neuralgia',
+                pageTitle: '醫療工具百寶箱'
+            });
+        });
+    </script>
+</body>
 </html>

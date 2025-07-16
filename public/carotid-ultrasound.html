@@ -189,20 +189,7 @@
         </div>
         <div>
           <div class="border-b border-gray-200">
-            <nav class="-mb-px flex space-x-4" aria-label="Tabs">
-              <button onclick="changeTab(this, 'imt-normal')"
-                class="imt-tab tab-active whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm">
-                &lt; 0.9 mm (正常)
-              </button>
-              <button onclick="changeTab(this, 'imt-thickened')"
-                class="imt-tab tab-inactive whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm">
-                0.9 - 1.5 mm (增厚)
-              </button>
-              <button onclick="changeTab(this, 'imt-plaque')"
-                class="imt-tab tab-inactive whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm">
-                &gt; 1.5 mm (斑塊)
-              </button>
-            </nav>
+            
           </div>
           <div id="imt-content" class="mt-6">
             <div id="imt-normal" class="imt-panel fade-in">
@@ -439,6 +426,23 @@
       updateStenosisInfo(parseInt(psvSlider.value));
     };
   </script>
-</body>
 
+    <!-- 必要的 JavaScript 文件 -->
+
+    <!-- 初始化頂部欄和側邊欄 -->
+    
+    <!-- 必要的 JavaScript 文件 -->
+    <script src="js/tools-config.js"></script>
+    <script src="components/header-sidebar.js"></script>
+
+    <!-- 初始化頂部欄和側邊欄 -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            initHeaderSidebar({
+                currentPage: 'carotid-ultrasound',
+                pageTitle: '醫療工具百寶箱'
+            });
+        });
+    </script>
+</body>
 </html>
