@@ -375,16 +375,33 @@
     <!-- 初始化頂部欄和側邊欄 -->
     
     <!-- 必要的 JavaScript 文件 -->
-    <script src="js/tools-config.js"></script>
-    <script src="components/header-sidebar.js"></script>
 
     <!-- 初始化頂部欄和側邊欄 -->
+    
+    <!-- 必要的 JavaScript 文件 -->
+    <script src="js/tools-config.js"></script>
+    <script src="js/spa-router.js"></script>
+    <script src="components/header-sidebar.js"></script>
+
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            initHeaderSidebar({
-                currentPage: 'hypertension',
-                pageTitle: '醫療工具百寶箱'
-            });
+            const existingNav = document.querySelector('nav');
+            const existingFrame = document.getElementById('main-frame');
+            
+            if (!existingNav && !existingFrame) {
+                initHeaderSidebar({
+                    currentPage: 'hypertension',
+                    pageTitle: '醫療工具百寶箱',
+                    enableSPA: true
+                });
+            } else {
+                if (typeof SPARouter !== 'undefined' && !window.spaRouter) {
+                    window.spaRouter = new SPARouter();
+                }
+                if (typeof updateSidebarHighlight === 'function') {
+                    updateSidebarHighlight('hypertension');
+                }
+            }
         });
     </script>
 </body>

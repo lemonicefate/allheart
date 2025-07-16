@@ -337,7 +337,12 @@
     </footer>
 
     <!-- 必要的 JavaScript 文件 -->
+
+    <!-- 初始化頂部欄和側邊欄 -->
+    
+    <!-- 必要的 JavaScript 文件 -->
     <script src="js/tools-config.js"></script>
+    <script src="js/spa-router.js"></script>
     <script src="components/header-sidebar.js"></script>
 
     <!-- 初始化頂部欄和側邊欄 -->
@@ -345,7 +350,8 @@
         document.addEventListener('DOMContentLoaded', () => {
             initHeaderSidebar({
                 currentPage: 'osas',
-                pageTitle: '醫療工具百寶箱'
+                pageTitle: '醫療工具百寶箱',
+                enableSPA: true
             });
         });
     </script>

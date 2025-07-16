@@ -245,14 +245,31 @@
                 setTimeout(() => {
                     const targetSection = document.getElementById(`section-${scrollToSection}`);
                     if (targetSection) {
-                        const navHeight = 64 + 20;
-                        const elementPosition = targetSection.offsetTop;
-                        const offsetPosition = elementPosition - navHeight;
+                        // 檢查是否使用框架結構
+                        const scrollContainer = document.getElementById('main-scroll-container');
                         
-                        window.scrollTo({
-                            top: offsetPosition,
-                            behavior: 'smooth'
-                        });
+                        if (scrollContainer) {
+                            // 框架結構：計算在框架內的位置
+                            const containerRect = scrollContainer.getBoundingClientRect();
+                            const targetRect = targetSection.getBoundingClientRect();
+                            const scrollTop = scrollContainer.scrollTop;
+                            const targetPosition = targetRect.top - containerRect.top + scrollTop - 20;
+                            
+                            scrollContainer.scrollTo({
+                                top: Math.max(0, targetPosition),
+                                behavior: 'smooth'
+                            });
+                        } else {
+                            // 傳統結構：使用原有邏輯
+                            const navHeight = 64 + 20;
+                            const elementPosition = targetSection.offsetTop;
+                            const offsetPosition = elementPosition - navHeight;
+                            
+                            window.scrollTo({
+                                top: offsetPosition,
+                                behavior: 'smooth'
+                            });
+                        }
                         
                         if (highlightColor) {
                             targetSection.classList.add('ring-2', `ring-${highlightColor}-500`, 'ring-opacity-50');
@@ -267,17 +284,62 @@
 
         // 初始化首頁
         function initIndexPage() {
-            renderFeaturedArticles();
-            renderToolsCategories();
-            handleScrollFromOtherPages();
+            console.log('執行 initIndexPage');
+            
+            // 檢查必要的依賴
+            if (typeof TOOLS_CONFIG === 'undefined' || typeof CATEGORIES === 'undefined') {
+                console.warn('TOOLS_CONFIG 或 CATEGORIES 未定義，延遲執行');
+                setTimeout(initIndexPage, 500);
+                return;
+            }
+            
+            // 清空現有內容，避免重複渲染
+            const featuredContainer = document.getElementById('featured-articles');
+            const toolsContainer = document.getElementById('tools-categories');
+            
+            if (featuredContainer) {
+                console.log('清空特色文章容器');
+                featuredContainer.innerHTML = '';
+            }
+            if (toolsContainer) {
+                console.log('清空工具分類容器');
+                toolsContainer.innerHTML = '';
+            }
+            
+            // 重新渲染內容
+            try {
+                console.log('開始渲染特色文章');
+                renderFeaturedArticles();
+                console.log('開始渲染工具分類');
+                renderToolsCategories();
+                console.log('處理滾動需求');
+                handleScrollFromOtherPages();
+                console.log('首頁內容渲染完成');
+            } catch (error) {
+                console.error('渲染首頁內容時發生錯誤:', error);
+            }
         }
         
+        // 將所有函數暴露到全域範圍，供 SPA 路由器使用
+        window.initIndexPage = initIndexPage;
+        window.renderFeaturedArticles = renderFeaturedArticles;
+        window.renderToolsCategories = renderToolsCategories;
+        window.handleScrollFromOtherPages = handleScrollFromOtherPages;
+        
         // 頁面載入完成後執行
-        document.addEventListener('DOMContentLoaded', initIndexPage);
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('DOMContentLoaded 事件觸發');
+            initIndexPage();
+        });
     </script>
 
     <!-- 必要的 JavaScript 文件 -->
+
+    <!-- 初始化頂部欄和側邊欄 -->
+    
+    <!-- 必要的 JavaScript 文件 -->
     <script src="js/tools-config.js"></script>
+    <script src="js/spa-router.js"></script>
     <script src="components/header-sidebar.js"></script>
 
     <!-- 初始化頂部欄和側邊欄 -->
@@ -285,7 +347,8 @@
         document.addEventListener('DOMContentLoaded', () => {
             initHeaderSidebar({
                 currentPage: 'index',
-                pageTitle: '醫療工具百寶箱'
+                pageTitle: '醫療工具百寶箱',
+                enableSPA: true  // 啟用單頁應用模式
             });
         });
     </script>
