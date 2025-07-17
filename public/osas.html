@@ -335,25 +335,17 @@
         <p class="text-sm">本資訊圖表內容僅供衛教參考，無法取代專業醫療診斷。若有相關問題，請諮詢您的醫師或睡眠專科醫師。</p>
         <p class="text-xs text-gray-400 mt-2">資料來源：睡眠呼吸中止症候群衛教指南</p>
     </footer>
+    <!-- 統一應用程式檔案 - 包含所有功能 -->
+    <script src="js/unified-app.js"></script>
 
-    <!-- 必要的 JavaScript 文件 -->
-
-    <!-- 初始化頂部欄和側邊欄 -->
-    
-    <!-- 必要的 JavaScript 文件 -->
-    <script src="js/tools-config.js"></script>
-    <script src="js/spa-router.js"></script>
-    <script src="components/header-sidebar.js"></script>
-
-    <!-- 初始化頂部欄和側邊欄 -->
+    <!-- 統一檔案會自動初始化，如需自訂配置可設定 window.medicalToolsConfig -->
     <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            initHeaderSidebar({
-                currentPage: 'osas',
-                pageTitle: '醫療工具百寶箱',
-                enableSPA: true
-            });
-        });
+        // 可選：自訂配置
+        window.medicalToolsConfig = {
+            currentPage: 'osas',
+            pageTitle: document.title || '醫療工具百寶箱',
+            enableSPA: true
+        };
     </script>
 </body>
 </html>

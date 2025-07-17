@@ -1,0 +1,583 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>健康檢查報告分析器</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', 'Noto Sans TC', sans-serif;
+        }
+        .status-normal { background-color: #f0fdf4; border-left-color: #22c55e; }
+        .status-warning { background-color: #fefce8; border-left-color: #eab308; }
+        .status-danger { background-color: #fef2f2; border-left-color: #ef4444; }
+        .status-info { background-color: #eef2ff; border-left-color: #6366f1; }
+        .result-card {
+            border-left-width: 4px;
+            transition: all 0.3s ease-in-out;
+        }
+        .summary-card {
+             background-color: #fff;
+             border: 1px solid #e5e7eb;
+             border-radius: 0.75rem;
+             padding: 1rem;
+             box-shadow: 0 1px 3px 0 rgba(0,0,0,0.1), 0 1px 2px 0 rgba(0,0,0,0.06);
+        }
+        
+        /* CKD Grid Colors with higher contrast */
+        .ckd-green { background-color: #bbf7d0; color: #166534; }
+        .ckd-yellow { background-color: #fef08a; color: #854d0e; }
+        .ckd-orange { background-color: #fed7aa; color: #9a3412; }
+        .ckd-red { background-color: #fca5a5; color: #991b1b; }
+
+        .ckd-cell-highlight {
+            position: relative;
+        }
+        .ckd-cell-highlight::after {
+            content: '';
+            position: absolute;
+            top: -4px;
+            left: -4px;
+            right: -4px;
+            bottom: -4px;
+            border: 3px solid #3b82f6; /* blue-500 */
+            border-radius: 0.5rem;
+            animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+         .ckd-row-highlight {
+            position: relative;
+        }
+        .ckd-row-highlight::after {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            border: 3px solid #3b82f6; /* blue-500 */
+            border-radius: 0.5rem;
+            animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+        @keyframes pulse {
+            0%, 100% {
+                opacity: 1;
+            }
+            50% {
+                opacity: 0.5;
+            }
+        }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800">
+
+    <div class="container mx-auto p-4 md:p-8 max-w-7xl">
+        <header class="text-center mb-8">
+            <h1 class="text-3xl md:text-4xl font-bold text-gray-900">健康檢查報告分析器</h1>
+            <p class="mt-2 text-gray-600">輸入您的健檢數據，獲取視覺化健康總覽、代謝症候群與慢性腎臟病(CKD)分析。</p>
+            <p class="mt-1 text-sm text-red-500 font-semibold">注意：本工具分析結果僅供參考，不能取代專業醫師的診斷。請務必與您的醫師討論報告。</p>
+        </header>
+
+        <main class="grid grid-cols-1 lg:grid-cols-4 gap-8">
+            <!-- 輸入區域 -->
+            <div class="bg-white p-6 rounded-xl shadow-md">
+                <h2 class="text-2xl font-bold mb-4 border-b pb-2">1. 輸入您的資料</h2>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                     <div>
+                        <label for="gender" class="block text-sm font-medium text-gray-700">生理性別</label>
+                        <select id="gender" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
+                            <option value="male">男性</option>
+                            <option value="female">女性</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label for="age" class="block text-sm font-medium text-gray-700">年齡</label>
+                        <input type="number" id="age" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" placeholder="例如：60">
+                    </div>
+                    <div>
+                        <label for="height" class="block text-sm font-medium text-gray-700">身高 (cm)</label>
+                        <input type="number" id="height" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" placeholder="例如：175">
+                    </div>
+                    <div>
+                        <label for="weight" class="block text-sm font-medium text-gray-700">體重 (kg)</label>
+                        <input type="number" id="weight" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" placeholder="例如：70">
+                    </div>
+                     <div>
+                        <label for="waist" class="block text-sm font-medium text-gray-700">腰圍 (cm)</label>
+                        <input type="number" id="waist" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" placeholder="例如：92">
+                    </div>
+                    <div></div>
+                    <div>
+                        <label for="sbp" class="block text-sm font-medium text-gray-700">收縮壓 (mmHg)</label>
+                        <input type="number" id="sbp" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" placeholder="例如：145">
+                    </div>
+                    <div>
+                        <label for="dbp" class="block text-sm font-medium text-gray-700">舒張壓 (mmHg)</label>
+                        <input type="number" id="dbp" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" placeholder="例如：90">
+                    </div>
+                </div>
+
+                <div class="mb-4">
+                    <label for="lab-results" class="block text-sm font-medium text-gray-700">
+                        貼上實驗室檢查結果
+                        <span class="text-xs text-gray-500">(可直接從報告PDF或網頁複製貼上)</span>
+                    </label>
+                    <textarea id="lab-results" rows="12" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" placeholder="例如：&#10;Creatinine 1.2 mg/dL&#10;HbA1C 7.2 %&#10;..."></textarea>
+                </div>
+
+                <button id="analyze-btn" class="w-full bg-indigo-600 text-white font-bold py-3 px-4 rounded-lg hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors duration-200">
+                    開始分析
+                </button>
+            </div>
+
+            <!-- 重點評估與建議區域 -->
+            <div id="key-assessments-section" class="bg-white p-6 rounded-xl shadow-md lg:col-span-2">
+                 <h2 class="text-2xl font-bold mb-4 border-b pb-2">2. 重點健康評估</h2>
+                 <div id="key-assessments-grid" class="space-y-4">
+                    <!-- Key summary cards will go here -->
+                 </div>
+            </div>
+
+            <!-- 數據總覽區域 -->
+            <div id="lab-overview-section" class="bg-white p-6 rounded-xl shadow-md">
+                <h2 class="text-2xl font-bold mb-4 border-b pb-2">3. 實驗室數據總覽</h2>
+                <div id="results-grid" class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <!-- Other lab results will go here -->
+                </div>
+            </div>
+
+             <div id="initial-message" class="lg:col-span-3 text-center py-12 text-gray-500">
+                <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                  <path vector-effect="non-scaling-stroke" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                </svg>
+                <h3 class="mt-2 text-sm font-medium text-gray-900">分析結果將顯示於此</h3>
+                <p class="mt-1 text-sm text-gray-500">請在左側輸入您的資料後點擊分析按鈕。</p>
+            </div>
+
+        </main>
+    </div>
+
+    <script>
+        document.getElementById('analyze-btn').addEventListener('click', () => {
+            // --- 1. Reset UI ---
+            document.getElementById('initial-message').classList.add('hidden');
+            ['key-assessments-section', 'lab-overview-section'].forEach(id => {
+                document.getElementById(id).classList.remove('hidden');
+            });
+            const keyAssessmentsGrid = document.getElementById('key-assessments-grid');
+            const resultsGrid = document.getElementById('results-grid');
+            keyAssessmentsGrid.innerHTML = '';
+            resultsGrid.innerHTML = '';
+
+            // --- 2. Data Parsing ---
+            const gender = document.getElementById('gender').value;
+            const age = parseFloat(document.getElementById('age').value);
+            const height = parseFloat(document.getElementById('height').value);
+            const weight = parseFloat(document.getElementById('weight').value);
+            const waist = parseFloat(document.getElementById('waist').value);
+            const sbp = parseFloat(document.getElementById('sbp').value);
+            const dbp = parseFloat(document.getElementById('dbp').value);
+            const labText = document.getElementById('lab-results').value;
+
+            let allData = {};
+            if (height && weight) allData.bmi = parseFloat((weight / (height / 100) ** 2).toFixed(2));
+            if (waist) allData.waist = waist;
+            if (sbp) allData.sbp = sbp;
+            if (dbp) allData.dbp = dbp;
+            
+            const keywords = {
+                'Protein': 'urine_protein', '尿蛋白': 'urine_protein', 'Sugar': 'urine_sugar', '尿糖': 'urine_sugar',
+                'Occult blood': 'occult_blood', '潛血': 'occult_blood', 'Leukocyte': 'leukocyte', '尿白血球': 'leukocyte',
+                'Nitrite': 'nitrite', '亞硝酸鹽': 'nitrite', 'eGFR': 'egfr', '腎絲球過濾率': 'egfr', 'GOT': 'got', 'AST': 'got',
+                'GPT': 'gpt', 'ALT': 'gpt', 'Creatinine(U)': 'urine_creatinine', 'Creatinine': 'creatinine', '肌酸酐': 'creatinine',
+                '血糖': 'glucose', '飯前血糖': 'glucose', '糖化血色素': 'hba1c', 'HbA1C': 'hba1c', 'A1C': 'hba1c',
+                '總膽固醇': 'total_cholesterol', 'T-CHO': 'total_cholesterol', '三酸甘油酯': 'triglycerides', 'TG': 'triglycerides',
+                '高密度脂蛋白膽固醇': 'hdl', 'HDL-C': 'hdl', 'HDL': 'hdl', '低密度脂蛋白膽固醇': 'ldl', 'LDL-C': 'ldl', 'LDL': 'ldl',
+                '尿酸': 'uric_acid', 'Uric Acid': 'uric_acid', 'HBsAg': 'hbsag', 'B型肝炎表面抗原': 'hbsag',
+                'anti-HCV': 'anti_hcv', 'C型肝炎抗體': 'anti_hcv', 'ACR': 'acr', '尿中微量白蛋白': 'acr', '尿液白蛋白': 'acr',
+                '24小時尿蛋白': 'urine_protein_24h'
+            };
+
+            labText.split('\n').forEach(line => {
+                if (line.match(/WBC\s+\d+-\d+\s*\/HPF/i) || line.match(/RBC\s+\d+-\d+\s*\/HPF/i)) return;
+                for (const keyword in keywords) {
+                    const keywordRegex = new RegExp(`(^|\\s)${keyword}\\s`, 'i');
+                    if (keywordRegex.test(line)) {
+                        const valueRegex = new RegExp(`${keyword}[^\\d-+/陰陽]*([\\d.]+|[-+]+|陰性|陽性|Negative|Positive|Trace)`, 'i');
+                        const match = line.match(valueRegex);
+                        if (match && match[1] && !allData[keywords[keyword]]) {
+                            let value = match[1].trim();
+                            if (!isNaN(parseFloat(value))) allData[keywords[keyword]] = parseFloat(value);
+                            else {
+                                value = value.toLowerCase();
+                                if (value.includes('陰') || value.includes('neg') || value === '-') allData[keywords[keyword]] = 'negative';
+                                else if (value.includes('陽') || value.includes('pos') || value.includes('+') || value.includes('trace')) allData[keywords[keyword]] = 'positive';
+                            }
+                        }
+                    }
+                }
+            });
+            
+            // Auto-calculate eGFR if not present
+            if (allData.egfr === undefined && allData.creatinine && age) {
+                let egfr = 186 * Math.pow(allData.creatinine, -1.154) * Math.pow(age, -0.203);
+                if (gender === 'female') {
+                    egfr *= 0.742;
+                }
+                allData.egfr = parseFloat(egfr.toFixed(1));
+                allData.egfr_calculated = true; // Flag for UI notification
+            }
+
+            if (allData.total_cholesterol && allData.hdl && allData.triglycerides && !allData.ldl) {
+                if (allData.triglycerides < 400) allData.ldl = parseFloat((allData.total_cholesterol - allData.hdl - (allData.triglycerides / 5)).toFixed(1));
+            }
+
+            // --- 3. Evaluate and Render ---
+            const keyAssessments = [
+                evaluateMetabolicSyndrome(allData, gender),
+                evaluateCKD(allData),
+                evaluateHypertension(allData),
+                evaluateDiabetes(allData),
+                evaluateDyslipidemia(allData, gender)
+            ].filter(Boolean);
+
+            keyAssessments.forEach(assessment => {
+                keyAssessmentsGrid.appendChild(assessment.cardElement);
+            });
+
+            const allItemsForGrid = getAllLabItems(allData, gender);
+            allItemsForGrid.forEach(item => {
+                resultsGrid.appendChild(createResultCard(item));
+            });
+
+            if (keyAssessmentsGrid.children.length === 0 && resultsGrid.children.length === 0) {
+                 document.getElementById('initial-message').classList.remove('hidden');
+                 document.getElementById('key-assessments-section').classList.add('hidden');
+                 document.getElementById('lab-overview-section').classList.add('hidden');
+            }
+        });
+
+        // --- Key Assessment Evaluation Functions ---
+        function evaluateMetabolicSyndrome(data, gender) {
+            const criteria = [];
+            let metCount = 0;
+            if (data.waist !== undefined) { const waistMet = (gender === 'male' && data.waist >= 90) || (gender === 'female' && data.waist >= 80); if (waistMet) metCount++; criteria.push({ name: '腹部肥胖', met: waistMet, value: `腰圍 ${data.waist} cm`});}
+            if (data.sbp !== undefined && data.dbp !== undefined) { const bpMet = data.sbp >= 130 || data.dbp >= 85; if (bpMet) metCount++; criteria.push({ name: '血壓偏高', met: bpMet, value: `血壓 ${data.sbp}/${data.dbp} mmHg`});}
+            if (data.glucose !== undefined) { const glucoseMet = data.glucose >= 100; if (glucoseMet) metCount++; criteria.push({ name: '空腹血糖偏高', met: glucoseMet, value: `血糖 ${data.glucose} mg/dL`});}
+            if (data.triglycerides !== undefined) { const tgMet = data.triglycerides >= 150; if (tgMet) metCount++; criteria.push({ name: '三酸甘油酯偏高', met: tgMet, value: `TG ${data.triglycerides} mg/dL`});}
+            if (data.hdl !== undefined) { const hdlMet = (gender === 'male' && data.hdl < 40) || (gender === 'female' && data.hdl < 50); if (hdlMet) metCount++; criteria.push({ name: '高密度脂蛋白偏低', met: hdlMet, value: `HDL ${data.hdl} mg/dL`});}
+            if (criteria.length < 3) return null;
+            return { cardElement: createMetabolicSyndromeCard({ hasSyndrome: metCount >= 3, count: metCount, criteria }) };
+        }
+        function evaluateCKD(data) {
+            if (data.egfr === undefined) return null;
+            
+            let gfrStage;
+            if (data.egfr >= 90) gfrStage = 1;
+            else if (data.egfr >= 60) gfrStage = 2;
+            else if (data.egfr >= 45) gfrStage = 3;
+            else if (data.egfr >= 30) gfrStage = 4;
+            else if (data.egfr >= 15) gfrStage = 5;
+            else gfrStage = 6;
+
+            let albuminuriaStage = 0; // 0 for no data
+            if (data.acr !== undefined || data.urine_protein !== undefined){
+                if (data.acr >= 300) albuminuriaStage = 3;
+                else if (data.acr >= 30) albuminuriaStage = 2;
+                else if (data.urine_protein === 'positive') albuminuriaStage = 2;
+                else albuminuriaStage = 1;
+            }
+            
+            return { cardElement: createCKDCard(gfrStage, albuminuriaStage, data.egfr, data.acr) };
+        }
+        function evaluateHypertension(data) {
+            if (data.sbp === undefined || data.dbp === undefined) return null;
+            let s = 'normal', i = '理想血壓', icon = '✅';
+            if (data.sbp >= 140 || data.dbp >= 90) { s = 'danger'; i = '高血壓'; icon = '🚨';}
+            else if (data.sbp >= 130 || data.dbp >= 80) { s = 'warning'; i = '高血壓前期'; icon = '⚠️';}
+            else if (data.sbp >= 120) { s = 'warning'; i = '血壓升高'; icon = '⚠️';}
+            return { cardElement: createSummaryCard({icon, title: '高血壓評估', status: s, interpretation: i})};
+        }
+        function evaluateDiabetes(data) {
+            if (data.hba1c === undefined) return null;
+            let currentStatus = 1; // 1: normal, 2: pre-diabetes, 3: diabetes
+            if (data.hba1c >= 6.5 || (data.glucose && data.glucose >= 126)) currentStatus = 3;
+            else if (data.hba1c >= 5.7 || (data.glucose && data.glucose >= 100)) currentStatus = 2;
+            
+            let suggestion = "建議生活型態調整，定期追蹤。";
+            if (currentStatus === 3) {
+                 const hasCKD = data.egfr < 60;
+                 const hasHighBP = data.sbp >= 140 || data.dbp >= 90;
+                 if (hasCKD || hasHighBP) {
+                    suggestion = "因合併腎臟病或高血壓風險，指引建議優先考慮<br><b>SGLT2i</b> 或 <b>GLP-1 RA</b> 類藥物。";
+                 } else {
+                    suggestion = "指引建議第一線用藥可考慮 <b>Metformin</b>。";
+                 }
+                 suggestion += "<br><span class='text-xs'>請務必與您的醫師討論最適合的治療方案。</span>";
+            }
+             if (currentStatus === 2) {
+                 suggestion = "您處於糖尿病前期，這是逆轉關鍵期，請與醫師討論生活方式調整計畫。";
+            }
+
+            return { cardElement: createDiabetesCard(currentStatus, suggestion, data.hba1c) };
+        }
+        function evaluateDyslipidemia(data) {
+            const { total_cholesterol, triglycerides, ldl } = data;
+            if (total_cholesterol === undefined && triglycerides === undefined && ldl === undefined) return null;
+            
+            const hasHypertriglyceridemia = triglycerides >= 150;
+            const hasHypercholesterolemia = total_cholesterol >= 200 || ldl >= 130;
+
+            if (!hasHypertriglyceridemia && !hasHypercholesterolemia) {
+                return { cardElement: createDyslipidemiaCard({isNormal: true}) };
+            }
+
+            return { cardElement: createDyslipidemiaCard({hasHypercholesterolemia, hasHypertriglyceridemia}) };
+        }
+
+        // --- Get ALL Individual Lab Items for Grid ---
+        function getAllLabItems(data, gender) {
+            let evaluations = [];
+            if(data.bmi !== undefined) evaluations.push({title: '身體質量指數 (BMI)', value: data.bmi, unit: '', interpretation: data.bmi < 18.5 ? '體重過輕' : data.bmi >= 27 ? '肥胖' : data.bmi >= 24 ? '體重過重' : '正常範圍', status: data.bmi < 18.5 || data.bmi >= 24 ? 'warning' : 'normal'});
+            if(data.waist !== undefined) evaluations.push({title: '腰圍', value: data.waist, unit: 'cm', interpretation: ((gender === 'male' && data.waist >= 90) || (gender === 'female' && data.waist >= 80)) ? '腹部肥胖' : '正常', status: ((gender === 'male' && data.waist >= 90) || (gender === 'female' && data.waist >= 80)) ? 'danger' : 'normal'});
+            if(data.sbp !== undefined && data.dbp !== undefined) evaluations.push({ title: '血壓', value: `${data.sbp}/${data.dbp}`, unit: 'mmHg', interpretation: data.sbp >= 140 || data.dbp >= 90 ? '高血壓' : data.sbp >= 120 ? '血壓升高' : '正常', status: data.sbp >= 140 || data.dbp >= 90 ? 'danger' : data.sbp >= 120 ? 'warning' : 'normal' });
+            if(data.glucose !== undefined) evaluations.push({ title: '飯前血糖', value: data.glucose, unit: 'mg/dL', interpretation: data.glucose >= 126 ? '糖尿病' : data.glucose >= 100 ? '糖尿病前期' : '正常', status: data.glucose >= 126 ? 'danger' : data.glucose >= 100 ? 'warning' : 'normal' });
+            if(data.hba1c !== undefined) evaluations.push({ title: '糖化血色素 (HbA1C)', value: data.hba1c, unit: '%', interpretation: data.hba1c >= 6.5 ? '糖尿病' : data.hba1c >= 5.7 ? '糖尿病前期' : '正常', status: data.hba1c >= 6.5 ? 'danger' : data.hba1c >= 5.7 ? 'warning' : 'normal' });
+            if(data.total_cholesterol !== undefined) evaluations.push({ title: '總膽固醇', value: data.total_cholesterol, unit: 'mg/dL', interpretation: data.total_cholesterol >= 240 ? '過高' : data.total_cholesterol >= 200 ? '邊緣性偏高' : '理想', status: data.total_cholesterol >= 240 ? 'danger' : data.total_cholesterol >= 200 ? 'warning' : 'normal' });
+            if(data.triglycerides !== undefined) evaluations.push({ title: '三酸甘油酯', value: data.triglycerides, unit: 'mg/dL', interpretation: data.triglycerides >= 200 ? '過高' : data.triglycerides >= 150 ? '邊緣性偏高' : '理想', status: data.triglycerides >= 200 ? 'danger' : data.triglycerides >= 150 ? 'warning' : 'normal' });
+            if(data.hdl !== undefined) { const isLow = (gender === 'male' && data.hdl < 40) || (gender === 'female' && data.hdl < 50); evaluations.push({ title: '高密度脂蛋白 (HDL)', value: data.hdl, unit: 'mg/dL', interpretation: isLow ? '偏低' : '良好', status: isLow ? 'warning' : 'normal' }); }
+            if(data.ldl !== undefined) evaluations.push({ title: '低密度脂蛋白 (LDL)', value: data.ldl, unit: 'mg/dL', interpretation: data.ldl >= 160 ? '過高' : data.ldl >= 130 ? '邊緣性偏高' : '理想', status: data.ldl >= 160 ? 'danger' : data.ldl >= 130 ? 'warning' : 'normal' });
+            if(data.creatinine !== undefined) evaluations.push({ title: '血清肌酸酐', value: data.creatinine, unit: 'mg/dL', interpretation: '腎功能指標之一', status: 'info'});
+            if(data.urine_creatinine !== undefined) evaluations.push({ title: '尿液肌酸酐', value: data.urine_creatinine, unit: 'mg/dL', interpretation: '尿液濃度指標', status: 'info'});
+            if(data.egfr !== undefined) {
+                let egfrText = data.egfr_calculated ? `${data.egfr} (計算值)` : data.egfr;
+                evaluations.push({ title: '腎絲球過濾率 (eGFR)', value: egfrText, unit: 'mL/min/1.73m²', interpretation: data.egfr < 60 ? '功能不全' : data.egfr < 90 ? '輕度下降' : '正常', status: data.egfr < 60 ? 'danger' : data.egfr < 90 ? 'warning' : 'normal' });
+            }
+            if(data.urine_protein !== undefined) evaluations.push({ title: '尿蛋白(定性)', value: data.urine_protein === 'positive' ? '異常 (陽性)' : '正常 (陰性)', status: data.urine_protein === 'positive' ? 'danger' : 'normal'});
+            if(data.acr !== undefined) evaluations.push({ title: '尿液微量白蛋白/肌酸酐比', value: data.acr, unit: 'mg/g', interpretation: data.acr > 300 ? '巨量白蛋白尿' : data.acr >= 30 ? '微量白蛋白尿' : '正常', status: data.acr > 300 ? 'danger' : data.acr >= 30 ? 'warning' : 'normal' });
+            if(data.got !== undefined) evaluations.push({title: '肝指數 (GOT/AST)', value: data.got, unit: 'U/L', interpretation: data.got >= 40 ? '偏高' : '正常', status: data.got >= 40 ? 'warning' : 'normal'});
+            if(data.gpt !== undefined) evaluations.push({title: '肝指數 (GPT/ALT)', value: data.gpt, unit: 'U/L', interpretation: data.gpt >= 40 ? '偏高' : '正常', status: data.gpt >= 40 ? 'warning' : 'normal'});
+            if(data.uric_acid !== undefined) evaluations.push({title: '尿酸', value: data.uric_acid, unit: 'mg/dL', interpretation: data.uric_acid > 7.0 ? '偏高 (高尿酸血症)' : '正常', status: data.uric_acid > 7.0 ? 'warning' : 'normal'});
+            if(data.urine_sugar !== undefined) evaluations.push({title: '尿糖', value: data.urine_sugar === 'positive' ? '異常 (陽性)' : '正常 (陰性)', status: data.urine_sugar === 'positive' ? 'warning' : 'normal'});
+            if(data.occult_blood !== undefined) evaluations.push({title: '尿潛血', value: data.occult_blood === 'positive' ? '異常 (陽性)' : '正常 (陰性)', status: data.occult_blood === 'positive' ? 'warning' : 'normal'});
+            if(data.leukocyte !== undefined) evaluations.push({title: '尿白血球', value: data.leukocyte === 'positive' ? '異常 (陽性)' : '正常 (陰性)', status: data.leukocyte === 'positive' ? 'warning' : 'normal'});
+            if(data.nitrite !== undefined) evaluations.push({title: '尿亞硝酸鹽', value: data.nitrite === 'positive' ? '異常 (陽性)' : '正常 (陰性)', status: data.nitrite === 'positive' ? 'danger' : 'normal'});
+            if(data.hbsag !== undefined) evaluations.push({title: 'B型肝炎抗原', value: data.hbsag === 'positive' ? '陽性' : '陰性', status: data.hbsag === 'positive' ? 'danger' : 'normal'});
+            if(data.anti_hcv !== undefined) evaluations.push({title: 'C型肝炎抗體', value: data.anti_hcv === 'positive' ? '陽性' : '陰性', status: data.anti_hcv === 'positive' ? 'danger' : 'normal'});
+            return evaluations;
+        }
+
+        // --- UI Creation Functions ---
+        function createResultCard({ title, value, unit, interpretation, status }) {
+            const card = document.createElement('div');
+            card.className = `result-card p-3 rounded-lg shadow-sm status-${status}`;
+            let displayValue = unit ? `<span class="text-2xl">${value}</span><span class="text-sm align-baseline font-normal text-gray-500 ml-1">${unit}</span>` : `<span class="text-2xl">${value}</span>`;
+            card.innerHTML = `<p class="text-sm font-medium text-gray-600">${title}</p><p class="font-bold text-gray-900">${displayValue}</p>${interpretation ? `<p class="text-xs font-semibold text-gray-700 mt-1">${interpretation}</p>` : ''}`;
+            return card;
+        }
+        function createSummaryCard({icon, title, status, interpretation}) {
+            const card = document.createElement('div');
+            card.className = `summary-card border-l-4 status-${status}`;
+            card.innerHTML = `<h3 class="font-bold text-gray-800">${icon} ${title}</h3><p class="font-semibold text-lg text-gray-900">${interpretation}</p>`;
+            return card;
+        }
+        function createMetabolicSyndromeCard(syndromeData) {
+            const card = document.createElement('div');
+            const statusClass = syndromeData.hasSyndrome ? 'status-danger' : 'status-normal';
+            const title = syndromeData.hasSyndrome ? `🚨 符合代謝症候群 (${syndromeData.count}/5)` : `✅ 未符合代謝症候群 (${syndromeData.count}/5)`;
+            let criteriaHtml = syndromeData.criteria.map(c => `<li class="flex items-center text-sm ${c.met ? 'font-semibold text-red-700' : 'text-gray-600'}">${c.met ? '<span class="mr-2">■</span>' : '<span class="text-green-500 mr-2">□</span>'} ${c.name}: ${c.value}</li>`).join('');
+            card.className = `summary-card border-l-4 ${statusClass}`;
+            card.innerHTML = `<h3 class="font-bold text-gray-800">${title}</h3><ul class="mt-2 space-y-1">${criteriaHtml}</ul>`;
+            return card;
+        }
+       
+        function createCKDCard(gfrStage, albuminuriaStage, egfr, acr) {
+            const card = document.createElement('div');
+            const ckdStageMap = { 1: 1, 2: 2, 3: 3, 4: 3, 5: 4, 6: 5 };
+            const isCKD = (egfr < 60) || (albuminuriaStage > 1 && albuminuriaStage !== 0);
+            let currentDisplayStage = isCKD ? ckdStageMap[gfrStage] : 0;
+
+            // --- Part 1: Staging Progress Bar ---
+            const stageColors = { 0: 'bg-blue-500', 1: 'bg-green-500', 2: 'bg-yellow-500', 3: 'bg-orange-500', 4: 'bg-red-500', 5: 'bg-red-600' };
+            let stageHtml = `<div class="relative w-full h-8 flex items-center">
+                                <div class="w-full h-2 bg-gray-200 rounded-full"></div>
+                                <div class="absolute w-full h-2 flex items-center">
+                                    <div class="w-1/6 h-2 bg-blue-400"></div><div class="w-1/6 h-2 bg-green-400"></div><div class="w-1/6 h-2 bg-yellow-400"></div><div class="w-1/6 h-2 bg-orange-400"></div><div class="w-1/6 h-2 bg-red-400"></div><div class="w-1/6 h-2 bg-red-700"></div>
+                                </div>
+                                <div class="absolute w-full h-8 flex items-center justify-between">`;
+            for (let i = 0; i <= 5; i++) {
+                const isCurrent = (i === currentDisplayStage);
+                stageHtml += `<div class="w-1/6 flex justify-center"><div class="w-5 h-5 rounded-full flex items-center justify-center text-white font-bold text-xs ${isCurrent ? stageColors[i] : 'bg-gray-300'}">${i===0 ? 'N' : i}</div></div>`;
+            }
+            stageHtml += `</div></div><div class="flex justify-between text-xs text-gray-500 mt-1"><span>正常</span><span>輕度</span><span class="pl-2">中度</span><span>重度</span><span class="pl-2">末期</span></div>`;
+            
+            // --- Part 2: Collapsible Description ---
+            const stageDescriptions = [
+                { title: '腎功能正常', criteria: 'eGFR ≧ 60 且 無持續性蛋白尿', detail: '您的腎功能指標在正常範圍，請繼續保持健康生活型態。'},
+                { title: '慢性腎臟病第一期', criteria: '腎功能正常 eGFR ≧ 90 且 合併尿蛋白異常', detail: '此階段不會有明顯症狀，但可能出現夜尿 、多尿及血尿等排尿型態。<br>建議均衡飲食及維持良好生活習慣，積極控制血糖及血壓，每半年做腎功能檢查。'},
+                { title: '慢性腎臟病第二期', criteria: '腎功能輕微下降 90> eGFR ≧ 60 且 合併尿蛋白異常', detail: '腎臟功能約正常人60~90%，應注意均衡飲食及維持良好生活習慣，積極控制血糖及血壓，每半年做腎功能檢查，透過治療後腎功能有可能恢復正常。'},
+                { title: '慢性腎臟病第三期', criteria: '腎功能中度異常 60> eGFR ≧ 30', detail: '腎功能為正常人的30~59%，應評估腎臟病的相關併發症，調整飲食、生活習慣，控制血糖及血壓，積極配合治療減緩腎功能的下降。'},
+                { title: '慢性腎臟病第四期', criteria: '腎功能重度異常 30> eGFR ≧ 15', detail: '腎功能約為一般人的15~29%，易出現疲勞、易喘及高血壓的症狀，應積極調整飲食及配合藥物控制，避免腎功能快速惡化。'},
+                { title: '慢性腎臟病第五期', criteria: '腎功能異常 eGFR < 15', detail: '腎臟功能約為一般人的15%以下，腎臟無法正常代謝運作，開始出現尿毒症狀，應及早與醫師討論後續腎臟替代療法的選擇。'}
+            ];
+            const descIndex = isCKD ? ckdStageMap[gfrStage] : 0;
+            const descriptionHtml = `
+                <div class="mt-4 p-3 bg-gray-50 rounded-lg">
+                    <h4 class="font-bold text-lg text-gray-800">${stageDescriptions[descIndex].title}</h4>
+                    <p class="text-sm font-semibold ${isCKD ? 'text-red-600' : 'text-green-600'} mt-1">${stageDescriptions[descIndex].criteria}</p>
+                    <p class="text-xs text-gray-600 mt-2">${stageDescriptions[descIndex].detail}</p>
+                </div>`;
+
+            // --- Part 3: New Visual Matrix ---
+             const riskMatrixColors = [
+                ['ckd-green', 'ckd-yellow', 'ckd-orange'], ['ckd-green', 'ckd-yellow', 'ckd-orange'],
+                ['ckd-yellow', 'ckd-orange', 'ckd-red'], ['ckd-orange', 'ckd-red', 'ckd-red'],
+                ['ckd-red', 'ckd-red', 'ckd-red'], ['ckd-red', 'ckd-red', 'ckd-red']
+            ];
+
+            const matrixHtml = `
+            <div class="grid grid-cols-[auto_1fr_auto] gap-1 mt-4">
+                <!-- Top Header -->
+                <div class="bg-gray-700 text-white p-2 rounded-tl-md flex items-center justify-center">
+                    <h4 class="font-bold text-sm">慢性腎臟病風險</h4>
+                </div>
+                <div class="p-1 text-center text-sm font-bold text-white bg-teal-600 rounded-t-md">蛋白尿嚴重度</div>
+                <div class="p-1 bg-gray-100 rounded-tr-md"></div>
+
+                <!-- GFR Title -->
+                <div class="p-1 flex items-center justify-center bg-gray-200 rounded-l-md">
+                    <span class="font-bold text-sm text-gray-600" style="writing-mode: vertical-rl; text-orientation: mixed;">腎絲球過濾率</span>
+                </div>
+                
+                <!-- Main Grid -->
+                <div class="grid grid-cols-3 grid-rows-7 gap-1">
+                    <!-- Albuminuria Sub-headers -->
+                    <div class="p-1 text-center text-xs font-bold text-gray-700">A1 正常<br>&lt;30 mg/g</div>
+                    <div class="p-1 text-center text-xs font-bold text-gray-700">A2 微量<br>30-300 mg/g</div>
+                    <div class="p-1 text-center text-xs font-bold text-gray-700">A3 巨量<br>&gt;300 mg/g</div>
+                    
+                    <!-- GFR & Risk Cells -->
+                    ${[1, 2, 3, 4, 5, 6].map(g => {
+                        let rowContent = '';
+                        if (albuminuriaStage === 0) {
+                             rowContent += `<div class="col-span-3 h-full rounded ${g === gfrStage ? 'ckd-row-highlight bg-gray-300' : 'bg-gray-200'} flex items-center justify-center text-xs text-gray-600 font-semibold p-1">缺乏蛋白尿數據</div>`;
+                        } else {
+                            for (let a = 1; a <= 3; a++) {
+                                const isCurrent = (g === gfrStage && a === albuminuriaStage);
+                                rowContent += `<div class="h-full min-h-[2.5rem] rounded ${riskMatrixColors[g - 1][a - 1]} ${isCurrent ? 'ckd-cell-highlight' : ''}"></div>`;
+                            }
+                        }
+                        return rowContent;
+                    }).join('')}
+                </div>
+                
+                <!-- Risk Gradient Bar -->
+                <div class="flex flex-col items-center justify-between text-xs font-semibold text-gray-500 bg-gray-100 rounded-r-md py-2">
+                    <span style="writing-mode: vertical-rl; text-orientation: mixed;">風險低</span>
+                    <div class="w-2 flex-1 mx-auto my-1 bg-gradient-to-t from-red-500 via-orange-400 via-yellow-300 to-green-400 rounded-full"></div>
+                    <span style="writing-mode: vertical-rl; text-orientation: mixed;">非常高</span>
+                </div>
+            </div>`;
+            
+            // --- Final Card Assembly ---
+            const title = isCKD ? "🚨 慢性腎臟病 (CKD) 風險評估" : "✅ 腎功能評估";
+            const borderColorClass = isCKD ? 'status-danger' : 'status-normal';
+
+            card.className = `summary-card border-l-4 ${borderColorClass}`;
+            card.innerHTML = `<h3 class="font-bold text-gray-800">${title}</h3>
+                              <div class="my-3">${stageHtml}</div>
+                              ${descriptionHtml}
+                              ${matrixHtml}`;
+            return card;
+        }
+
+        function createDiabetesCard(currentStatus, suggestion, hba1c) {
+             const card = document.createElement('div');
+             const statuses = [
+                { status: 1, text: "正常", value: "&lt; 5.7%", highlightClass: "bg-green-500 text-white" },
+                { status: 2, text: "糖尿病前期", value: "5.7-6.4%", highlightClass: "bg-yellow-500 text-black" },
+                { status: 3, text: "糖尿病", value: "≥ 6.5%", highlightClass: "bg-red-500 text-white" }
+            ];
+
+            let statusHtml = `<div class="grid grid-cols-3 gap-0 text-center rounded-lg overflow-hidden border">`;
+            statuses.forEach(s => {
+                const isCurrent = s.status === currentStatus;
+                statusHtml += `
+                    <div class=" ${isCurrent ? s.highlightClass : 'bg-gray-100 text-gray-600'}">
+                        <div class="p-2 font-bold text-sm whitespace-nowrap">${s.text}</div>
+                        <div class="text-xs pb-1 opacity-80">${s.value}</div>
+                    </div>
+                `;
+            });
+            statusHtml += `</div>`;
+
+            const titleIcon = currentStatus > 1 ? '⚠️' : '✅';
+            
+            card.className = `summary-card border-l-4 ${currentStatus === 1 ? 'status-normal' : currentStatus === 2 ? 'status-warning' : 'status-danger'}`;
+            card.innerHTML = `<h3 class="font-bold text-gray-800">${titleIcon} 糖尿病評估</h3>
+                              <p class="text-sm text-gray-600 mb-2">您目前的 HbA1c: <b>${hba1c}%</b></p>
+                             ${statusHtml}
+                             <div class="mt-3 p-2 bg-indigo-50 border border-indigo-200 rounded-md">
+                                <h4 class="text-sm font-semibold text-indigo-800">初步用藥建議參考</h4>
+                                <p class="text-sm text-indigo-700">${suggestion}</p>
+                             </div>`;
+             return card;
+        }
+        function createDyslipidemiaCard({isNormal, hasHypercholesterolemia, hasHypertriglyceridemia }) {
+            const card = document.createElement('div');
+            if (isNormal) {
+                card.className = `summary-card border-l-4 status-normal`;
+                card.innerHTML = `<h3 class="font-bold text-gray-800">✅ 血脂肪評估</h3><p class="font-semibold text-lg text-gray-900">血脂肪大致正常</p>`;
+                return card;
+            }
+
+            card.className = `summary-card border-l-4 status-warning`;
+            const hcHtml = `<div class="p-2 rounded-md text-sm ${hasHypercholesterolemia ? 'bg-yellow-200 border border-yellow-400' : 'bg-gray-100'}">高血膽固醇症</div>`;
+            const htgHtml = `<div class="p-2 rounded-md text-sm ${hasHypertriglyceridemia ? 'bg-yellow-200 border border-yellow-400' : 'bg-gray-100'}">高三酸甘油酯血症</div>`;
+            const link = `<div class="mt-2"><a href="#" onclick="event.preventDefault(); alert('此功能將連結至十年心血管疾病風險(ASCVD)計算器，幫助您與醫師評估是否需要藥物介入。此為功能示意。')" class="text-sm text-indigo-600 hover:text-indigo-800 font-semibold">評估心血管風險與用藥必要性 &rarr;</a></div>`;
+
+            card.innerHTML = `<h3 class="font-bold text-gray-800">⚠️ 血脂肪評估</h3>
+                             <div class="grid grid-cols-2 gap-2 my-2">${hcHtml}${htgHtml}</div>
+                             ${link}`;
+            return card;
+        }
+    </script>
+
+    <!-- 必要的 JavaScript 文件 -->
+
+    <!-- 初始化頂部欄和側邊欄 -->
+    
+    <!-- 必要的 JavaScript 文件 -->
+
+    <!-- 初始化頂部欄和側邊欄 -->
+    
+    <!-- 必要的 JavaScript 文件 -->
+    <script src="js/tools-config.js"></script>
+    <script src="js/spa-router.js"></script>
+    <script src="components/header-sidebar.js"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const existingNav = document.querySelector('nav');
+            const existingFrame = document.getElementById('main-frame');
+            
+            if (!existingNav && !existingFrame) {
+                initHeaderSidebar({
+                    currentPage: 'health-check-analyzer',
+                    pageTitle: '醫療工具百寶箱',
+                    enableSPA: true
+                });
+            } else {
+                if (typeof SPARouter !== 'undefined' && !window.spaRouter) {
+                    window.spaRouter = new SPARouter();
+                }
+                if (typeof updateSidebarHighlight === 'function') {
+                    updateSidebarHighlight('health-check-analyzer');
+                }
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="zh-TW" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>醫療工具百寶箱 - 專業醫療知識與工具分享平台</title>
+    <meta name="description" content="提供實用、易懂的醫學資訊與便捷的健康小工具，包含各種醫療計算器、疾病衛教資訊等專業內容。">
+    <meta name="keywords" content="醫療工具, 健康計算器, 醫學知識, 疾病衛教, 醫療資訊">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    
+    <!-- Tailwind Config -->
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        primary: {
+                            50: '#eff6ff',
+                            100: '#dbeafe',
+                            500: '#3b82f6',
+                            600: '#2563eb',
+                            700: '#1d4ed8',
+                            800: '#1e40af',
+                            900: '#1e3a8a'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-gray-50 dark:bg-gray-900 transition-colors duration-300">
+    
+    <!-- 主內容區 -->
+    <main class="p-6 lg:p-8">
+        <div class="max-w-7xl mx-auto">
+            <!-- 網站簡介 -->
+            <section class="mb-12">
+                <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-8 border border-gray-200 dark:border-gray-700">
+                    <div class="text-center">
+                        <!-- Logo 容器 -->
+                        <div class="inline-flex items-center justify-center bg-white rounded-2xl mb-6 shadow-lg p-4" style="width: 400px; height: 300px;">
+                            <img src="assets/images/allheart_logo.jpg" alt="誠心醫療體系 Logo" class="w-full h-full object-contain">
+                        </div>
+                        <h2 class="text-3xl font-bold text-gray-900 dark:text-white mb-4">
+                            歡迎來到誠心醫療體系的醫療工具箱
+                        </h2>
+                        <p class="text-lg text-gray-600 dark:text-gray-300 max-w-3xl mx-auto leading-relaxed">
+                            我們致力於提供實用、易懂的醫學資訊與便捷的健康小工具。
+                            無論您是醫療專業人員還是關心健康的一般民眾，都能在這裡找到有價值的醫療知識與實用工具，
+                            幫助您做出更明智的健康決策。
+                        </p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 特色文章展示 -->
+            <section class="mb-12">
+                <div class="flex items-center justify-between mb-8">
+                    <h3 class="text-2xl font-bold text-gray-900 dark:text-white">特色文章</h3>
+                    <a href="knowledge-base.html" class="text-primary-600 dark:text-primary-400 hover:text-primary-700 dark:hover:text-primary-300 font-medium transition-colors duration-200">
+                        查看更多 <i class="fas fa-arrow-right ml-1"></i>
+                    </a>
+                </div>
+                
+                <div id="featured-articles" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+                    <!-- 文章卡片將由 JavaScript 動態生成 -->
+                </div>
+            </section>
+
+            <!-- 醫療工具分類展示 -->
+            <section class="mb-12">
+                <div id="tools-categories" class="space-y-12">
+                    <!-- 分類工具將由 JavaScript 動態生成 -->
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <!-- JavaScript -->
+    <script>
+        // 特色文章數據
+        const featuredArticles = [
+            {
+                title: "貧血的診斷與治療",
+                summary: "了解貧血的成因、症狀及治療方法，包含完整的診斷流程和治療建議。",
+                date: "2024-01-15",
+                href: "anemia.html",
+                category: "內科疾病",
+                icon: "fa-tint"
+            },
+            {
+                title: "氣喘控制指南",
+                summary: "全面的氣喘管理指南，包含藥物治療、環境控制和日常照護要點。",
+                date: "2024-01-12",
+                href: "asthma-control.html",
+                category: "呼吸系統",
+                icon: "fa-lungs"
+            },
+            {
+                title: "高血壓的預防與管理",
+                summary: "高血壓的成因、預防方法和生活方式調整，幫助您有效控制血壓。",
+                date: "2024-01-10",
+                href: "hypertension.html",
+                category: "心血管疾病",
+                icon: "fa-heartbeat"
+            },
+            {
+                title: "兒童疫苗接種指南",
+                summary: "台灣兒童疫苗接種時程表，包含各種疫苗的接種時間和注意事項。",
+                date: "2024-01-08",
+                href: "children-vaccine.html",
+                category: "兒科",
+                icon: "fa-syringe"
+            }
+        ];
+
+        // 渲染特色文章
+        function renderFeaturedArticles() {
+            const container = document.getElementById('featured-articles');
+            
+            featuredArticles.forEach((article, index) => {
+                const articleCard = document.createElement('div');
+                articleCard.className = 'group bg-white dark:bg-gray-800 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700 overflow-hidden hover:shadow-xl hover:-translate-y-1 transition-all duration-300';
+                articleCard.style.animationDelay = `${index * 0.1}s`;
+                
+                articleCard.innerHTML = `
+                    <div class="p-6">
+                        <div class="flex items-center mb-4">
+                            <div class="w-12 h-12 bg-primary-100 dark:bg-primary-900/30 rounded-lg flex items-center justify-center mr-4">
+                                <i class="fas ${article.icon} text-primary-600 dark:text-primary-400"></i>
+                            </div>
+                            <div>
+                                <span class="text-sm text-primary-600 dark:text-primary-400 font-medium">${article.category}</span>
+                                <p class="text-sm text-gray-500 dark:text-gray-400">${article.date}</p>
+                            </div>
+                        </div>
+                        
+                        <h4 class="text-xl font-bold text-gray-900 dark:text-white mb-3 group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors duration-200">
+                            ${article.title}
+                        </h4>
+                        
+                        <p class="text-gray-600 dark:text-gray-300 mb-4 leading-relaxed">
+                            ${article.summary}
+                        </p>
+                        
+                        <a href="${article.href}" class="inline-flex items-center text-primary-600 dark:text-primary-400 hover:text-primary-700 dark:hover:text-primary-300 font-medium transition-colors duration-200">
+                            閱讀更多
+                            <i class="fas fa-arrow-right ml-2 transform group-hover:translate-x-1 transition-transform duration-200"></i>
+                        </a>
+                    </div>
+                `;
+                
+                container.appendChild(articleCard);
+            });
+        }
+
+        // 渲染工具分類
+        function renderToolsCategories() {
+            const container = document.getElementById('tools-categories');
+            
+            if (typeof TOOLS_CONFIG !== 'undefined' && typeof CATEGORIES !== 'undefined') {
+                Object.entries(TOOLS_CONFIG).forEach(([categoryKey, tools]) => {
+                    const categoryInfo = CATEGORIES[categoryKey];
+                    if (categoryInfo && tools.length > 0) {
+                        // 創建分類區塊
+                        const categorySection = document.createElement('div');
+                        categorySection.className = 'bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-8 border border-gray-200 dark:border-gray-700 transition-all duration-300';
+                        categorySection.id = `section-${categoryKey}`;
+                        
+                        categorySection.innerHTML = `
+                            <!-- 分類標題 -->
+                            <div class="flex items-center mb-8">
+                                <div class="bg-${categoryInfo.color}-500 p-3 rounded-xl mr-4">
+                                    <i class="fas ${categoryInfo.icon} text-white text-xl"></i>
+                                </div>
+                                <h3 class="text-2xl font-bold text-gray-900 dark:text-white">${categoryInfo.name}</h3>
+                                <div class="ml-4 px-3 py-1 bg-${categoryInfo.color}-100 dark:bg-${categoryInfo.color}-900/30 text-${categoryInfo.color}-700 dark:text-${categoryInfo.color}-300 text-sm font-medium rounded-full">
+                                    ${tools.length} 個頁面
+                                </div>
+                            </div>
+                            
+                            <!-- 工具卡片網格 -->
+                            <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4" id="${categoryKey}-tools-grid">
+                            </div>
+                        `;
+                        
+                        container.appendChild(categorySection);
+                        
+                        // 渲染該分類下的所有工具
+                        const toolsGrid = document.getElementById(`${categoryKey}-tools-grid`);
+                        tools.forEach((tool, index) => {
+                            const toolCard = document.createElement('a');
+                            toolCard.href = tool.href;
+                            toolCard.className = 'group bg-gray-50 dark:bg-gray-700 rounded-lg p-4 hover:bg-white dark:hover:bg-gray-600 hover:shadow-lg hover:-translate-y-1 transition-all duration-300 border border-gray-100 dark:border-gray-600 hover:border-' + categoryInfo.color + '-200 dark:hover:border-' + categoryInfo.color + '-400';
+                            toolCard.style.animationDelay = `${index * 0.05}s`;
+                            
+                            toolCard.innerHTML = `
+                                <!-- 工具圖標 -->
+                                <div class="flex items-center justify-center w-10 h-10 bg-${categoryInfo.color}-100 dark:bg-${categoryInfo.color}-900/30 rounded-lg mb-3 group-hover:bg-${categoryInfo.color}-200 dark:group-hover:bg-${categoryInfo.color}-900/50 transition-colors duration-200">
+                                    <i class="fas ${tool.icon} text-${categoryInfo.color}-600 dark:text-${categoryInfo.color}-400 text-lg"></i>
+                                </div>
+                                
+                                <!-- 工具標題 -->
+                                <h4 class="text-sm font-bold text-gray-900 dark:text-white mb-2 group-hover:text-${categoryInfo.color}-600 dark:group-hover:text-${categoryInfo.color}-400 transition-colors duration-200 leading-tight">
+                                    ${tool.text}
+                                </h4>
+                                
+                                <!-- 工具描述 -->
+                                <p class="text-xs text-gray-600 dark:text-gray-300 mb-3 leading-relaxed line-clamp-2">
+                                    ${tool.description || '實用的醫療工具'}
+                                </p>
+                                
+                                <!-- 使用按鈕 -->
+                                <div class="flex items-center justify-between">
+                                    <span class="text-${categoryInfo.color}-600 dark:text-${categoryInfo.color}-400 font-medium text-xs">
+                                        立即使用
+                                    </span>
+                                    <i class="fas fa-arrow-right text-${categoryInfo.color}-500 opacity-0 group-hover:opacity-100 transform translate-x-1 group-hover:translate-x-0 transition-all duration-300 text-xs"></i>
+                                </div>
+                            `;
+                            
+                            toolsGrid.appendChild(toolCard);
+                        });
+                    }
+                });
+            }
+        }
+        
+        // 處理從其他頁面跳轉過來的滾動需求
+        function handleScrollFromOtherPages() {
+            const scrollToSection = sessionStorage.getItem('scrollToSection');
+            const highlightColor = sessionStorage.getItem('highlightColor');
+            
+            if (scrollToSection) {
+                sessionStorage.removeItem('scrollToSection');
+                sessionStorage.removeItem('highlightColor');
+                
+                setTimeout(() => {
+                    const targetSection = document.getElementById(`section-${scrollToSection}`);
+                    if (targetSection) {
+                        // 檢查是否使用框架結構
+                        const scrollContainer = document.getElementById('main-scroll-container');
+                        
+                        if (scrollContainer) {
+                            // 框架結構：計算在框架內的位置
+                            const containerRect = scrollContainer.getBoundingClientRect();
+                            const targetRect = targetSection.getBoundingClientRect();
+                            const scrollTop = scrollContainer.scrollTop;
+                            const targetPosition = targetRect.top - containerRect.top + scrollTop - 20;
+                            
+                            scrollContainer.scrollTo({
+                                top: Math.max(0, targetPosition),
+                                behavior: 'smooth'
+                            });
+                        } else {
+                            // 傳統結構：使用原有邏輯
+                            const navHeight = 64 + 20;
+                            const elementPosition = targetSection.offsetTop;
+                            const offsetPosition = elementPosition - navHeight;
+                            
+                            window.scrollTo({
+                                top: offsetPosition,
+                                behavior: 'smooth'
+                            });
+                        }
+                        
+                        if (highlightColor) {
+                            targetSection.classList.add('ring-2', `ring-${highlightColor}-500`, 'ring-opacity-50');
+                            setTimeout(() => {
+                                targetSection.classList.remove('ring-2', `ring-${highlightColor}-500`, 'ring-opacity-50');
+                            }, 2000);
+                        }
+                    }
+                }, 500);
+            }
+        }
+
+        // 初始化首頁
+        function initIndexPage() {
+            console.log('執行 initIndexPage');
+            
+            // 檢查必要的依賴
+            if (typeof TOOLS_CONFIG === 'undefined' || typeof CATEGORIES === 'undefined') {
+                console.warn('TOOLS_CONFIG 或 CATEGORIES 未定義，延遲執行');
+                setTimeout(initIndexPage, 500);
+                return;
+            }
+            
+            // 清空現有內容，避免重複渲染
+            const featuredContainer = document.getElementById('featured-articles');
+            const toolsContainer = document.getElementById('tools-categories');
+            
+            if (featuredContainer) {
+                console.log('清空特色文章容器');
+                featuredContainer.innerHTML = '';
+            }
+            if (toolsContainer) {
+                console.log('清空工具分類容器');
+                toolsContainer.innerHTML = '';
+            }
+            
+            // 重新渲染內容
+            try {
+                console.log('開始渲染特色文章');
+                renderFeaturedArticles();
+                console.log('開始渲染工具分類');
+                renderToolsCategories();
+                console.log('處理滾動需求');
+                handleScrollFromOtherPages();
+                console.log('首頁內容渲染完成');
+            } catch (error) {
+                console.error('渲染首頁內容時發生錯誤:', error);
+            }
+        }
+        
+        // 將所有函數暴露到全域範圍，供 SPA 路由器使用
+        window.initIndexPage = initIndexPage;
+        window.renderFeaturedArticles = renderFeaturedArticles;
+        window.renderToolsCategories = renderToolsCategories;
+        window.handleScrollFromOtherPages = handleScrollFromOtherPages;
+        
+        // 頁面載入完成後執行
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('DOMContentLoaded 事件觸發');
+            initIndexPage();
+        });
+    </script>
+
+    <!-- 必要的 JavaScript 文件 -->
+
+    <!-- 初始化頂部欄和側邊欄 -->
+    
+    <!-- 必要的 JavaScript 文件 -->
+    <!-- 統一應用程式檔案 - 包含所有功能 -->
+    <script src="js/unified-app.js"></script>
+
+    <!-- 統一檔案會自動初始化，無需額外設定 -->
+    <!-- 如需自訂配置，可設定 window.medicalToolsConfig -->
+    <script>
+        // 可選：自訂配置
+        window.medicalToolsConfig = {
+            currentPage: 'index',
+            pageTitle: '醫療工具百寶箱',
+            enableSPA: true
+        };
+    </script>
+</body>
+</html>

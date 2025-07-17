@@ -126,29 +126,18 @@
     // 頁面載入時初始化計時器
     window.onload = resetTimer;
   </script>
-
-    <!-- 必要的 JavaScript 文件 -->
-
     <!-- 初始化頂部欄和側邊欄 -->
-    
-    <!-- 必要的 JavaScript 文件 -->
+    <!-- 統一應用程式檔案 - 包含所有功能 -->
+    <script src="js/unified-app.js"></script>
 
-    <!-- 初始化頂部欄和側邊欄 -->
-    
-    <!-- 必要的 JavaScript 文件 -->
-    <script src="js/tools-config.js"></script>
-    <script src="js/spa-router.js"></script>
-    <script src="components/header-sidebar.js"></script>
-
-    <!-- 初始化頂部欄和側邊欄 -->
+    <!-- 統一檔案會自動初始化，如需自訂配置可設定 window.medicalToolsConfig -->
     <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            initHeaderSidebar({
-                currentPage: 'timer-for-bppv',
-                pageTitle: '醫療工具百寶箱',
-                enableSPA: true
-            });
-        });
+        // 可選：自訂配置
+        window.medicalToolsConfig = {
+            currentPage: 'timer-for-bppv',
+            pageTitle: document.title || '醫療工具百寶箱',
+            enableSPA: true
+        };
     </script>
 </body>
 </html>

@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>互動式第二型糖尿病治療指引</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
+  <!-- Chosen Palette: Warm Neutrals -->
+  <!-- Application Structure Plan: The SPA is designed as a clinical decision support tool using a top-level tabbed navigation. This non-linear structure allows users (clinicians/students) to directly access information relevant to their immediate query, such as a specific patient profile or drug comparison, rather than reading the report linearly. The flow is: 1. Overview Flowchart for the big picture. 2. High-Risk section for common, critical patient types (ASCVD/HF/CKD). 3. Individualized Goals for other cases. 4. Quick Drug Reference for comparison. 5. NHI rules for practical constraints. This user-task-oriented architecture is more efficient for clinical decision-making than the original report's structure. -->
+  <!-- Visualization & Content Choices: 1. Overall Algorithm: HTML/CSS flowchart (Goal: Organize) for intuitive process visualization. 2. High-Risk/Individualized Paths: Interactive cards (Goal: Inform/Compare) for focused, uncluttered recommendations based on user selection. 3. Drug Comparison: Chart.js bar chart (Goal: Compare) for quick visual assessment of efficacy/side effects, supplemented by detailed HTML tables (Goal: Inform). 4. NHI Rules: Accordion/collapsible sections (Goal: Inform) to manage dense regulatory information without overwhelming the user. All choices prioritize interactivity and clarity, using Canvas for charts and structured HTML/CSS for diagrams. -->
+  <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+  <style>
+    body {
+      font-family: 'Noto Sans TC', sans-serif;
+      background-color: #FDFBF8;
+    }
+
+    .tab-active {
+      border-color: #2563eb;
+      color: #2563eb;
+      background-color: #eff6ff;
+    }
+
+    .tab-inactive {
+      border-color: transparent;
+      color: #4b5563;
+    }
+
+    .content-section {
+      display: none;
+    }
+
+    .content-active {
+      display: block;
+    }
+
+    .chart-container {
+      position: relative;
+      width: 100%;
+      max-width: 800px;
+      margin-left: auto;
+      margin-right: auto;
+      height: 400px;
+      max-height: 50vh;
+    }
+
+    .flowchart-node {
+      border: 2px solid #d1d5db;
+      padding: 0.75rem 1.25rem;
+      border-radius: 0.5rem;
+      text-align: center;
+      background-color: white;
+      box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+    }
+
+    .flowchart-connector {
+      flex-grow: 1;
+      background-color: #9ca3af;
+      height: 2px;
+    }
+
+    .flowchart-arrow::after {
+      content: '▼';
+      color: #9ca3af;
+      font-size: 1.5rem;
+      line-height: 0;
+    }
+  </style>
+</head>
+
+<body class="bg-gray-50 text-gray-800">
+
+  <div class="container mx-auto p-4 md:p-8">
+    <header class="text-center mb-8">
+      <h1 class="text-3xl md:text-4xl font-bold text-blue-800">導航台灣現代糖尿病藥物治療版圖</h1>
+      <p class="mt-2 text-lg text-gray-600">一份基於臨床指引與實證的互動式決策工具</p>
+    </header>
+
+    <main id="main-content">
+      <section id="overview" class="content-section content-active">
+        <div class="bg-white p-6 rounded-lg shadow-md">
+          <h2 class="text-2xl font-bold mb-4 text-gray-700">治療演算法概觀</h2>
+          <p class="mb-6 text-gray-600">
+            現代第二型糖尿病治療已從單純的血糖控制，轉向以病人為中心、多面向的風險管理。首要步驟是評估病人是否存在心血管或腎臟等高風險共病症，以決定最優先的治療路徑。此流程圖概述了這個決策過程。</p>
+          <div class="flex flex-col items-center space-y-4">
+            <div class="flowchart-node w-full md:w-3/4"><strong>第一步：治療基石</strong><br>所有病人均需生活型態介入 + Metformin (若無禁忌症)
+            </div>
+            <div class="flowchart-arrow"></div>
+            <div class="flowchart-node w-full md:w-3/4"><strong>第二步：風險分層</strong><br>評估是否存在 ASCVD、心臟衰竭 (HF) 或慢性腎臟病 (CKD)
+            </div>
+            <div class="flowchart-arrow"></div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 w-full">
+              <div class="flex flex-col items-center space-y-4 p-4 bg-blue-50 rounded-lg">
+                <div class="flowchart-node w-full bg-blue-100"><strong>路徑A：存在高風險共病症</strong></div>
+                <div class="flowchart-arrow"></div>
+                <div class="flowchart-node w-full">優先選擇具器官保護實證的藥物 (SGLT2i / GLP-1 RA)，其重要性超越HbA1c</div>
+              </div>
+              <div class="flex flex-col items-center space-y-4 p-4 bg-green-50 rounded-lg">
+                <div class="flowchart-node w-full bg-green-100"><strong>路徑B：無高風險共病症</strong></div>
+                <div class="flowchart-arrow"></div>
+                <div class="flowchart-node w-full">依個體化目標選擇二線藥物 (避免低血糖、體重管理、成本)</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="high-risk" class="content-section">
+        <div class="bg-white p-6 rounded-lg shadow-md">
+          <h2 class="text-2xl font-bold mb-4 text-gray-700">高風險共病症病人的藥物選擇</h2>
+          <p class="mb-6 text-gray-600">
+            對於已確立心血管疾病、心臟衰竭或慢性腎臟病的病人，藥物選擇的首要考量是器官保護。即使血糖控制尚可，也應優先使用具有實證效益的藥物。請選擇病人的共病症以查看指引建議。</p>
+          <div class="flex flex-wrap justify-center gap-4 mb-6">
+            <button class="risk-btn bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-lg transition"
+              data-risk="ascvd">動脈粥狀硬化心血管疾病 (ASCVD)</button>
+            <button class="risk-btn bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-lg transition"
+              data-risk="hf">心臟衰竭 (HF)</button>
+            <button class="risk-btn bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-lg transition"
+              data-risk="ckd">慢性腎臟病 (CKD)</button>
+          </div>
+          <div id="risk-info" class="mt-6 p-6 bg-gray-100 rounded-lg min-h-[200px] flex items-center justify-center">
+            <p class="text-gray-500">請選擇一項共病症</p>
+          </div>
+        </div>
+      </section>
+
+      <section id="individual-goals" class="content-section">
+        <div class="bg-white p-6 rounded-lg shadow-md">
+          <h2 class="text-2xl font-bold mb-4 text-gray-700">無高風險共病症病人的個體化目標</h2>
+          <p class="mb-6 text-gray-600">當病人沒有高風險共病症時，藥物選擇應回歸達成血糖目標，並同時權衡其他重要面向。請選擇最優先的治療考量，以查看建議的藥物類別。</p>
+          <div class="flex flex-wrap justify-center gap-4 mb-6">
+            <button
+              class="goal-btn bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded-lg transition"
+              data-goal="hypo">優先考量：最小化低血糖風險</button>
+            <button
+              class="goal-btn bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded-lg transition"
+              data-goal="weight">優先考量：促進體重減輕</button>
+            <button
+              class="goal-btn bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded-lg transition"
+              data-goal="cost">優先考量：治療成本</button>
+          </div>
+          <div id="goal-info" class="mt-6 p-6 bg-gray-100 rounded-lg min-h-[200px] flex items-center justify-center">
+            <p class="text-gray-500">請選擇一項治療目標</p>
+          </div>
+        </div>
+      </section>
+
+      <section id="drug-ref" class="content-section">
+        <div class="bg-white p-6 rounded-lg shadow-md">
+          <h2 class="text-2xl font-bold mb-4 text-gray-700">藥物特性比較速查</h2>
+          <p class="mb-6 text-gray-600">本區提供主要非胰島素類降血糖藥物的特性比較。下方的圖表可快速比較各類藥物在降糖效力、體重影響與低血糖風險上的差異。點擊藥物類別可查看詳細資訊。</p>
+          <div class="chart-container mb-8">
+            <canvas id="drugCompareChart"></canvas>
+          </div>
+          <div id="drug-details-table" class="overflow-x-auto">
+          </div>
+        </div>
+      </section>
+
+      <section id="nhi" class="content-section">
+        <div class="bg-white p-6 rounded-lg shadow-md">
+          <h2 class="text-2xl font-bold mb-4 text-gray-700">台灣健保給付規範摘要</h2>
+          <p class="mb-6 text-gray-600">
+            在台灣，藥物選擇深受健保給付政策影響。此處整理主要二、三線藥物的給付重點與組合限制，這是在理想指引外，臨床實務中必須考量的現實因素。點擊藥物類別可展開或收合其給付規範。</p>
+          <div id="nhi-accordion" class="space-y-2">
+          </div>
+        </div>
+      </section>
+
+    </main>
+
+    <footer class="text-center mt-12 text-sm text-gray-500">
+      <p>本工具資訊整理自《導航台灣現代糖尿病藥物治療版圖：一份基於臨床指引與實證的專家報告》。</p>
+      <p>內容僅供學術參考，不構成任何醫療建議。所有治療決策應由專業醫師進行。</p>
+    </footer>
+
+  </div>
+
+    <!-- 必要的 JavaScript 文件 -->
+
+    <!-- 初始化頂部欄和側邊欄 -->
+    
+    <!-- 必要的 JavaScript 文件 -->
+    <script src="js/tools-config.js"></script>
+    <script src="js/spa-router.js"></script>
+    <script src="components/header-sidebar.js"></script>
+
+    <!-- 初始化頂部欄和側邊欄 -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            initHeaderSidebar({
+                currentPage: 'diabetes-medication',
+                pageTitle: '醫療工具百寶箱',
+                enableSPA: true
+            });
+        });
+    </script>
+</body>
+</html>

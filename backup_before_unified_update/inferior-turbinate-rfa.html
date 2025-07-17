@@ -1,0 +1,723 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>迎向順暢呼吸：下鼻甲微創手術</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Noto Sans TC', sans-serif;
+            background-color: #f0f9ff;
+        }
+
+        .content-card {
+            background-color: white;
+            border-radius: 0 0 12px 12px;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            padding: 2rem;
+        }
+
+        .highlight {
+            color: #0ea5e9;
+            font-weight: 600;
+        }
+
+        .clinic-logo {
+            text-align: center;
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #0c4a6e;
+        }
+
+        .cta-button {
+            display: inline-block;
+            background-color: #0ea5e9;
+            color: white;
+            padding: 0.75rem 2rem;
+            border-radius: 9999px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: background-color 0.3s ease;
+        }
+
+        .cta-button:hover {
+            background-color: #0369a1;
+        }
+
+        /* Tab Navigation Styles */
+        .tab-nav {
+            display: flex;
+            border-bottom: 2px solid #e5e7eb;
+            background-color: #f9fafb;
+            border-radius: 12px 12px 0 0;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .tab-button {
+            padding: 1rem 1.5rem;
+            font-size: 1rem;
+            font-weight: 600;
+            color: #4b5563;
+            text-align: center;
+            border: none;
+            background-color: transparent;
+            cursor: pointer;
+            transition: color 0.3s, border-bottom 0.3s;
+            white-space: nowrap;
+            border-bottom: 4px solid transparent;
+        }
+
+        .tab-button.active {
+            color: #0369a1;
+            border-bottom: 4px solid #0ea5e9;
+        }
+
+        .tab-button:hover {
+            color: #0369a1;
+        }
+
+        .page-content {
+            display: none;
+        }
+
+        .page-content.active {
+            display: block;
+            animation: fadeIn 0.5s;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
+        }
+
+        /* General Styles from previous version */
+        .section-title {
+            font-size: 2.25rem;
+            font-weight: 700;
+            color: #0c4a6e;
+            text-align: center;
+            margin-bottom: 2.5rem;
+        }
+
+        .subsection-title {
+            font-size: 1.875rem;
+            font-weight: 600;
+            color: #0369a1;
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid #38bdf8;
+        }
+
+        .image-caption {
+            text-align: center;
+            font-size: 0.9rem;
+            color: #4b5563;
+            margin-top: 0.75rem;
+            line-height: 1.6;
+        }
+
+        .benefit-item {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 1.25rem;
+            padding: 1rem;
+            background-color: #f0f8ff;
+            border-radius: 8px;
+            border-left: 4px solid #38bdf8;
+        }
+
+        .benefit-item svg {
+            width: 1.75rem;
+            height: 1.75rem;
+            margin-right: 1rem;
+            color: #0ea5e9;
+            flex-shrink: 0;
+        }
+
+        .benefit-text strong {
+            color: #075985;
+            font-weight: 600;
+        }
+
+        .text-red-500 {
+            color: #ef4444;
+        }
+
+        .font-semibold {
+            font-weight: 600;
+        }
+
+        .comparison-card {
+            background-color: white;
+            border-radius: 12px;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+
+        .comparison-card-header {
+            background-color: #38bdf8;
+            color: white;
+            padding: 1rem;
+            border-top-left-radius: 12px;
+            border-top-right-radius: 12px;
+            font-size: 1.25rem;
+            font-weight: 700;
+            text-align: center;
+        }
+
+        .comparison-feature-row {
+            border-bottom: 1px solid #e5e7eb;
+            padding: 1rem 1.25rem;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .comparison-feature-title {
+            font-weight: 600;
+            color: #1f2937;
+            margin-bottom: 0.25rem;
+            font-size: 0.875rem;
+            flex-shrink: 0;
+        }
+
+        .comparison-feature-content {
+            color: #4b5563;
+            font-size: 0.85rem;
+            line-height: 1.5;
+        }
+
+        .accordion-item {
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            overflow: hidden;
+        }
+
+        .accordion-button {
+            width: 100%;
+            text-align: left;
+            padding: 1.25rem;
+            background-color: #ffffff;
+            font-size: 1.125rem;
+            font-weight: 600;
+            color: #0369a1;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .accordion-button:hover {
+            background-color: #f0f9ff;
+        }
+
+        .accordion-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.5s ease-in-out, padding 0.5s ease;
+            padding: 0 1.25rem;
+            background-color: #fafcff;
+        }
+
+        .accordion-content.open {
+            padding: 1.5rem 1.25rem;
+        }
+
+        .accordion-button svg {
+            transition: transform 0.3s;
+        }
+
+        .accordion-button.open svg {
+            transform: rotate(180deg);
+        }
+
+        @media (min-width: 1024px) {
+            .comparison-feature-row {
+                flex-direction: row;
+                align-items: flex-start;
+            }
+
+            .comparison-feature-title {
+                width: 40%;
+                margin-bottom: 0;
+                padding-right: 0.75rem;
+            }
+
+            .comparison-feature-content {
+                width: 60%;
+            }
+        }
+    </style>
+</head>
+
+<body class="p-4 md:p-8">
+    <div class="container mx-auto">
+
+        <header class="mb-6 text-center">
+            <div class="clinic-logo">誠心醫療體系 ALL HEART MEDICAL GROUP</div>
+        </header>
+
+        <!-- Tab Navigation -->
+
+        <!-- Page Content Wrapper -->
+        <main>
+            <!-- Page 1: Home -->
+            <div id="page-home" class="page-content active">
+                <div class="content-card text-center">
+                    <h1 class="text-4xl md:text-5xl font-bold text-sky-700">長期鼻塞、打鼾，困擾您多久了？</h1>
+                    <p class="text-lg text-sky-600 mt-3">一個更有效、更舒適的選擇，或許比您想的更簡單。</p>
+                    <p class="text-lg text-gray-700 mt-6 max-w-3xl mx-auto">
+                        鼻子，是我們呼吸的第一道防線。當它被長期堵塞，不僅影響睡眠、精神，更可能改變生活品質。如果您嘗試過各種方法卻效果不彰，那麼「微創下鼻甲無線射頻手術」，就是專為解決這個根本問題而設計的現代療法。
+                    </p>
+                    <button onclick="openPage('page-details')" class="cta-button mt-8">開始了解手術詳情</button>
+                </div>
+            </div>
+
+            <!-- Page 2: Surgery Details -->
+            <div id="page-details" class="page-content">
+                <div class="content-card">
+                    <h2 class="subsection-title text-center mb-8">認識根本性的解決方案─下鼻甲無線射頻手術</h2>
+                    <p class="text-lg text-gray-700 mb-6">
+                        它利用非常細的探針，在黏膜下方釋放無線電波能量，讓肥厚的組織自行凝固、吸收，進而縮小體積。整個過程都在保留完整鼻黏膜功能的前提下進行。</p>
+                    <div>
+                        <!-- 修改此處的 'h-80' 來調整圖片高度 -->
+                        <div class="h-84 flex justify-center items-center bg-gray-100 rounded-lg">
+                            <img src="assets/images/infT RFA pic.jpg" alt="微創下鼻甲手術示意圖" class="w-full h-full object-cover">
+                        </div>
+                        <p class="image-caption"><strong>微創下鼻甲手術示意圖</strong>
+                    </div>
+                    <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+                        <div class="benefit-item"><svg xmlns="http://www.w3.org/2000/svg" fill="none"
+                                viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                                <path stroke-linecap="round" stroke-linejoin="round"
+                                    d="m3.75 13.5 10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75Z" />
+                            </svg>
+                            <div class="benefit-text"><strong>微創傷口</strong><br>針孔大小，近乎無痕。</div>
+                        </div>
+                        <div class="benefit-item"><svg xmlns="http://www.w3.org/2000/svg" fill="none"
+                                viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                                <path stroke-linecap="round" stroke-linejoin="round"
+                                    d="M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                            </svg>
+                            <div class="benefit-text"><strong>手術快速</strong><br>主要手術時間約 <span class="highlight">20
+                                    分鐘</span>。</div>
+                        </div>
+                        <div class="benefit-item"><svg xmlns="http://www.w3.org/2000/svg" fill="none"
+                                viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                                <path stroke-linecap="round" stroke-linejoin="round"
+                                    d="M7.5 3.75H6A2.25 2.25 0 0 0 3.75 6v1.5M16.5 3.75H18A2.25 2.25 0 0 1 20.25 6v1.5m0 9V18A2.25 2.25 0 0 1 18 20.25h-1.5m-9 0H6A2.25 2.25 0 0 1 3.75 18v-1.5M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
+                            </svg>
+                            <div class="benefit-text"><strong>局部麻醉</strong><br>手術過程<span class="highlight">無痛感</span>。
+                            </div>
+                        </div>
+                        <div class="benefit-item"><svg xmlns="http://www.w3.org/2000/svg" fill="none"
+                                viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                                <path stroke-linecap="round" stroke-linejoin="round"
+                                    d="M9 12.75l3 3m0 0 3-3m-3 3v-7.5M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                            </svg>
+                            <div class="benefit-text"><strong>出血量少</strong><br>術中術後出血極微。</div>
+                        </div>
+                        <div class="benefit-item"><svg xmlns="http://www.w3.org/2000/svg" fill="none"
+                                viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                                <path stroke-linecap="round" stroke-linejoin="round"
+                                    d="M18.364 18.364A9 9 0 0 0 5.636 5.636m12.728 12.728A9 9 0 0 1 5.636 5.636m12.728 12.728L5.636 5.636" />
+                            </svg>
+                            <div class="benefit-text"><strong>免鼻填塞</strong><br>術後鼻子無異物感。</div>
+                        </div>
+                        <div class="benefit-item"><svg xmlns="http://www.w3.org/2000/svg" fill="none"
+                                viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                                <path stroke-linecap="round" stroke-linejoin="round"
+                                    d="M8.25 9V5.25A2.25 2.25 0 0 1 10.5 3h6a2.25 2.25 0 0 1 2.25 2.25v13.5A2.25 2.25 0 0 1 16.5 21h-6a2.25 2.25 0 0 1-2.25-2.25V15m-3 0-3-3m0 0 3-3m-3 3H15" />
+                            </svg>
+                            <div class="benefit-text"><strong>恢復迅速</strong><br>可<span class="highlight">立即返回工作崗位</span>。
+                            </div>
+                        </div>
+                    </div>
+                    <div class="text-center mt-8">
+                        <button onclick="openPage('page-faq')" class="cta-button">仍有疑慮？查看常見問答</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Page X: 鼻塞的原因 -->
+            <div id="page-nasal-causes" class="page-content">
+                <div class="content-card">
+                    <h2 class="subsection-title text-center mb-8">鼻塞的原因</h2>
+                    <p class="text-lg text-gray-700 mb-6">
+                        鼻塞是耳鼻喉科門診最常見的症狀之一，其原因主要是下鼻道阻塞。我們第一步就是要先檢查鼻道的通暢度以及是否有可能其他潛在的原因。
+                    </p>
+
+                    <!-- 鼻甲阻塞程度示意圖大小修改處 -->
+                    <!-- 
+                        要修改下方圖片大小，請調整 class 中的 'max-w-2xl'。
+                        例如：max-w-lg (較小), max-w-2xl (目前大小), max-w-3xl (更大)。
+                    -->
+                    <div class="my-8 p-4 bg-slate-50 rounded-lg">
+                        <img src="assets/images/infT stage.jpeg" alt="不同程度的下鼻甲肥大示意圖" class="w-full max-w-6xl mx-auto rounded-lg shadow-md border">
+                        <p class="image-caption"><strong>圖一：不同程度的下鼻甲肥大</strong><br>從輕微腫脹到嚴重阻塞，可見下鼻甲肥厚對呼吸通道的影響程度。</p>
+                    </div>
+
+                    <!-- 圖片格式修改處 -->
+                    <!-- 
+                        下方區塊為圖片排版修改處。
+                        要修改圖片大小，請調整 'h-80' 這個 class。
+                        例如：h-64 (較小), h-80 (目前大小), h-96 (較大)。
+                    -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8 my-8 p-4 bg-slate-50 rounded-lg">
+                        <div>
+                            <!-- 修改此處的 'h-80' 來調整圖片高度 -->
+                            <div class="h-80 flex justify-center items-center bg-gray-100 rounded-lg">
+                                <img src="assets/images/Enlarged infT pic.jpg" alt="下鼻甲肥大導致鼻塞示意圖" class="w-full h-full object-contain">
+                            </div>
+                            <p class="image-caption"><strong>圖二：下鼻甲肥大</strong><br>下鼻甲肥厚腫大，佔據鼻腔通道，造成慢性鼻塞。</p>
+                        </div>
+                        <div>
+                            <!-- 修改此處的 'h-80' 來調整圖片高度 -->
+                            <div class="h-80 flex justify-center items-center bg-gray-100 rounded-lg">
+                                <img src="assets/images/DNS pic.jpg" alt="鼻中膈彎曲示意圖" class="w-full h-full object-contain">
+                            </div>
+                            <p class="image-caption"><strong>圖三：鼻中膈彎曲</strong><br>鼻中膈彎曲導致一側鼻腔狹窄，影響氣流。</p>
+                        </div>
+                    </div>
+                    <p class="text-lg text-gray-700 mb-6">
+                        除了下鼻甲肥大和鼻中膈彎曲，其他常見的鼻塞原因還包括：
+                    </p>
+                    <ul class="list-disc list-inside text-gray-700 mb-6 space-y-2">
+                        <li>過敏性鼻炎： 接觸過敏原（如花粉、塵蟎）導致鼻黏膜腫脹。</li>
+                        <li>非過敏性鼻炎： 對氣溫、濕度變化敏感，或因藥物、荷爾蒙等因素引起。</li>
+                        <li>鼻竇炎： 鼻竇發炎導致鼻腔分泌物增多，阻塞鼻道。</li>
+                        <li>鼻息肉： 鼻腔或鼻竇內生長的良性腫塊，可能阻塞鼻道。</li>
+                        <li>感冒或流感： 病毒感染導致鼻黏膜充血腫脹。</li>
+                    </ul>
+                    <p class="text-lg text-gray-700">
+                        無論是哪一種原因，都直接或間接地造成下鼻道的氣流影響，進而造成鼻塞。
+                    </p>
+                </div>
+            </div>
+
+            <!-- Page 3: FAQ -->
+            <div id="page-faq" class="page-content">
+                <div class="content-card">
+                    <h2 class="subsection-title text-center mb-8">為您解答，手術前最關心的問題</h2>
+                    <div class="max-w-3xl mx-auto">
+                        <div class="accordion-item">
+                            <button class="accordion-button"><span>1. 手術會不會很痛？局部麻醉真的可以嗎？</span><svg class="w-6 h-6"
+                                    fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M19 9l-7 7-7-7"></path>
+                                </svg></button>
+                            <div class="accordion-content">
+                                <p class="text-gray-700">這是最常見的疑慮，請您放心。我們採用<span
+                                        class="highlight">「三段式無痛麻醉法」</span>，確保手術過程的舒適性。從鼻噴麻藥、放置麻醉棉條到極細針頭的補強注射，全程都會在確保您無痛感的狀態下進行。
+                                </p>
+                            </div>
+                        </div>
+                        <div class="accordion-item">
+                            <button class="accordion-button"><span>2. 恢復期要多久？會影響上班嗎？</span><svg class="w-6 h-6"
+                                    fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M19 9l-7 7-7-7"></path>
+                                </svg></button>
+                            <div class="accordion-content">
+                                <p class="text-gray-700">這是此手術最大的優點之一：<span
+                                        class="highlight">恢復極快</span>。術後不需住院、不需鼻填塞，多數患者隔天就能<span
+                                        class="highlight">正常上班</span>。<br>術後一週內避免劇烈運動即可。</p>
+                            </div>
+                        </div>
+                        <div class="accordion-item">
+                            <button class="accordion-button"><span>3. 效果能維持多久？會不會復發？</span><svg class="w-6 h-6"
+                                    fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M19 9l-7 7-7-7"></path>
+                                </svg></button>
+                            <div class="accordion-content">
+                                <p class="text-gray-700">效果非常持久，通常可維持 <span class="highlight">5 至 10
+                                        年以上</span>。<br>即使多年後因嚴重過敏體質而有部分復發，依然可再次接受此簡單治療來恢復通暢，是一勞永逸的方案。</p>
+                            </div>
+                        </div>
+                        <div class="accordion-item">
+                            <button class="accordion-button"><span>4. 有沒有風險？會不會得「空鼻症」？</span><svg class="w-6 h-6"
+                                    fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M19 9l-7 7-7-7"></path>
+                                </svg></button>
+                            <div class="accordion-content">
+                                <p class="text-gray-700">無線射頻手術<span
+                                        class="highlight">產生「空鼻症」的風險極低</span>。<br>因為它作用在黏膜下方，完整保留了調節空氣功能的鼻黏膜，只是「讓它消腫」，而非像傳統手術「把它切掉」，安全性極高。
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="text-center mt-8">
+                        <button onclick="openPage('page-comparison')" class="cta-button">與其他手術有何不同？</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Page 4: Comparison -->
+            <div id="page-comparison" class="page-content">
+                <div class="content-card">
+                    <h2 class="subsection-title text-center mb-8">了解不同手術的差異</h2>
+                    <p class="text-center text-gray-700 mb-10">選擇最適合您的治療，是我們共同的目標。您會發現「下鼻甲無線射頻手術」在安全性、舒適度和恢復期上，擁有無可取代的優勢。
+                    </p>
+                    <!-- 開發者注意：若要調整第一欄（特點）的寬度，請修改下方 thead > tr > th 的 'w-1/6' class，以及 tbody 中每一行第一個 td 的 'w-1/6' class。可用的值參考 Tailwind CSS 官網，例如 w-1/4, w-1/5, w-1/6 等。 -->
+                    <div class="bg-white rounded-lg shadow-lg overflow-x-auto md:overflow-x-hidden">
+                        <table class="min-w-full border-collapse text-sm text-left">
+                            <thead class="bg-sky-100">
+                                <tr>
+                                    <th class="p-4 font-semibold text-sky-800 border-b-2 border-sky-200 text-center whitespace-nowrap">特點</th>
+                                    <th class="p-4 font-semibold text-sky-800 border-b-2 border-sky-200 text-center bg-sky-100 border-x-2 border-sky-200 whitespace-nowrap">
+                                        <div class="flex justify-center items-center">
+                                            <svg class="w-5 h-5 mr-2 text-sky-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                                            下鼻甲無線射頻手術
+                                        </div>
+                                    </th>
+                                    <th class="p-4 font-semibold text-gray-700 border-b-2 border-gray-200 text-center whitespace-nowrap">
+                                        <div class="flex justify-center items-center">
+                                            <svg class="w-5 h-5 mr-2 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" d="m7.848 8.25 1.536.887M7.848 8.25a3 3 0 1 1-5.196-3 3 3 0 0 1 5.196 3Zm1.536.887a2.165 2.165 0 0 1 1.083 1.839c.005.351.054.695.14 1.024M9.384 9.137l2.077 1.199M7.848 15.75l1.536-.887m-1.536.887a3 3 0 1 1-5.196 3 3 3 0 0 1 5.196-3Zm1.536-.887a2.165 2.165 0 0 0 1.083-1.838c.005-.352.054-.695.14-1.025m-1.223 2.863 2.077-1.199m0-3.328a4.323 4.323 0 0 1 2.068-1.379l5.325-1.628a4.5 4.5 0 0 1 2.48-.044l.803.215-7.794 4.5m-2.882-1.664A4.33 4.33 0 0 0 10.607 12m3.736 0 7.794 4.5-.802.215a4.5 4.5 0 0 1-2.48-.043l-5.326-1.629a4.324 4.324 0 0 1-2.068-1.379M14.343 12l-2.882 1.664" />
+</svg>
+                                            下鼻甲部分切除術<span class="text-red-500 font-semibold">(傳統手術)</span>
+                                        </div>
+                                    </th>
+                                    <th class="p-4 font-semibold text-gray-700 border-b-2 border-gray-200 text-center whitespace-nowrap">
+                                        <div class="flex justify-center items-center">
+                                            <svg class="w-5 h-5 mr-2 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" d="M11.42 15.17 17.25 21A2.652 2.652 0 0 0 21 17.25l-5.877-5.877M11.42 15.17l2.496-3.03c.317-.384.74-.626 1.208-.766M11.42 15.17l-4.655 5.653a2.548 2.548 0 1 1-3.586-3.586l6.837-5.63m5.108-.233c.55-.164 1.163-.188 1.743-.14a4.5 4.5 0 0 0 4.486-6.336l-3.276 3.277a3.004 3.004 0 0 1-2.25-2.25l3.276-3.276a4.5 4.5 0 0 0-6.336 4.486c.091 1.076-.071 2.264-.904 2.95l-.102.085m-1.745 1.437L5.909 7.5H4.5L2.25 3.75l1.5-1.5L7.5 4.5v1.409l4.26 4.26m-1.745 1.437 1.745-1.437m6.615 8.206L15.75 15.75M4.867 19.125h.008v.008h-.008v-.008Z" />
+</svg>
+                                            下鼻甲黏膜下切除術
+                                        </div>
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-gray-200">
+                                <tr class="hover:bg-gray-50">
+                                    <td class="p-3 font-medium text-gray-800 text-center whitespace-nowrap">手術原理</td>
+                                    <td class="p-3 text-gray-700 bg-sky-50 border-x-2 border-sky-200 whitespace-nowrap"><span class="highlight">黏膜下</span>組織凝固縮小。</td>
+                                    <td class="p-3 text-gray-700 whitespace-nowrap">直接<span class="text-red-500 font-semibold">切除部分</span>肥厚下鼻甲組織 。</td>
+                                    <td class="p-3 text-gray-700 whitespace-nowrap">動力螺旋刀在黏膜下移除鼻甲骨及組織。</td>
+                                </tr>
+                                <tr class="hover:bg-gray-50">
+                                    <td class="p-3 font-medium text-gray-800 w-1/6 text-center whitespace-nowrap">麻醉</td>
+                                    <td class="p-3 text-gray-700 bg-sky-50 border-x-2 border-sky-200 whitespace-nowrap">局部麻醉 (鼻棉&打針)。</td>
+                                    <td class="p-3 text-gray-700 whitespace-nowrap">全身麻醉。</td>
+                                    <td class="p-3 text-gray-700 whitespace-nowrap">通常全身麻醉。</td>
+                                </tr>
+                                <tr class="hover:bg-gray-50">
+                                    <td class="p-3 font-medium text-gray-800 w-1/6 text-center whitespace-nowrap">傷口</td>
+                                    <td class="p-3 text-gray-700 bg-sky-50 border-x-2 border-sky-200 whitespace-nowrap"><span class="highlight">針孔、微創</span>。</td>
+                                    <td class="p-3 text-gray-700 whitespace-nowrap"><span class="text-red-500 font-semibold">較大</span>。</td>
+                                    <td class="p-3 text-gray-700 whitespace-nowrap">切口小，藏於黏膜內。</td>
+                                </tr>
+                                <tr class="hover:bg-gray-50">
+                                    <td class="p-3 font-medium text-gray-800 w-1/6 text-center whitespace-nowrap">出血</td>
+                                    <td class="p-3 text-gray-700 bg-sky-50 border-x-2 border-sky-200 whitespace-nowrap"><span class="highlight">少</span>。</td>
+                                    <td class="p-3 text-gray-700 whitespace-nowrap"><span class="text-red-500 font-semibold">較多</span>。</td>
+                                    <td class="p-3 text-gray-700 whitespace-nowrap">介於無線射頻和部分切除之間。</td>
+                                </tr>
+                                <tr class="hover:bg-gray-50">
+                                    <td class="p-3 font-medium text-gray-800 w-1/6 text-center whitespace-nowrap">鼻填塞</td>
+                                    <td class="p-3 text-gray-700 bg-sky-50 border-x-2 border-sky-200 whitespace-nowrap"><span class="highlight">免</span>。</td>
+                                    <td class="p-3 text-gray-700 whitespace-nowrap"><span class="text-red-500 font-semibold">需要</span>。</td>
+                                    <td class="p-3 text-gray-700 whitespace-nowrap">可能需短時間填塞。</td>
+                                </tr>
+                                <tr class="hover:bg-gray-50">
+                                    <td class="p-3 font-medium text-gray-800 w-1/6 text-center whitespace-nowrap">恢復期</td>
+                                    <td class="p-3 text-gray-700 bg-sky-50 border-x-2 border-sky-200 whitespace-nowrap"><span class="highlight">快</span>，可立即上班。3天內少許血絲。</td>
+                                    <td class="p-3 text-gray-700 whitespace-nowrap"><span class="text-red-500 font-semibold">較長</span>，腫脹疼痛感較明顯。</td>
+                                    <td class="p-3 text-gray-700 whitespace-nowrap">較部分切除術短，術後可能有痂皮。</td>
+                                </tr>
+                                <tr class="hover:bg-gray-50">
+                                    <td class="p-3 font-medium text-gray-800 w-1/6 text-center whitespace-nowrap">對黏膜影響</td>
+                                    <td class="p-3 text-gray-700 bg-sky-50 border-x-2 border-sky-200 whitespace-nowrap"><span class="highlight">小</span>，保留黏膜功能。</td>
+                                    <td class="p-3 text-gray-700 whitespace-nowrap"><span class="text-red-500 font-semibold">大</span>，可能影響鼻腔功能。</td>
+                                    <td class="p-3 text-gray-700 whitespace-nowrap"><span class="highlight">致力保留黏膜功能</span>。</td>
+                                </tr>
+                                <tr class="hover:bg-gray-50">
+                                    <td class="p-3 font-medium text-gray-800 w-1/6 text-center whitespace-nowrap">鼻塞改善</td>
+                                    <td class="p-3 text-gray-700 bg-sky-50 border-x-2 border-sky-200 whitespace-nowrap">約 <span class="highlight">80%</span>。效果持久 (5-10年+)。</td>
+                                    <td class="p-3 text-gray-700 whitespace-nowrap">效果顯著，但需注意長期黏膜變化。</td>
+                                    <td class="p-3 text-gray-700 whitespace-nowrap">效果良好，且生理功能影響較小。</td>
+                                </tr>
+                                <tr class="hover:bg-gray-50">
+                                    <td class="p-3 font-medium text-gray-800 w-1/6 text-center whitespace-nowrap">主要優點</td>
+                                    <td class="p-3 text-gray-700 bg-sky-50 border-x-2 border-sky-200 whitespace-nowrap">微創、恢復快、疼痛少、黏膜保留佳。</td>
+                                    <td class="p-3 text-gray-700 whitespace-nowrap">鼻塞改善直接，健保在醫院有給付。</td>
+                                    <td class="p-3 text-gray-700 whitespace-nowrap">兼顧鼻塞改善與黏膜保留，空鼻症風險較低。</td>
+                                </tr>
+                                <tr class="hover:bg-gray-50">
+                                    <td class="p-3 font-medium text-gray-800 w-1/6 text-center whitespace-nowrap">主要考量</td>
+                                    <td class="p-3 text-gray-700 bg-sky-50 border-x-2 border-sky-200 whitespace-nowrap">自費項目。效果可能因體質略有差異。</td>
+                                    <td class="p-3 text-gray-700 whitespace-nowrap">出血多、恢復慢、疼痛感較高，<span class="text-red-500 font-semibold">空鼻症風險高</span>。</td>
+                                    <td class="p-3 text-gray-700 whitespace-nowrap">需清理痂皮。</td>
+                                </tr>
+                                <tr class="hover:bg-gray-50">
+                                    <td class="p-3 font-medium text-gray-800 w-1/6 text-center whitespace-nowrap">費用 (參考)</td>
+                                    <td class="p-3 text-gray-700 bg-sky-50 border-x-2 border-sky-200 whitespace-nowrap"><span class="highlight">45,000元</span> (自費)。</td>
+                                    <td class="p-3 text-gray-700 whitespace-nowrap">健保醫院有給付，自費視情況使用。</td>
+                                    <td class="p-3 text-gray-700 whitespace-nowrap">自費。</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="text-center mt-8">
+                        <button onclick="openPage('page-process')" class="cta-button">費用與流程如何？</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Page 5: Process & Cost -->
+            <div id="page-process" class="page-content">
+                <div class="content-card">
+                    <h2 class="subsection-title text-center mb-8">費用與完整流程</h2>
+                    <div class="bg-sky-50 p-6 rounded-lg border border-sky-200 mb-8">
+                        <p class="text-lg mb-2"><strong>下鼻甲無線射頻手術 (自費項目)：</strong> <span
+                                class="highlight text-xl">45,000 元</span></p>
+                        <p class="text-md text-gray-700 mt-4">此費用為一次性療程，其效果可維持多年，免去長期使用藥物、就診時間或忍受不適的隱形成本。</p>
+                        <hr class="my-4">
+                        <h4 class="font-semibold text-gray-800">關於保險理賠：</h4>
+                        <p class="text-gray-600 mt-2">本手術為「門診手術」，多數「實支實付」的醫療險或手術險均可理賠，請先洽詢您的保險專員。診所會為您開立正式的診斷證明書與收據，方便您向保險公司申請。</p>
+                    </div>
+                    <p class="text-md text-gray-700">可搭配選用項目 (費用另計，詳情請洽診所)：</p>
+                        <ul class="list-disc list-inside text-gray-600 ml-4 mt-2 space-y-2">
+                            <li>膠原蛋白止血粉 (約 18,000 元)</li>
+                            <li>術後修復黏膜點滴 (約 3,000 元/針)</li>
+                            <li>NewEpi水性敷料凝膠5ml (約 8,000 元)</li>
+                        </ul>
+                    </div>
+                    <h3 class="text-2xl font-semibold text-sky-700 text-center mb-6">準備好，迎向順暢呼吸了嗎？</h3>
+                    <p class="text-center text-gray-600 mb-8">我們的專業團隊已準備好為您服務。只需簡單三步驟，即可完成評估與治療。</p>
+                    <div class="grid md:grid-cols-3 gap-4 text-center">
+                        <div class="p-4">
+                            <div
+                                class="bg-sky-500 text-white rounded-full w-12 h-12 flex items-center justify-center text-2xl font-bold mx-auto mb-2">
+                                1</div>
+                            <h4 class="font-semibold">預約諮詢</h4>
+                            <p class="text-sm text-gray-600">醫師親自評估，確認狀況。</p>
+                        </div>
+                        <div class="p-4">
+                            <div
+                                class="bg-sky-500 text-white rounded-full w-12 h-12 flex items-center justify-center text-2xl font-bold mx-auto mb-2">
+                                2</div>
+                            <h4 class="font-semibold">術前準備</h4>
+                            <p class="text-sm text-gray-600">安排檢查，確認保險事宜。</p>
+                        </div>
+                        <div class="p-4">
+                            <div
+                                class="bg-sky-500 text-white rounded-full w-12 h-12 flex items-center justify-center text-2xl font-bold mx-auto mb-2">
+                                3</div>
+                            <h4 class="font-semibold">安排手術</h4>
+                            <p class="text-sm text-gray-600">半小時門診手術，迎接新生活。</p>
+                        </div>
+                    </div>
+                    <div class="text-center mt-8">
+                        <a href="#" class="cta-button">立即預約，或撥打電話 (04) 2471-9001</a>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <footer class="text-center mt-8 mb-4">
+            <p class="text-sm text-gray-500">耳鼻喉科 李名弘醫師 關心您的呼吸健康</p>
+            <p class="text-xs text-gray-400 mt-2">（此網頁資訊僅供參考，實際療程與費用請以門診醫師說明為準。）</p>
+        </footer>
+    </div>
+
+    <script>
+        // Function to switch pages
+        function openPage(pageId) {
+            // Hide all page content
+            const pages = document.querySelectorAll('.page-content');
+            pages.forEach(page => {
+                page.classList.remove('active');
+            });
+
+            // Deactivate all tab buttons
+            const tabs = document.querySelectorAll('.tab-button');
+            tabs.forEach(tab => {
+                tab.classList.remove('active');
+            });
+
+            // Show the selected page
+            const selectedPage = document.getElementById(pageId);
+            if (selectedPage) {
+                selectedPage.classList.add('active');
+            }
+
+            // Activate the selected tab button
+            const selectedTab = document.querySelector(`.tab-button[onclick="openPage('${pageId}')"]`);
+            if (selectedTab) {
+                selectedTab.classList.add('active');
+            }
+        }
+
+        // Accordion functionality for FAQ page
+        document.addEventListener('DOMContentLoaded', function () {
+            // Use event delegation for accordions since they are in a hidden tab initially
+            const faqPage = document.getElementById('page-faq');
+            if (faqPage) {
+                faqPage.addEventListener('click', function (event) {
+                    const button = event.target.closest('.accordion-button');
+                    if (!button) return;
+
+                    const content = button.nextElementSibling;
+                    const isOpen = button.classList.contains('open');
+
+                    // Optional: Close others when one opens
+                    const allOpenButtons = faqPage.querySelectorAll('.accordion-button.open');
+                    allOpenButtons.forEach(openButton => {
+                        if (openButton !== button) {
+                            openButton.classList.remove('open');
+                            const openContent = openButton.nextElementSibling;
+                            openContent.style.maxHeight = '0';
+                            openContent.classList.remove('open');
+                        }
+                    });
+
+                    if (isOpen) {
+                        content.style.maxHeight = '0';
+                    } else {
+                        content.style.maxHeight = '9999px';
+                    }
+                    button.classList.toggle('open');
+                    content.classList.toggle('open');
+                });
+            }
+        });
+    </script>
+
+    <!-- 必要的 JavaScript 文件 -->
+
+    <!-- 初始化頂部欄和側邊欄 -->
+    
+    <!-- 必要的 JavaScript 文件 -->
+
+    <!-- 初始化頂部欄和側邊欄 -->
+    
+    <!-- 必要的 JavaScript 文件 -->
+    <script src="js/tools-config.js"></script>
+    <script src="js/spa-router.js"></script>
+    <script src="components/header-sidebar.js"></script>
+
+    <!-- 初始化頂部欄和側邊欄 -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            initHeaderSidebar({
+                currentPage: 'inferior-turbinate-rfa',
+                pageTitle: '醫療工具百寶箱',
+                enableSPA: true
+            });
+        });
+    </script>
+</body>
+</html>

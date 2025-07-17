@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="zh-TW" class="scroll-smooth">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>貧血全方位互動指南 - 醫療工具百寶箱</title>
+  <meta name="description" content="全面的貧血診斷與治療指南，包含互動式診斷流程和詳細的疾病資訊。">
+  
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  
+  <!-- Font Awesome -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+  
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
+  
+  <!-- Tailwind Config -->
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            primary: {
+              50: '#eff6ff',
+              100: '#dbeafe',
+              500: '#3b82f6',
+              600: '#2563eb',
+              700: '#1d4ed8',
+              800: '#1e40af',
+              900: '#1e3a8a'
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <!-- Chosen Palette: Warm Neutrals with Soft Terracotta Accents -->
+  <!-- Application Structure Plan: A 4-tab SPA designed to guide the user from general knowledge to specific actions. Tab 1 (Overview) establishes foundational concepts and symptom awareness. Tab 2 (Diagnostic Journey) features an interactive HTML/CSS flowchart that visually simulates the clinical decision-making process based on MCV, making the complex logic from the report digestible and engaging. Tab 3 (Anemia Types) uses expandable cards to present detailed information on various anemias, preventing cognitive overload. Tab 4 (Treatment & Prevention) provides actionable advice, including an enhanced dietary guide and crucial principles like transfusion and genetic counseling. This task-oriented structure is more user-friendly than a linear report, allowing users to explore content based on their immediate questions. -->
+  <!-- Visualization & Content Choices: Report's diagnostic logic -> Goal: Organize/Guide -> Viz: Interactive HTML/CSS flowchart with clickable nodes to reveal diagnostic paths. Justification: Visually simplifies a complex decision tree. Report's IDA vs. Thalassemia lab data -> Goal: Compare -> Viz: Dynamic horizontal bar chart (Chart.js/Canvas) to visually contrast key values. Justification: More intuitive and impactful than a static table. Report's detailed info on each anemia type -> Goal: Inform -> Viz: Expandable HTML info cards. Justification: Manages information density and allows focused learning. Report's dietary info -> Goal: Inform/Action -> Viz: Structured HTML grid with icons. Justification: Clear, scannable, and practical. -->
+  <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+  <style>
+    body {
+      font-family: 'Noto Sans TC', sans-serif;
+      background-color: #FFFBF5;
+      color: #4A4A4A;
+    }
+
+    .nav-btn {
+      transition: all 0.3s ease;
+    }
+
+    .nav-btn.active {
+      background-color: #E1784F;
+      color: white;
+      font-weight: 700;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    }
+
+    .content-section {
+      display: none;
+      animation: fadeIn 0.5s ease-in-out;
+    }
+
+    .content-section.active {
+      display: block;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+      }
+
+      to {
+        opacity: 1;
+      }
+    }
+
+    .type-card {
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+      cursor: pointer;
+    }
+
+    .type-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -4px rgba(0, 0, 0, 0.05);
+    }
+
+    .details-content {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.5s ease-out;
+    }
+
+    .details-content.open {
+      max-height: 1000px;
+      transition: max-height 0.7s ease-in;
+    }
+
+    .chart-container {
+      position: relative;
+      width: 100%;
+      max-width: 800px;
+      margin: 2rem auto;
+      height: 350px;
+      max-height: 50vh;
+    }
+
+    @media (min-width: 768px) {
+      .chart-container {
+        height: 400px;
+      }
+    }
+
+    .flowchart-node {
+      border: 2px solid #F7D9C4;
+      background-color: white;
+      padding: 0.75rem 1rem;
+      border-radius: 0.5rem;
+      text-align: center;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .flowchart-node:hover,
+    .flowchart-node.active {
+      border-color: #E1784F;
+      background-color: #FEF3C7;
+      transform: scale(1.05);
+    }
+
+    .flowchart-connector {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+    }
+
+    .flowchart-connector::before {
+      content: '▼';
+      color: #F7D9C4;
+      font-size: 1.5rem;
+    }
+
+    .flowchart-path {
+      display: none;
+    }
+
+    .flowchart-path.active {
+      display: grid;
+    }
+  </style>
+</head>
+
+<body class="bg-gray-50 dark:bg-gray-900 transition-colors duration-300">
+    <!-- 頂部導航欄 -->
+
+    <!-- 側邊欄遮罩 (移動端) -->
+
+    <!-- 側邊欄 -->
+
+    <!-- 主內容區 -->
+    <main class="p-6 lg:p-8">
+        <div class="max-w-7xl mx-auto bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6">
+    <header class="text-center mb-8">
+      <h1 class="text-4xl md:text-5xl font-bold text-[#C75D2F]">貧血全方位互動指南</h1>
+      <p class="mt-3 text-lg text-gray-600">一個基於臨床實證的貧血探索、理解與管理工具</p>
+    </header>
+
+    <main id="app-content">
+      <!-- Section 1: Overview -->
+      <section id="overview" class="content-section">
+        <div class="bg-white p-6 rounded-xl shadow-lg">
+          <h2 class="text-2xl font-bold text-[#C75D2F] border-b-2 border-amber-200 pb-2 mb-4">什麼是貧血？</h2>
+          <p class="mb-4">貧血並非一種單一疾病，而是一種臨床表徵，意指血液中負責攜帶氧氣的**血紅素 (Hemoglobin)** 濃度低於正常標準。根據世界衛生組織 (WHO) 定義，成年男性低於 13
+            g/dL，非懷孕成年女性低於 12 g/dL，即可診斷為貧血。這會削弱血液的攜氧能力，導致組織缺氧，引發一系列症狀，更重要的是，貧血往往是其他潛在疾病的警訊。</p>
+
+          <div class="grid md:grid-cols-2 gap-6 mt-6">
+            <div class="bg-amber-50 p-4 rounded-lg">
+              <h3 class="font-bold text-lg text-amber-800">急性 vs. 慢性：速度的診斷價值</h3>
+              <p class="mt-2 text-sm">貧血症狀出現的速度，是判斷病因的重要線索。</p>
+              <ul class="list-disc list-inside mt-2 space-y-1 text-sm">
+                <li><strong>急性貧血 (如大出血):</strong> 症狀來得又快又猛，除了缺氧症狀外，更突顯的是血量不足引起的低血壓、暈厥。</li>
+                <li><strong>慢性貧血 (如慢性病):</strong> 身體有時間適應，症狀可能非常輕微或被忽略，直到貧血變得嚴重。持續的疲勞不應被輕易歸咎於老化或壓力。</li>
+              </ul>
+            </div>
+            <div class="bg-red-50 p-4 rounded-lg">
+              <h3 class="font-bold text-lg text-red-800">指向特定貧血的特殊症狀</h3>
+              <p class="mt-2 text-sm">除了常見症狀，某些特殊表現能提供醫師重要線索。</p>
+              <ul class="list-disc list-inside mt-2 space-y-1 text-sm">
+                <li><strong>缺鐵性貧血:</strong> 可能出現異食症 (愛吃冰塊、泥土)、舌面平滑 (舌炎)、指甲呈湯匙狀。</li>
+                <li><strong>維生素B12缺乏:</strong> 可能造成不可逆的神經損傷，如手腳麻木、行走不穩、記憶力衰退等，有時症狀會比貧血更早出現。</li>
+              </ul>
+            </div>
+          </div>
+
+          <h3 class="text-xl font-semibold text-[#C75D2F] mt-8 mb-4">常見症狀互動檢視</h3>
+          <p class="mb-4">您可以勾選您所經歷的症狀，了解哪些可能與貧血有關。這些症狀主要源於組織缺氧。</p>
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            <label
+              class="flex items-center space-x-3 p-3 bg-gray-50 rounded-lg hover:bg-amber-100 transition-colors"><input
+                type="checkbox"
+                class="h-5 w-5 rounded border-gray-300 text-amber-600 focus:ring-amber-500"><span>持續感到疲勞、虛弱</span></label>
+            <label
+              class="flex items-center space-x-3 p-3 bg-gray-50 rounded-lg hover:bg-amber-100 transition-colors"><input
+                type="checkbox"
+                class="h-5 w-5 rounded border-gray-300 text-amber-600 focus:ring-amber-500"><span>頭暈、眼花、頭痛</span></label>
+            <label
+              class="flex items-center space-x-3 p-3 bg-gray-50 rounded-lg hover:bg-amber-100 transition-colors"><input
+                type="checkbox"
+                class="h-5 w-5 rounded border-gray-300 text-amber-600 focus:ring-amber-500"><span>活動時呼吸急促、心悸</span></label>
+            <label
+              class="flex items-center space-x-3 p-3 bg-gray-50 rounded-lg hover:bg-amber-100 transition-colors"><input
+                type="checkbox"
+                class="h-5 w-5 rounded border-gray-300 text-amber-600 focus:ring-amber-500"><span>臉色、嘴唇或眼瞼蒼白</span></label>
+            <label
+              class="flex items-center space-x-3 p-3 bg-gray-50 rounded-lg hover:bg-amber-100 transition-colors"><input
+                type="checkbox"
+                class="h-5 w-5 rounded border-gray-300 text-amber-600 focus:ring-amber-500"><span>手腳冰冷</span></label>
+            <label
+              class="flex items-center space-x-3 p-3 bg-gray-50 rounded-lg hover:bg-amber-100 transition-colors"><input
+                type="checkbox"
+                class="h-5 w-5 rounded border-gray-300 text-amber-600 focus:ring-amber-500"><span>注意力不集中</span></label>
+          </div>
+        </div>
+      </section>
+
+      <!-- Section 2: Diagnosis -->
+      <section id="diagnosis" class="content-section">
+        <div class="bg-white p-6 rounded-xl shadow-lg">
+          <h2 class="text-2xl font-bold text-[#C75D2F] border-b-2 border-amber-200 pb-2 mb-4">互動式診斷流程</h2>
+          <p class="mb-6">貧血的診斷是一個層層遞進的解謎過程。起點是基礎的「全血球計數」(CBC) 檢查，其中的「平均紅血球容積」(MCV)
+            數值是第一個關鍵分岔路，它能將複雜的病因分流。請點擊下方的流程圖，體驗醫師如何思考並規劃下一步檢查。</p>
+
+          <div id="flowchart" class="space-y-4">
+            <div class="flex justify-center">
+              <div class="flowchart-node bg-amber-100 border-amber-500">起點: 症狀/健檢 -> 安排抽血 (CBC)</div>
+            </div>
+            <div class="flowchart-connector"></div>
+            <div class="flex justify-center">
+              <div class="flowchart-node font-bold text-lg">判讀關鍵指標: 平均紅血球容積 (MCV)</div>
+            </div>
+            <div class="flowchart-connector"></div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 text-center">
+              <div id="mcv-micro" class="flowchart-node">小球性 (MCV &lt; 80)</div>
+              <div id="mcv-normo" class="flowchart-node">正球性 (MCV 80-100)</div>
+              <div id="mcv-macro" class="flowchart-node">大球性 (MCV > 100)</div>
+            </div>
+
+            <div id="micro-path"
+              class="flowchart-path mt-6 grid-cols-1 gap-4 p-4 border-2 border-amber-200 rounded-lg bg-amber-50">
+              <h3 class="font-bold text-lg text-center text-amber-800 col-span-full">方向 A: 小球性貧血 (紅血球偏小)</h3>
+              <p class="text-center col-span-full text-sm text-gray-600">這是最常見的類型，主要需區分「缺鐵」或「遺傳」。下一步檢查是關鍵。</p>
+              <div class="chart-container">
+                <canvas id="microcyticChart"></canvas>
+              </div>
+              <div class="p-4 bg-red-100 border-l-4 border-red-500 text-red-800 rounded-r-lg">
+                <p class="font-bold">臨床警示</p>
+                <p>錯誤地給予海洋性貧血患者鐵劑會造成鐵質沉積，損害心、肝等器官。因此精準鑑別診斷至關重要。</p>
+              </div>
+            </div>
+
+            <div id="normo-path"
+              class="flowchart-path mt-6 grid-cols-1 gap-4 p-4 border-2 border-blue-200 rounded-lg bg-blue-50">
+              <h3 class="font-bold text-lg text-center text-blue-800 col-span-full">方向 B: 正球性貧血 (紅血球大小正常)</h3>
+              <p class="text-center col-span-full text-sm text-gray-600">原因較複雜，需判斷是「製造太少」或「破壞/流失太多」。</p>
+              <div class="flowchart-connector"></div>
+              <div class="flex justify-center">
+                <div class="flowchart-node w-1/2">關鍵檢查: 網狀紅血球計數</div>
+              </div>
+              <div class="flowchart-connector"></div>
+              <div class="grid md:grid-cols-2 gap-4">
+                <div class="bg-white p-4 rounded-lg shadow-sm">
+                  <h4 class="font-semibold text-blue-900">網狀紅血球「偏低」</h4>
+                  <p class="text-sm text-gray-500 mb-2">(骨髓製造功能不彰)</p>
+                  <ul class="list-disc list-inside text-sm space-y-1">
+                    <li>慢性病/發炎 (ACD)</li>
+                    <li>慢性腎臟病 (CKD)</li>
+                    <li>早期缺鐵性貧血</li>
+                    <li>骨髓本身問題</li>
+                  </ul>
+                </div>
+                <div class="bg-white p-4 rounded-lg shadow-sm">
+                  <h4 class="font-semibold text-blue-900">網狀紅血球「偏高」</h4>
+                  <p class="text-sm text-gray-500 mb-2">(骨髓努力造血以代償)</p>
+                  <ul class="list-disc list-inside text-sm space-y-1">
+                    <li>溶血性貧血 (紅血球被破壞)</li>
+                    <li>急性失血</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+
+            <div id="macro-path"
+              class="flowchart-path mt-6 grid-cols-1 gap-4 p-4 border-2 border-green-200 rounded-lg bg-green-50">
+              <h3 class="font-bold text-lg text-center text-green-800 col-span-full">方向 C: 大球性貧血 (紅血球偏大)</h3>
+              <p class="text-center col-span-full text-sm text-gray-600">通常與製造紅血球的「原料」不足，影響DNA合成有關。</p>
+              <div class="bg-white p-4 rounded-lg shadow-sm">
+                <h4 class="font-semibold text-green-900">主要懷疑與下一步檢查</h4>
+                <ul class="list-disc list-inside text-sm space-y-1 mt-2">
+                  <li><strong>維生素B12缺乏:</strong> 下一步檢查 -> 血清維生素B12濃度。</li>
+                  <li><strong>葉酸缺乏:</strong> 下一步檢查 -> 血清葉酸濃度。</li>
+                  <li>其他可能: 肝病、酒精中毒、甲狀腺功能低下。</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Section 3: Types of Anemia -->
+      <section id="types" class="content-section">
+        <div class="bg-white p-6 rounded-xl shadow-lg">
+          <h2 class="text-2xl font-bold text-[#C75D2F] border-b-2 border-amber-200 pb-2 mb-4">貧血類型詳解</h2>
+          <p class="mb-6">貧血的成因多樣。以下是幾種常見貧血類型的深入介紹，點擊卡片以展開或收合詳細資訊，包含成因、治療與監測重點。</p>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="type-card bg-red-50 p-5 rounded-lg" data-card="ida">
+              <h3 class="text-xl font-bold text-red-900">缺鐵性貧血 (IDA)</h3>
+              <div id="ida-details" class="details-content mt-2 prose-sm">
+                <p><strong>核心問題:</strong> 體內鐵質儲存耗盡，無法製造足夠的血紅素。</p>
+                <p><strong>治療首要目標:</strong> **找出並根除鐵質流失的源頭！** (如腸胃道出血、經血過多)。</p>
+                <p><strong>治療方式:</strong> 口服鐵劑是首選，若無法耐受或吸收不良則考慮靜脈注射。</p>
+                <p><strong>監測重點:</strong> 服藥後7-10天網狀紅血球會上升。血紅素恢復正常後仍需持續服藥3-6個月以補足鐵庫存 (Ferritin)。</p>
+              </div>
+            </div>
+            <div class="type-card bg-teal-50 p-5 rounded-lg" data-card="thal">
+              <h3 class="text-xl font-bold text-teal-900">海洋性貧血 (Thalassemia)</h3>
+              <div id="thal-details" class="details-content mt-2 prose-sm">
+                <p><strong>核心問題:</strong> 遺傳性疾病，血紅素鏈合成有缺陷。</p>
+                <p><strong>分級管理:</strong>
+                  <br>• <strong>輕型(帶因者):</strong> 無需治療，但需**遺傳諮詢**。
+                  <br>• <strong>重型:</strong> 需終身規律輸血。
+                </p>
+                <p><strong>治療關鍵:</strong> 重型患者因長期輸血會造成鐵質沉積，必須搭配**排鐵劑治療**，其重要性與輸血相當。</p>
+                <p class="font-bold text-red-700"><strong>絕對警示:</strong> 嚴禁對海洋性貧血患者隨意補充鐵劑！</p>
+              </div>
+            </div>
+            <div class="type-card bg-blue-50 p-5 rounded-lg" data-card="b12">
+              <h3 class="text-xl font-bold text-blue-900">維生素B12/葉酸缺乏</h3>
+              <div id="b12-details" class="details-content mt-2 prose-sm">
+                <p><strong>核心問題:</strong> 缺乏DNA合成原料，導致巨幼紅血球性貧血。</p>
+                <p><strong>成因:</strong> B12缺乏常見於素食者或吸收障礙 (如惡性貧血)。葉酸缺乏多因攝取不足。</p>
+                <p><strong>治療方式:</strong> 補充缺乏的維生素。惡性貧血患者因無法吸收B12，需**終身接受B12注射治療**。</p>
+              </div>
+            </div>
+            <div class="type-card bg-purple-50 p-5 rounded-lg" data-card="acd">
+              <h3 class="text-xl font-bold text-purple-900">慢性病貧血 (ACD)</h3>
+              <div id="acd-details" class="details-content mt-2 prose-sm">
+                <p><strong>核心問題:</strong> 慢性發炎干擾鐵質利用與骨髓造血。</p>
+                <p><strong>治療首要目標:</strong> **控制根本的慢性疾病** (如類風濕關節炎、癌症)。</p>
+                <p><strong>特殊亞型 - 腎性貧血:</strong> 因腎臟無法產生足夠的紅血球生成素(EPO)，需注射EPO (ESA藥物) 並常需同步補鐵。</p>
+              </div>
+            </div>
+            <div class="type-card bg-orange-50 p-5 rounded-lg" data-card="hemo">
+              <h3 class="text-xl font-bold text-orange-900">溶血性貧血</h3>
+              <div id="hemo-details" class="details-content mt-2 prose-sm">
+                <p><strong>核心問題:</strong> 紅血球被過早、過度破壞。</p>
+                <p><strong>關鍵檢驗:</strong> 網狀紅血球、LDH、間接膽紅素皆會**升高**。</p>
+                <p><strong>鑑別診斷:</strong> 直接抗人球蛋白試驗 (Coombs Test) 若為陽性，可確認是自體免疫溶血。</p>
+              </div>
+            </div>
+            <div class="type-card bg-gray-200 p-5 rounded-lg" data-card="aplastic">
+              <h3 class="text-xl font-bold text-gray-800">再生不良性貧血</h3>
+              <div id="aplastic-details" class="details-content mt-2 prose-sm">
+                <p><strong>核心問題:</strong> 骨髓造血幹細胞衰竭，無法製造足夠的血球。</p>
+                <p><strong>治療方式:</strong>
+                  <br>• 年輕重症患者首選**骨髓移植**。
+                  <br>• 年長或無捐贈者則採**免疫抑制治療**。
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Section 4: Management -->
+      <section id="management" class="content-section">
+        <div class="bg-white p-6 rounded-xl shadow-lg">
+          <h2 class="text-2xl font-bold text-[#C75D2F] border-b-2 border-amber-200 pb-2 mb-4">治療原則與預防策略</h2>
+          <p class="mb-6">成功的貧血管理，不僅在於治療，更包含預防與監測。本節將提供治療原則的概覽以及實用的飲食指南。</p>
+
+          <div class="grid md:grid-cols-2 gap-6">
+            <div class="bg-amber-50 p-4 rounded-lg">
+              <h3 class="font-bold text-lg text-amber-800">輸血原則</h3>
+              <p class="mt-2 text-sm">輸血是快速矯正嚴重貧血的手段，但需謹慎使用。臨床上採「限制性輸血策略」，通常在血紅素**低於 7 g/dL**
+                或患者有嚴重症狀時才考慮。目標是緩解症狀，而非將數值恢復正常。</p>
+            </div>
+            <div class="bg-teal-50 p-4 rounded-lg">
+              <h3 class="font-bold text-lg text-teal-800">遺傳諮詢</h3>
+              <p class="mt-2 text-sm">對於海洋性貧血等遺傳疾病，遺傳諮詢至關重要。能幫助家庭了解遺傳模式、後代風險，並提供產前診斷等生育選擇，以達到優生保健的目的。</p>
+            </div>
+          </div>
+
+          <h3 class="text-xl font-semibold text-[#C75D2F] mt-8 mb-4">預防性營養飲食指南</h3>
+          <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <div class="bg-gray-50 p-4 rounded-lg">
+              <h4 class="text-lg font-bold text-red-800">🥩 鐵質 (Iron)</h4>
+              <ul class="text-sm mt-2 space-y-2">
+                <li><strong>高吸收率來源 (動物性):</strong> 紅肉、豬肝、鴨血、文蛤。</li>
+                <li><strong>低吸收率來源 (植物性):</strong> 菠菜、紅莧菜、黃豆。</li>
+                <li><strong>💡 技巧:</strong> 維生素C (芭樂、柑橘) 可**促進**植物鐵吸收。茶、咖啡、牛奶會**抑制**吸收，應避免同時攝取。</li>
+              </ul>
+            </div>
+            <div class="bg-gray-50 p-4 rounded-lg">
+              <h4 class="text-lg font-bold text-blue-800">🥚 維生素B12</h4>
+              <ul class="text-sm mt-2 space-y-2">
+                <li><strong>主要來源:</strong> 肉類、魚、蛋、乳製品等動物性食品。</li>
+                <li><strong>💡 技巧:</strong> **全素食者必須**透過營養補充劑或B12強化食品來獲取足夠量。</li>
+              </ul>
+            </div>
+            <div class="bg-gray-50 p-4 rounded-lg">
+              <h4 class="text-lg font-bold text-green-800">🥬 葉酸 (Folate)</h4>
+              <ul class="text-sm mt-2 space-y-2">
+                <li><strong>主要來源:</strong> 深綠色葉菜 (菠菜)、蘆筍、豆類、酪梨。</li>
+                <li><strong>💡 技巧:</strong> 葉酸對熱敏感，不宜過度烹調。</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+    <footer class="text-center mt-12 text-sm text-gray-500">
+      <p>本內容僅供衛教參考，不能取代專業醫療建議。如有健康問題，請諮詢您的醫師。</p>
+    </footer>
+  </div>
+
+    <!-- 必要的 JavaScript 文件 -->
+    <script src="js/tools-config.js"></script>
+    <script src="js/spa-router.js"></script>
+    <script src="components/header-sidebar.js"></script>
+
+    <!-- 初始化頂部欄和側邊欄 -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            initHeaderSidebar({
+                currentPage: 'anemia',
+                pageTitle: '醫療工具百寶箱',
+                enableSPA: true
+            });
+        });
+    </script>
+</body>
+</html>

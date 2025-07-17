@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>深度解析失眠：一份互動式指南</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
+  <!-- Chosen Palette: Calm Harmony -->
+  <!-- Application Structure Plan: A thematic, top-down single-page application designed for user engagement. The flow starts with self-assessment ("Are you experiencing insomnia?"), moves to understanding causes ("Why Insomnia?" using the 3P model) and impacts, presents data visualizations ("Insomnia by the Numbers"), and culminates in actionable solutions ("How to Manage Insomnia?"). This structure prioritizes a user-centric journey over mirroring the report's linear format, making complex information more accessible and interactive. -->
+  <!-- Visualization & Content Choices: 1. Prevalence Data: Interactive bar chart (Chart.js) to compare rates by demographic, more engaging than a static table. 2. 3P Model: Clickable HTML/CSS diagram to explain the framework interactively. 3. Health Impacts: A toggle switch (HTML/CSS/JS) to separate short-term vs. long-term effects for clarity. 4. CBT-I Components: A grid of interactive cards for non-linear exploration of the primary treatment. All text is adapted for the web, and icons are Unicode characters. -->
+  <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+  <style>
+    body {
+      font-family: 'Noto Sans TC', sans-serif;
+    }
+
+    .chart-container {
+      position: relative;
+      width: 100%;
+      max-width: 600px;
+      margin-left: auto;
+      margin-right: auto;
+      height: 320px;
+      max-height: 400px;
+    }
+
+    @media (min-width: 768px) {
+      .chart-container {
+        height: 400px;
+      }
+    }
+
+    .section-fade-in {
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+    }
+
+    .section-fade-in.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .nav-link {
+      transition: color 0.3s, border-bottom-color 0.3s;
+    }
+
+    .nav-link.active {
+      color: #0891b2;
+      /* cyan-600 */
+      border-bottom-color: #0891b2;
+    }
+  </style>
+</head>
+
+<body class="bg-slate-50 text-slate-800">
+
+  <header id="header" class="bg-slate-100/80 backdrop-blur-lg sticky top-0 z-50 shadow-sm">
+    
+  </header>
+
+  <main class="container mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12">
+
+    <section id="intro" class="text-center py-16 section-fade-in">
+      <h2 class="text-4xl md:text-5xl font-bold text-slate-800 mb-4">一夜好眠，為何如此困難？</h2>
+      <p class="max-w-3xl mx-auto text-lg text-slate-600 mb-8">
+        失眠不僅是個人困擾，更是一個普遍的公共衛生議題。在台灣，估計近400萬人受其影響。本指南將帶您深入了解失眠的成因、影響，並提供基於實證的應對策略。
+      </p>
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-6 max-w-4xl mx-auto">
+        <div class="bg-white p-6 rounded-xl shadow-md border border-slate-200">
+          <p class="text-4xl font-bold text-cyan-600">17%</p>
+          <p class="text-slate-500 mt-2">台灣失眠盛行率 (2023)</p>
+        </div>
+        <div class="bg-white p-6 rounded-xl shadow-md border border-slate-200">
+          <p class="text-4xl font-bold text-cyan-600">~1/3</p>
+          <p class="text-slate-500 mt-2">全球成人曾偶發性失眠</p>
+        </div>
+        <div class="bg-white p-6 rounded-xl shadow-md border border-slate-200">
+          <p class="text-4xl font-bold text-cyan-600">>200萬</p>
+          <p class="text-slate-500 mt-2">台灣慢性失眠人口</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="assessment" class="py-16 section-fade-in">
+      <div class="text-center mb-12">
+        <h3 class="text-3xl font-bold text-slate-800 mb-2">您是否失眠？</h3>
+        <p class="text-slate-600">點擊符合您情況的描述。失眠的醫學定義不僅是睡不著，還包括睡眠品質不佳及對日間功能的影響。</p>
+      </div>
+      <div class="max-w-4xl mx-auto bg-white p-8 rounded-2xl shadow-lg border border-slate-200">
+        <div id="symptom-grid" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div
+            class="symptom-card cursor-pointer p-4 border-2 border-slate-200 rounded-lg flex items-center space-x-4 transition-all duration-300 hover:bg-cyan-50 hover:border-cyan-400">
+            <span class="text-2xl">🌙</span>
+            <div>
+              <h4 class="font-semibold">入睡困難</h4>
+              <p class="text-sm text-slate-500">躺床超過30分鐘仍清醒</p>
+            </div>
+          </div>
+          <div
+            class="symptom-card cursor-pointer p-4 border-2 border-slate-200 rounded-lg flex items-center space-x-4 transition-all duration-300 hover:bg-cyan-50 hover:border-cyan-400">
+            <span class="text-2xl">⏱️</span>
+            <div>
+              <h4 class="font-semibold">睡眠中斷</h4>
+              <p class="text-sm text-slate-500">夜間頻繁醒來，不易再入睡</p>
+            </div>
+          </div>
+          <div
+            class="symptom-card cursor-pointer p-4 border-2 border-slate-200 rounded-lg flex items-center space-x-4 transition-all duration-300 hover:bg-cyan-50 hover:border-cyan-400">
+            <span class="text-2xl">🌅</span>
+            <div>
+              <h4 class="font-semibold">過早醒來</h4>
+              <p class="text-sm text-slate-500">比預期時間早醒且無法再睡</p>
+            </div>
+          </div>
+          <div
+            class="symptom-card cursor-pointer p-4 border-2 border-slate-200 rounded-lg flex items-center space-x-4 transition-all duration-300 hover:bg-cyan-50 hover:border-cyan-400">
+            <span class="text-2xl">🥱</span>
+            <div>
+              <h4 class="font-semibold">日間疲憊</h4>
+              <p class="text-sm text-slate-500">即使睡足時數，白天仍感疲倦</p>
+            </div>
+          </div>
+        </div>
+        <div id="assessment-result"
+          class="mt-6 p-4 bg-amber-50 border-l-4 border-amber-400 text-amber-800 rounded-r-lg hidden">
+          <p>如果您長期（超過三個月，每週三次以上）經歷上述一或多種情況，並已影響到您的日間情緒、專注力或工作表現，建議諮詢專業醫師的意見。</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="causes" class="py-16 section-fade-in">
+      <div class="text-center mb-12">
+        <h3 class="text-3xl font-bold text-slate-800 mb-2">為何失眠？</h3>
+        <p class="text-slate-600 max-w-2xl mx-auto">失眠的成因錯綜複雜，很少是單一因素造成。著名的「3P模式」幫助我們理解失眠如何發生與持續。</p>
+      </div>
+      <div class="max-w-5xl mx-auto">
+        <div class="grid md:grid-cols-3 gap-8 text-center">
+          <div
+            class="p-factor-card p-6 bg-white rounded-xl shadow-md border-2 border-transparent cursor-pointer transition-all hover:border-cyan-400 hover:shadow-lg"
+            data-factor="predisposing">
+            <h4 class="font-bold text-xl text-cyan-700 mb-2">前置因子</h4>
+            <p class="text-slate-600">增加您失眠風險的先天或長期特質。</p>
+          </div>
+          <div
+            class="p-factor-card p-6 bg-white rounded-xl shadow-md border-2 border-transparent cursor-pointer transition-all hover:border-cyan-400 hover:shadow-lg"
+            data-factor="precipitating">
+            <h4 class="font-bold text-xl text-cyan-700 mb-2">誘發因子</h4>
+            <p class="text-slate-600">直接觸發您失眠的短期壓力或事件。</p>
+          </div>
+          <div
+            class="p-factor-card p-6 bg-white rounded-xl shadow-md border-2 border-transparent cursor-pointer transition-all hover:border-cyan-400 hover:shadow-lg"
+            data-factor="perpetuating">
+            <h4 class="font-bold text-xl text-cyan-700 mb-2">持續因子</h4>
+            <p class="text-slate-600">讓您的失眠從急性變為慢性的行為或想法。</p>
+          </div>
+        </div>
+        <div id="p-factor-details"
+          class="mt-8 p-6 bg-white rounded-lg shadow-inner border border-slate-200 min-h-[100px] flex items-center justify-center">
+          <p class="text-slate-500">點擊上方卡片查看詳細說明。</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="impact" class="py-16 section-fade-in">
+      <div class="text-center mb-12">
+        <h3 class="text-3xl font-bold text-slate-800 mb-2">失眠的代價：身心健康的全面影響</h3>
+        <p class="text-slate-600 max-w-2xl mx-auto">長期睡眠不足的危害遠不止疲憊，它是一個系統性的健康警訊，預示著潛在的健康危機。</p>
+      </div>
+
+      <div class="flex justify-center mb-8">
+        <div class="relative flex p-1 bg-slate-200 rounded-full">
+          <button id="impact-toggle-short"
+            class="relative w-28 sm:w-32 py-2 text-sm font-semibold text-white bg-cyan-600 rounded-full z-10 transition-colors">短期影響</button>
+          <button id="impact-toggle-long"
+            class="relative w-28 sm:w-32 py-2 text-sm font-semibold text-slate-600 rounded-full z-10 transition-colors">長期危害</button>
+        </div>
+      </div>
+
+      <div id="impact-content" class="max-w-4xl mx-auto">
+        <div id="short-term-impact" class="grid grid-cols-2 md:grid-cols-3 gap-4 md:gap-6"></div>
+        <div id="long-term-impact" class="grid grid-cols-2 md:grid-cols-3 gap-4 md:gap-6 hidden"></div>
+      </div>
+    </section>
+
+    <section id="data" class="py-16 section-fade-in">
+      <div class="text-center mb-12">
+        <h3 class="text-3xl font-bold text-slate-800 mb-2">數據看失眠：誰是高風險群體？</h3>
+        <p class="text-slate-600 max-w-2xl mx-auto">統計數據顯示，特定族群的失眠風險顯著更高。這不僅是個人問題，更反映了深層的生理與社會因素。</p>
+      </div>
+      <div class="bg-white p-4 sm:p-8 rounded-2xl shadow-lg border border-slate-200">
+        <div class="chart-container">
+          <canvas id="insomniaPrevalenceChart"></canvas>
+        </div>
+      </div>
+    </section>
+
+    <section id="solutions" class="py-16 section-fade-in">
+      <div class="text-center mb-12">
+        <h3 class="text-3xl font-bold text-slate-800 mb-2">如何找回安穩睡眠？</h3>
+        <p class="text-slate-600 max-w-2xl mx-auto">面對失眠，現代醫學強調綜合治療，並將非藥物治療作為首選及長期解決方案。</p>
+      </div>
+
+      <div class="max-w-5xl mx-auto">
+        <div class="flex justify-center border-b border-slate-200 mb-8">
+          <button id="tab-non-drug"
+            class="tab-button px-6 py-3 font-semibold text-cyan-600 border-b-2 border-cyan-600">非藥物治療 (首選)</button>
+          <button id="tab-drug"
+            class="tab-button px-6 py-3 font-semibold text-slate-500 border-b-2 border-transparent">藥物治療 (輔助)</button>
+        </div>
+
+        <div id="content-non-drug" class="tab-content">
+          <div class="bg-white p-8 rounded-2xl shadow-lg border border-slate-200">
+            <h4 class="text-2xl font-bold text-cyan-700 mb-4">認知行為療法 (CBT-I)：治本之道</h4>
+            <p class="text-slate-600 mb-6">CBT-I是國際公認治療慢性失眠最有效的方法，效果持久且無藥物依賴風險。它透過系統性方法，從根本上糾正導致失眠的錯誤想法與行為。</p>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              <div class="cbti-card p-4 bg-slate-50 rounded-lg border border-slate-200">
+                <h5 class="font-semibold mb-1">刺激控制療法</h5>
+                <p class="text-sm text-slate-500">重建床與睡眠的連結，只在想睡時上床。</p>
+              </div>
+              <div class="cbti-card p-4 bg-slate-50 rounded-lg border border-slate-200">
+                <h5 class="font-semibold mb-1">睡眠限制療法</h5>
+                <p class="text-sm text-slate-500">先縮短躺床時間，提高睡眠效率後再延長。</p>
+              </div>
+              <div class="cbti-card p-4 bg-slate-50 rounded-lg border border-slate-200">
+                <h5 class="font-semibold mb-1">放鬆技巧</h5>
+                <p class="text-sm text-slate-500">學習腹式呼吸、冥想等，降低身心警覺。</p>
+              </div>
+              <div class="cbti-card p-4 bg-slate-50 rounded-lg border border-slate-200">
+                <h5 class="font-semibold mb-1">認知重建</h5>
+                <p class="text-sm text-slate-500">挑戰「我一定睡不著」等災難性想法。</p>
+              </div>
+              <div class="cbti-card p-4 bg-slate-50 rounded-lg border border-slate-200">
+                <h5 class="font-semibold mb-1">睡眠衛生教育</h5>
+                <p class="text-sm text-slate-500">建立規律作息、優化睡眠環境等好習慣。</p>
+              </div>
+              <div class="cbti-card p-4 bg-slate-50 rounded-lg border border-slate-200">
+                <h5 class="font-semibold mb-1">心理教育</h5>
+                <p class="text-sm text-slate-500">正確認識睡眠，破除迷思，減輕焦慮。</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div id="content-drug" class="tab-content hidden">
+          <div class="bg-white p-8 rounded-2xl shadow-lg border border-slate-200">
+            <h4 class="text-2xl font-bold text-cyan-700 mb-4">藥物治療：短期輔助方案</h4>
+            <p class="text-slate-600 mb-6">安眠藥物在特定情況下（如急性失眠）有其角色，但應視為短期輔助工具。所有藥物都應在醫師指導下使用，以避免依賴性、副作用與戒斷問題。</p>
+            <div class="overflow-x-auto">
+              <table class="w-full text-left text-sm">
+                <thead class="bg-slate-100 text-slate-600">
+                  <tr>
+                    <th class="p-3 font-semibold">藥物類別</th>
+                    <th class="p-3 font-semibold">主要用途</th>
+                    <th class="p-3 font-semibold">關鍵提醒</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr class="border-b border-slate-200">
+                    <td class="p-3">非苯二氮平類 (Z-drugs)</td>
+                    <td class="p-3">縮短入睡時間</td>
+                    <td class="p-3">目前主流，仍有依賴風險</td>
+                  </tr>
+                  <tr class="border-b border-slate-200">
+                    <td class="p-3">苯二氮平類 (BZRAs)</td>
+                    <td class="p-3">急性失眠、焦慮</td>
+                    <td class="p-3">依賴性與副作用風險較高</td>
+                  </tr>
+                  <tr class="border-b border-slate-200">
+                    <td class="p-3">褪黑激素受體激動劑</td>
+                    <td class="p-3">調整生理時鐘</td>
+                    <td class="p-3">作用溫和，副作用較少</td>
+                  </tr>
+                  <tr class="border-b border-slate-200">
+                    <td class="p-3">鎮靜型抗憂鬱藥</td>
+                    <td class="p-3">伴隨憂鬱症的失眠</td>
+                    <td class="p-3">多為超適應症使用，須謹慎</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="mt-6 p-4 bg-amber-50 border-l-4 border-amber-400 text-amber-800 rounded-r-lg">
+              <p><strong>重要提醒：</strong>從藥物優先轉向CBT-I優先，是睡眠醫學的重大範式轉變。治療失眠，請務必先與醫師討論最適合您的綜合治療方案。</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="bg-slate-200">
+    <div class="container mx-auto px-4 sm:px-6 lg:px-8 py-4 text-center text-slate-500 text-sm">
+      <p>本頁面資訊僅供參考，不能取代專業醫療建議。若您有睡眠困擾，請諮詢醫師或睡眠技師。</p>
+      <p>資料來源：失眠症：全面解析、診斷與治療策略報告。</p>
+    </div>
+  </footer>
+
+    <!-- 必要的 JavaScript 文件 -->
+
+    <!-- 初始化頂部欄和側邊欄 -->
+    
+    <!-- 必要的 JavaScript 文件 -->
+    <script src="js/tools-config.js"></script>
+    <script src="js/spa-router.js"></script>
+    <script src="components/header-sidebar.js"></script>
+
+    <!-- 初始化頂部欄和側邊欄 -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            initHeaderSidebar({
+                currentPage: 'insomnia',
+                pageTitle: '醫療工具百寶箱',
+                enableSPA: true
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="zh-TW" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>貧血診斷與治療 - 誠心醫療體系的醫療工具箱</title>
+    <meta name="description" content="完整的貧血診斷與治療指南，包含症狀識別、檢查項目、治療方法等專業醫療資訊。">
+    <meta name="keywords" content="貧血, 診斷, 治療, 血紅素, 鐵質, 醫療指南">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    
+    <!-- Tailwind Config -->
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        primary: {
+                            50: '#eff6ff',
+                            100: '#dbeafe',
+                            500: '#3b82f6',
+                            600: '#2563eb',
+                            700: '#1d4ed8',
+                            800: '#1e40af',
+                            900: '#1e3a8a'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-gray-50 dark:bg-gray-900 transition-colors duration-300">
+    
+    <!-- 主內容區 - 頂部欄和側邊欄會自動插入 -->
+    <main class="p-6 lg:p-8">
+        <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-8 border border-gray-200 dark:border-gray-700">
+            
+            <!-- 麵包屑導航 -->
+            <nav class="flex mb-6" aria-label="Breadcrumb">
+                <ol class="inline-flex items-center space-x-1 md:space-x-3">
+                    <li class="inline-flex items-center">
+                        <a href="index.html" class="inline-flex items-center text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400">
+                            <i class="fas fa-home mr-2"></i>
+                            首頁
+                        </a>
+                    </li>
+                    <li>
+                        <div class="flex items-center">
+                            <i class="fas fa-chevron-right text-gray-400 mx-2"></i>
+                            <span class="text-sm font-medium text-gray-500 dark:text-gray-400">內科疾病</span>
+                        </div>
+                    </li>
+                    <li aria-current="page">
+                        <div class="flex items-center">
+                            <i class="fas fa-chevron-right text-gray-400 mx-2"></i>
+                            <span class="text-sm font-medium text-gray-500 dark:text-gray-400">貧血診斷與治療</span>
+                        </div>
+                    </li>
+                </ol>
+            </nav>
+            
+            <!-- 頁面標題 -->
+            <div class="flex items-center mb-8">
+                <div class="w-16 h-16 bg-red-100 dark:bg-red-900/30 rounded-xl flex items-center justify-center mr-4">
+                    <i class="fas fa-tint text-2xl text-red-600 dark:text-red-400"></i>
+                </div>
+                <div>
+                    <h1 class="text-3xl font-bold text-gray-900 dark:text-white">貧血診斷與治療</h1>
+                    <p class="text-gray-600 dark:text-gray-300 mt-1">完整的貧血管理指南</p>
+                </div>
+            </div>
+            
+            <!-- 標籤切換 -->
+            <div class="mb-8">
+                <div class="border-b border-gray-200 dark:border-gray-700">
+                    <nav class="-mb-px flex space-x-8">
+                        <button class="tab-button active py-2 px-1 border-b-2 border-red-500 font-medium text-sm text-red-600 dark:text-red-400" data-tab="overview">
+                            <i class="fas fa-info-circle mr-2"></i>概述
+                        </button>
+                        <button class="tab-button py-2 px-1 border-b-2 border-transparent font-medium text-sm text-gray-500 hover:text-gray-700 hover:border-gray-300 dark:text-gray-400 dark:hover:text-gray-300" data-tab="symptoms">
+                            <i class="fas fa-exclamation-triangle mr-2"></i>症狀
+                        </button>
+                        <button class="tab-button py-2 px-1 border-b-2 border-transparent font-medium text-sm text-gray-500 hover:text-gray-700 hover:border-gray-300 dark:text-gray-400 dark:hover:text-gray-300" data-tab="diagnosis">
+                            <i class="fas fa-microscope mr-2"></i>診斷
+                        </button>
+                        <button class="tab-button py-2 px-1 border-b-2 border-transparent font-medium text-sm text-gray-500 hover:text-gray-700 hover:border-gray-300 dark:text-gray-400 dark:hover:text-gray-300" data-tab="treatment">
+                            <i class="fas fa-pills mr-2"></i>治療
+                        </button>
+                    </nav>
+                </div>
+            </div>
+            
+            <!-- 標籤內容 -->
+            <div class="tab-content">
+                <!-- 概述標籤 -->
+                <div id="overview" class="tab-pane active">
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                        <div>
+                            <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-4">什麼是貧血？</h3>
+                            <p class="text-gray-600 dark:text-gray-300 mb-4">
+                                貧血是指血液中紅血球數量或血紅素濃度低於正常值的狀態。這會導致身體組織無法獲得足夠的氧氣，引起各種症狀。
+                            </p>
+                            <div class="bg-blue-50 dark:bg-blue-900/20 p-4 rounded-lg">
+                                <h4 class="font-semibold text-blue-800 dark:text-blue-200 mb-2">正常血紅素值</h4>
+                                <ul class="text-blue-700 dark:text-blue-300 text-sm space-y-1">
+                                    <li>• 成年男性：13.5-17.5 g/dL</li>
+                                    <li>• 成年女性：12.0-15.5 g/dL</li>
+                                    <li>• 孕婦：11.0 g/dL 以上</li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div>
+                            <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-4">常見類型</h3>
+                            <div class="space-y-3">
+                                <div class="border border-gray-200 dark:border-gray-600 rounded-lg p-4">
+                                    <h4 class="font-medium text-gray-900 dark:text-white">缺鐵性貧血</h4>
+                                    <p class="text-sm text-gray-600 dark:text-gray-300">最常見的貧血類型</p>
+                                </div>
+                                <div class="border border-gray-200 dark:border-gray-600 rounded-lg p-4">
+                                    <h4 class="font-medium text-gray-900 dark:text-white">維生素 B12 缺乏性貧血</h4>
+                                    <p class="text-sm text-gray-600 dark:text-gray-300">巨球性貧血的一種</p>
+                                </div>
+                                <div class="border border-gray-200 dark:border-gray-600 rounded-lg p-4">
+                                    <h4 class="font-medium text-gray-900 dark:text-white">慢性疾病性貧血</h4>
+                                    <p class="text-sm text-gray-600 dark:text-gray-300">由慢性疾病引起</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 症狀標籤 -->
+                <div id="symptoms" class="tab-pane hidden">
+                    <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-6">貧血常見症狀</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        <div class="bg-yellow-50 dark:bg-yellow-900/20 p-6 rounded-lg">
+                            <i class="fas fa-tired text-2xl text-yellow-600 dark:text-yellow-400 mb-3"></i>
+                            <h4 class="font-semibold text-yellow-800 dark:text-yellow-200 mb-2">疲勞無力</h4>
+                            <p class="text-yellow-700 dark:text-yellow-300 text-sm">容易感到疲倦，體力不足</p>
+                        </div>
+                        <div class="bg-red-50 dark:bg-red-900/20 p-6 rounded-lg">
+                            <i class="fas fa-heartbeat text-2xl text-red-600 dark:text-red-400 mb-3"></i>
+                            <h4 class="font-semibold text-red-800 dark:text-red-200 mb-2">心悸氣喘</h4>
+                            <p class="text-red-700 dark:text-red-300 text-sm">心跳加快，容易喘息</p>
+                        </div>
+                        <div class="bg-gray-50 dark:bg-gray-700 p-6 rounded-lg">
+                            <i class="fas fa-user text-2xl text-gray-600 dark:text-gray-400 mb-3"></i>
+                            <h4 class="font-semibold text-gray-800 dark:text-gray-200 mb-2">面色蒼白</h4>
+                            <p class="text-gray-700 dark:text-gray-300 text-sm">皮膚、眼瞼內側蒼白</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 診斷標籤 -->
+                <div id="diagnosis" class="tab-pane hidden">
+                    <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-6">診斷檢查</h3>
+                    <div class="space-y-6">
+                        <div class="bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg p-6">
+                            <h4 class="font-semibold text-gray-900 dark:text-white mb-3">
+                                <i class="fas fa-vial text-blue-600 dark:text-blue-400 mr-2"></i>
+                                血液常規檢查 (CBC)
+                            </h4>
+                            <p class="text-gray-600 dark:text-gray-300 mb-3">基本的血液檢查，包含：</p>
+                            <ul class="text-gray-600 dark:text-gray-300 space-y-1 ml-4">
+                                <li>• 血紅素 (Hemoglobin)</li>
+                                <li>• 血球容積比 (Hematocrit)</li>
+                                <li>• 紅血球數量 (RBC count)</li>
+                                <li>• 平均紅血球體積 (MCV)</li>
+                            </ul>
+                        </div>
+                        
+                        <div class="bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg p-6">
+                            <h4 class="font-semibold text-gray-900 dark:text-white mb-3">
+                                <i class="fas fa-search text-green-600 dark:text-green-400 mr-2"></i>
+                                進階檢查
+                            </h4>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div>
+                                    <h5 class="font-medium text-gray-900 dark:text-white mb-2">鐵質相關</h5>
+                                    <ul class="text-gray-600 dark:text-gray-300 text-sm space-y-1">
+                                        <li>• 血清鐵 (Serum Iron)</li>
+                                        <li>• 鐵蛋白 (Ferritin)</li>
+                                        <li>• 總鐵結合力 (TIBC)</li>
+                                    </ul>
+                                </div>
+                                <div>
+                                    <h5 class="font-medium text-gray-900 dark:text-white mb-2">維生素檢查</h5>
+                                    <ul class="text-gray-600 dark:text-gray-300 text-sm space-y-1">
+                                        <li>• 維生素 B12</li>
+                                        <li>• 葉酸 (Folate)</li>
+                                        <li>• 維生素 D</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 治療標籤 -->
+                <div id="treatment" class="tab-pane hidden">
+                    <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-6">治療方法</h3>
+                    <div class="space-y-6">
+                        <div class="bg-green-50 dark:bg-green-900/20 p-6 rounded-lg">
+                            <h4 class="font-semibold text-green-800 dark:text-green-200 mb-4">
+                                <i class="fas fa-pills mr-2"></i>藥物治療
+                            </h4>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div>
+                                    <h5 class="font-medium text-green-700 dark:text-green-300 mb-2">鐵劑補充</h5>
+                                    <ul class="text-green-600 dark:text-green-400 text-sm space-y-1">
+                                        <li>• 口服鐵劑：硫酸亞鐵</li>
+                                        <li>• 注射鐵劑：嚴重缺鐵時使用</li>
+                                        <li>• 服用時間：空腹效果較佳</li>
+                                    </ul>
+                                </div>
+                                <div>
+                                    <h5 class="font-medium text-green-700 dark:text-green-300 mb-2">維生素補充</h5>
+                                    <ul class="text-green-600 dark:text-green-400 text-sm space-y-1">
+                                        <li>• 維生素 B12 注射</li>
+                                        <li>• 葉酸錠劑</li>
+                                        <li>• 綜合維生素</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="bg-blue-50 dark:bg-blue-900/20 p-6 rounded-lg">
+                            <h4 class="font-semibold text-blue-800 dark:text-blue-200 mb-4">
+                                <i class="fas fa-utensils mr-2"></i>飲食調整
+                            </h4>
+                            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                <div>
+                                    <h5 class="font-medium text-blue-700 dark:text-blue-300 mb-2">富含鐵質食物</h5>
+                                    <ul class="text-blue-600 dark:text-blue-400 text-sm space-y-1">
+                                        <li>• 紅肉、肝臟</li>
+                                        <li>• 深綠色蔬菜</li>
+                                        <li>• 豆類、堅果</li>
+                                    </ul>
+                                </div>
+                                <div>
+                                    <h5 class="font-medium text-blue-700 dark:text-blue-300 mb-2">促進鐵質吸收</h5>
+                                    <ul class="text-blue-600 dark:text-blue-400 text-sm space-y-1">
+                                        <li>• 維生素 C 食物</li>
+                                        <li>• 柑橘類水果</li>
+                                        <li>• 番茄、草莓</li>
+                                    </ul>
+                                </div>
+                                <div>
+                                    <h5 class="font-medium text-blue-700 dark:text-blue-300 mb-2">避免同時攝取</h5>
+                                    <ul class="text-blue-600 dark:text-blue-400 text-sm space-y-1">
+                                        <li>• 茶、咖啡</li>
+                                        <li>• 牛奶、起司</li>
+                                        <li>• 高纖維食物</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+    
+    <!-- 必要的 JavaScript 文件 -->
+    <script src="js/tools-config.js"></script>
+    <script src="components/header-sidebar.js"></script>
+    
+    <!-- 標籤切換功能 -->
+    <script>
+        // 標籤切換功能
+        document.addEventListener('DOMContentLoaded', () => {
+            // 初始化頂部欄和側邊欄
+            initHeaderSidebar({
+                currentPage: 'anemia',
+                pageTitle: '誠心醫療體系的醫療工具箱'
+            });
+            
+            // 標籤切換邏輯
+            const tabButtons = document.querySelectorAll('.tab-button');
+            const tabPanes = document.querySelectorAll('.tab-pane');
+            
+            tabButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    const targetTab = button.getAttribute('data-tab');
+                    
+                    // 移除所有活動狀態
+                    tabButtons.forEach(btn => {
+                        btn.classList.remove('active', 'border-red-500', 'text-red-600', 'dark:text-red-400');
+                        btn.classList.add('border-transparent', 'text-gray-500', 'dark:text-gray-400');
+                    });
+                    
+                    tabPanes.forEach(pane => {
+                        pane.classList.add('hidden');
+                        pane.classList.remove('active');
+                    });
+                    
+                    // 添加活動狀態到點擊的標籤
+                    button.classList.add('active', 'border-red-500', 'text-red-600', 'dark:text-red-400');
+                    button.classList.remove('border-transparent', 'text-gray-500', 'dark:text-gray-400');
+                    
+                    // 顯示對應的內容
+                    const targetPane = document.getElementById(targetTab);
+                    if (targetPane) {
+                        targetPane.classList.remove('hidden');
+                        targetPane.classList.add('active');
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>

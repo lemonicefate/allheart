@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>暈眩互動式鑑別診斷指南</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
+  <!-- Chosen Palette: Warm Neutrals -->
+  <!-- Application Structure Plan: The SPA is designed with a task-oriented, non-linear structure to maximize usability. Instead of a long scroll, a sticky top navigation allows users to jump to specific sections based on their clinical question (e.g., 'What type of dizziness is it?', 'Is it dangerous?', 'What's the condition?', 'How to treat it?'). This structure mirrors a clinical decision-making workflow. Key sections include: 1) Initial Assessment (classifying symptoms via interactive cards), 2) Differential Diagnosis (visualizing peripheral vs. central concepts and highlighting red flags), 3) Disorder Explorer (a filterable library of common conditions with comparative charts), 4) Clinical Toolbox (explaining key exams), and 5) Treatment/Rehab (using tabs and visual guides). This approach makes the dense report content more accessible and engaging than a static document. -->
+  <!-- Visualization & Content Choices: 1. Symptom Types (Inform): Interactive cards with icons replace a simple list for better engagement. (HTML/CSS/JS). 2. Peripheral vs. Central (Compare): A CSS-based diagram visually separates anatomical origins. A Chart.js bar chart compares features, making abstract differences concrete. Red Flags use a collapsible list for emphasis without clutter. (HTML/CSS/JS + Chart.js). 3. Disorder Comparison (Compare/Organize): A filterable grid allows quick access. A key feature, vertigo duration, is visualized in a Chart.js bar chart for rapid comparison. (HTML/CSS/JS + Chart.js). 4. Treatment Maneuvers (Inform): Static text is converted into step-by-step visual guides using HTML/CSS for clarity. 5. Drug Information (Inform): An interactive HTML table uses hover effects to provide layered information on demand. (HTML/CSS/JS). -->
+  <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+  <style>
+    body {
+      font-family: 'Noto Sans TC', sans-serif;
+      background-color: #F8F7F3;
+      color: #4A4A4A;
+    }
+
+    .nav-link {
+      transition: color 0.3s, border-bottom-color 0.3s;
+      border-bottom: 2px solid transparent;
+    }
+
+    .nav-link:hover,
+    .nav-link.active {
+      color: #F76C6C;
+      border-bottom-color: #F76C6C;
+    }
+
+    .card {
+      transition: transform 0.3s, box-shadow 0.3s;
+    }
+
+    .card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    }
+
+    .tab-btn.active {
+      background-color: #A8D0E6;
+      color: #FFFFFF;
+    }
+
+    .content-section {
+      display: none;
+    }
+
+    .content-section.active {
+      display: block;
+    }
+
+    .chart-container {
+      position: relative;
+      width: 100%;
+      max-width: 700px;
+      margin-left: auto;
+      margin-right: auto;
+      height: 400px;
+      max-height: 50vh;
+    }
+  </style>
+</head>
+
+<body class="antialiased">
+
+  <header class="bg-white/80 backdrop-blur-md shadow-sm sticky top-0 z-50">
+    
+    <div id="mobile-menu" class="md:hidden hidden">
+      <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
+        <a href="#intro" class="nav-link block px-3 py-2 rounded-md text-base font-medium">初步評估</a>
+        <a href="#diff" class="nav-link block px-3 py-2 rounded-md text-base font-medium">鑑別診斷</a>
+        <a href="#explore" class="nav-link block px-3 py-2 rounded-md text-base font-medium">疾病探索</a>
+        <a href="#toolbox" class="nav-link block px-3 py-2 rounded-md text-base font-medium">檢查工具</a>
+        <a href="#treat" class="nav-link block px-3 py-2 rounded-md text-base font-medium">治療復健</a>
+      </div>
+    </div>
+  </header>
+
+  <main class="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
+
+    <!-- Section 1: Initial Assessment -->
+    <section id="intro" class="pt-16 -mt-16 mb-12">
+      <h2 class="text-3xl font-bold mb-2 text-[#34495E]">初步評估：我該如何描述我的「暈」？</h2>
+      <p class="text-lg text-gray-600 mb-8">精確描述您的感受是正確診斷的第一步。臨床上，模糊的「頭暈」可細分為四種類型。點擊下方卡片，了解哪一種最符合您的情況。</p>
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <!-- Vertigo Card -->
+        <div class="card bg-white p-6 rounded-lg shadow-md cursor-pointer" onclick="showDetail('vertigo-detail')">
+          <div class="flex items-center mb-4">
+            <div class="text-3xl mr-4">🌀</div>
+            <h3 class="text-xl font-semibold text-[#34495E]">眩暈 (Vertigo)</h3>
+          </div>
+          <p>感覺自己或周遭環境在旋轉、移動（天旋地轉）。</p>
+        </div>
+        <!-- Presyncope Card -->
+        <div class="card bg-white p-6 rounded-lg shadow-md cursor-pointer" onclick="showDetail('presyncope-detail')">
+          <div class="flex items-center mb-4">
+            <div class="text-3xl mr-4">😵</div>
+            <h3 class="text-xl font-semibold text-[#34495E]">暈厥前期 (Presyncope)</h3>
+          </div>
+          <p>頭重腳輕，感覺快要昏倒，眼前發黑。</p>
+        </div>
+        <!-- Disequilibrium Card -->
+        <div class="card bg-white p-6 rounded-lg shadow-md cursor-pointer"
+          onclick="showDetail('disequilibrium-detail')">
+          <div class="flex items-center mb-4">
+            <div class="text-3xl mr-4"> unsteady_face:</div>
+            <h3 class="text-xl font-semibold text-[#34495E]">不平衡感 (Disequilibrium)</h3>
+          </div>
+          <p>站立或行走時感覺不穩定，像要傾倒。</p>
+        </div>
+        <!-- Non-specific Card -->
+        <div class="card bg-white p-6 rounded-lg shadow-md cursor-pointer" onclick="showDetail('nonspecific-detail')">
+          <div class="flex items-center mb-4">
+            <div class="text-3xl mr-4">🤔</div>
+            <h3 class="text-xl font-semibold text-[#34495E]">非特異性頭暈</h3>
+          </div>
+          <p>難以形容的昏沉感、漂浮感或「腦霧」。</p>
+        </div>
+      </div>
+      <div id="detail-display" class="mt-8 p-6 bg-blue-50 rounded-lg border border-blue-200 hidden">
+        <div id="vertigo-detail" class="content-section">
+          <h4 class="text-2xl font-bold mb-2 text-blue-800">眩暈 (Vertigo) 的細節</h4>
+          <p class="mb-2"><strong>核心特徵：</strong>一種運動幻覺，感覺自身或環境在旋轉、搖晃。通常強度較高，常伴隨噁心、嘔吐和步態不穩。</p>
+          <p><strong>強烈指向：</strong>平衡系統，特別是<strong>前庭系統</strong>（內耳或中樞神經連結）的功能障礙。</p>
+        </div>
+        <div id="presyncope-detail" class="content-section">
+          <h4 class="text-2xl font-bold mb-2 text-blue-800">暈厥前期 (Presyncope) 的細節</h4>
+          <p class="mb-2"><strong>核心特徵：</strong>即將昏倒的感覺，可能伴隨視力模糊、全身無力。</p>
+          <p><strong>強烈指向：</strong>暫時性的全腦血流灌注不足，通常與<strong>心血管系統</strong>（如姿勢性低血壓、心律不整）有關。</p>
+        </div>
+        <div id="disequilibrium-detail" class="content-section">
+          <h4 class="text-2xl font-bold mb-2 text-blue-800">不平衡感 (Disequilibrium) 的細節</h4>
+          <p class="mb-2"><strong>核心特徵：</strong>主要在站立或行走時感受到的不穩定感，坐下或躺著時會消失。</p>
+          <p><strong>強烈指向：</strong>本體感覺輸入、小腦運動協調功能或運動輸出路徑的問題。</p>
+        </div>
+        <div id="nonspecific-detail" class="content-section">
+          <h4 class="text-2xl font-bold mb-2 text-blue-800">非特異性頭暈的細節</h4>
+          <p class="mb-2"><strong>核心特徵：</strong>無法歸入上述三類的模糊感覺，如頭部昏沉、漂浮感、注意力不集中。</p>
+          <p><strong>強烈指向：</strong>代謝性問題（如低血糖）、藥物副作用或功能性/精神心理因素（如焦慮、PPPD）。</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Section 2: Differential Diagnosis -->
+    <section id="diff" class="pt-16 -mt-16 mb-12">
+      <h2 class="text-3xl font-bold mb-2 text-[#34495E]">鑑別診斷：是周邊還是中樞問題？</h2>
+      <p class="text-lg text-gray-600 mb-8">區分病變位置是診斷的關鍵。周邊型通常問題在內耳，較良性；中樞型問題在腦幹或小腦，可能危及生命，需特別警惕。</p>
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
+        <div>
+          <h3 class="text-2xl font-semibold mb-4 text-center">暈眩來源：周邊 vs 中樞</h3>
+          <div class="flex flex-col md:flex-row justify-around items-center gap-4">
+            <div class="text-center p-4 border-2 border-blue-300 rounded-lg bg-blue-50 w-full md:w-1/2">
+              <h4 class="text-xl font-bold text-blue-800">周邊型 (Peripheral)</h4>
+              <div class="text-5xl my-4">👂</div>
+              <p class="font-semibold">病變位置</p>
+              <p>內耳迷路、前庭神經</p>
+              <p class="font-semibold mt-2">特徵</p>
+              <p>眩暈感劇烈，噁心嘔吐常見</p>
+            </div>
+            <div class="text-center p-4 border-2 border-red-300 rounded-lg bg-red-50 w-full md:w-1/2">
+              <h4 class="text-xl font-bold text-red-800">中樞型 (Central)</h4>
+              <div class="text-5xl my-4">🧠</div>
+              <p class="font-semibold">病變位置</p>
+              <p>腦幹、小腦</p>
+              <p class="font-semibold mt-2">特徵</p>
+              <p>常伴隨其他神經學症狀</p>
+            </div>
+          </div>
+          <div class="mt-6">
+            <div class="chart-container h-64 sm:h-80 md:h-96 max-h-[400px]">
+              <canvas id="symptomCompareChart"></canvas>
+            </div>
+          </div>
+        </div>
+
+        <div class="bg-red-50 border border-red-200 p-6 rounded-lg">
+          <h3 class="text-2xl font-bold text-red-700 mb-4 flex items-center">
+            <span class="text-3xl mr-3">⚠️</span> 中樞性眩暈警訊 (Red Flags)
+          </h3>
+          <p class="mb-4">若出現以下任何症狀，應立即尋求醫療協助，因為這可能指向腦中風等嚴重問題。</p>
+          <div id="red-flags-container" class="space-y-2">
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Section 3: Explore Disorders -->
+    <section id="explore" class="pt-16 -mt-16 mb-12">
+      <h2 class="text-3xl font-bold mb-2 text-[#34495E]">常見暈眩疾病探索</h2>
+      <p class="text-lg text-gray-600 mb-8">了解不同暈眩疾病的關鍵特徵。使用下方的篩選器或圖表來比較它們。</p>
+      <div class="flex flex-wrap gap-2 mb-6">
+        <button class="filter-btn bg-gray-200 text-gray-800 py-2 px-4 rounded-full" data-filter="all">全部</button>
+        <button class="filter-btn bg-blue-100 text-blue-800 py-2 px-4 rounded-full" data-filter="周邊型">周邊型</button>
+        <button class="filter-btn bg-red-100 text-red-800 py-2 px-4 rounded-full" data-filter="中樞型">中樞型</button>
+        <button class="filter-btn bg-green-100 text-green-800 py-2 px-4 rounded-full" data-filter="功能性">功能性</button>
+        <button class="filter-btn bg-yellow-100 text-yellow-800 py-2 px-4 rounded-full" data-filter="系統性">系統性</button>
+      </div>
+      <div id="disorders-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      </div>
+      <div class="mt-8">
+        <h3 class="text-2xl font-semibold mb-4 text-center">不同疾病的眩暈持續時間比較</h3>
+        <div class="chart-container">
+          <canvas id="durationChart"></canvas>
+        </div>
+      </div>
+    </section>
+
+    <!-- Section 4: Clinical Toolbox -->
+    <section id="toolbox" class="pt-16 -mt-16 mb-12">
+      <h2 class="text-3xl font-bold mb-2 text-[#34495E]">臨床檢查工具箱</h2>
+      <p class="text-lg text-gray-600 mb-8">臨床醫師會透過一系列理學檢查來找出暈眩的根本原因。了解這些關鍵檢查的目的與方法。</p>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div class="card bg-white p-6 rounded-lg shadow">
+          <h3 class="text-xl font-semibold text-[#34495E] mb-2">HINTS 檢查</h3>
+          <p class="mb-4">一項在急診中極具價值的床邊檢查，用以區分急性前庭症候群是源自良性的前庭神經炎還是危險的後循環中風。</p>
+          <ul class="list-disc list-inside space-y-1 text-sm">
+            <li><strong>HI (頭部脈衝測試):</strong> 檢查前庭-眼反射是否正常。</li>
+            <li><strong>N (眼球震顫):</strong> 觀察眼振的方向性。</li>
+            <li><strong>TS (偏斜試驗):</strong> 檢查是否有垂直眼位偏斜。</li>
+          </ul>
+          <p class="mt-4 text-red-600 font-semibold text-sm">判讀口訣「INFARCT」提示中風可能，敏感度在急性期甚至高於MRI。</p>
+        </div>
+        <div class="card bg-white p-6 rounded-lg shadow">
+          <h3 class="text-xl font-semibold text-[#34495E] mb-2">Dix-Hallpike 測試</h3>
+          <p class="mb-4">診斷最常見的眩暈原因—良性陣發性姿勢性眩暈 (BPPV) 的黃金標準。透過特定擺位來誘發症狀。</p>
+          <p class="font-semibold">陽性反應：</p>
+          <p class="text-sm">在特定頭位下，出現短暫延遲後、具疲乏性的扭轉合併上跳性眼振，並伴隨劇烈眩暈。</p>
+        </div>
+        <div class="card bg-white p-6 rounded-lg shadow">
+          <h3 class="text-xl font-semibold text-[#34495E] mb-2">前庭功能檢查 (VNG/ENG)</h3>
+          <p class="mb-4">一系列客觀評估前庭系統功能的檢查，有助於定位病變和判斷患側。</p>
+          <p class="font-semibold">核心項目—雙溫試驗:</p>
+          <p class="text-sm">透過向耳道灌入溫/冷水來刺激單側水平半規管，比較兩耳反應強度，以判斷是否有單側前庭功能衰弱。</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Section 5: Treatment & Rehabilitation -->
+    <section id="treat" class="pt-16 -mt-16">
+      <h2 class="text-3xl font-bold mb-2 text-[#34495E]">治療與復健</h2>
+      <p class="text-lg text-gray-600 mb-6">治療策略因診斷而異，從物理復位、藥物控制到長期的前庭復健，目標都是改善症狀與生活品質。</p>
+      <div class="w-full">
+        <div class="mb-4 border-b border-gray-200">
+          
+        </div>
+        <div class="bg-white p-6 rounded-lg shadow-inner">
+          <div id="physical-content" class="tab-content">
+            <h3 class="text-2xl font-semibold mb-4">耳石復位術</h3>
+            <p class="mb-6">針對良性陣發性姿勢性眩暈(BPPV)的首選治療，透過一系列頭部與身體的轉動，將掉落的耳石引導回正確位置。</p>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+              <div>
+                <h4 class="text-lg font-bold">艾普利復位術 (Epley) - 針對後半規管</h4>
+                <ol class="list-decimal list-inside mt-2 space-y-2 text-sm">
+                  <li>坐姿，頭轉向患側45度。</li>
+                  <li>快速躺下，頭部後仰，維持30-60秒。</li>
+                  <li>頭轉向對側90度，維持30-60秒。</li>
+                  <li>身體隨頭部向同方向側翻，面朝下，維持30-60秒。</li>
+                  <li>緩慢坐起。</li>
+                </ol>
+              </div>
+              <div>
+                <h4 class="text-lg font-bold">BBQ翻滾法 (BBQ Roll) - 針對水平半規管</h4>
+                <ol class="list-decimal list-inside mt-2 space-y-2 text-sm">
+                  <li>平躺，頭轉向患側90度，維持30-60秒。</li>
+                  <li>頭轉回正中，維持30-60秒。</li>
+                  <li>頭轉向對側90度，維持30-60秒。</li>
+                  <li>身體翻成俯臥，維持30-60秒。</li>
+                  <li>緩慢坐起。</li>
+                </ol>
+              </div>
+            </div>
+          </div>
+          <div id="meds-content" class="tab-content hidden">
+            <h3 class="text-2xl font-semibold mb-4">常用藥物治療</h3>
+            <p class="mb-6 text-sm text-red-600">
+              <strong>核心原則：</strong>急性期藥物用於緩解嚴重不適，以便盡早開始活動。應避免長期使用前庭抑制劑，以免妨礙大腦的自我修復（中樞代償）。</p>
+            <div class="overflow-x-auto">
+              <table class="w-full text-sm text-left text-gray-500">
+                <thead class="text-xs text-gray-700 uppercase bg-gray-50">
+                  <tr>
+                    <th scope="col" class="py-3 px-6">藥物類別</th>
+                    <th scope="col" class="py-3 px-6">代表藥物</th>
+                    <th scope="col" class="py-3 px-6">主要適應症</th>
+                    <th scope="col" class="py-3 px-6">注意事項</th>
+                  </tr>
+                </thead>
+                <tbody id="meds-table-body">
+                </tbody>
+              </table>
+            </div>
+          </div>
+          <div id="rehab-content" class="tab-content hidden">
+            <h3 class="text-2xl font-semibold mb-4">前庭復健治療 (VRT)</h3>
+            <p class="mb-6">一套基於運動的治療方案，利用大腦的神經可塑性，促進中樞神經對前庭功能缺損的代償，是多數慢性暈眩問題的根本治療方式。</p>
+            <div class="space-y-4">
+              <div>
+                <h4 class="font-bold"> VRT 的三大支柱</h4>
+                <ul class="list-disc list-inside text-sm space-y-1 mt-2">
+                  <li><strong>凝視穩定性練習:</strong> 頭部轉動時，眼睛保持注視固定目標。</li>
+                  <li><strong>習慣化練習:</strong> 反覆執行會誘發輕微暈眩的動作，以降低大腦敏感度。</li>
+                  <li><strong>平衡與步態訓練:</strong> 在不同平面上進行平衡挑戰，增強姿勢控制。</li>
+                </ul>
+              </div>
+              <div>
+                <h4 class="font-bold">Cawthorne-Cooksey 運動 (範例)</h4>
+                <p class="text-sm mt-2">此運動循序漸進，從床上到移動中的複雜任務，關鍵在於持之以恆。</p>
+                <ul class="list-disc list-inside text-sm space-y-1 mt-2">
+                  <li><strong>坐姿:</strong> 眼球上下左右移動、頭部前後左右轉動、聳肩、彎腰撿拾物品。</li>
+                  <li><strong>站姿:</strong> 重複坐姿運動、練習從坐到站、手眼協調活動(如拋接球)。</li>
+                  <li><strong>移動中:</strong> 在室內行走、上下樓梯、邊走邊轉頭。</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="bg-gray-800 text-white mt-12">
+    <div class="container mx-auto px-4 sm:px-6 lg:px-8 py-4 text-center text-sm">
+      <p>此互動指南基於臨床報告製作，僅供衛教參考，不能取代專業醫療診斷。若有暈眩問題，請諮詢醫師。</p>
+    </div>
+  </footer>
+
+    <!-- 必要的 JavaScript 文件 -->
+
+    <!-- 初始化頂部欄和側邊欄 -->
+    
+    <!-- 必要的 JavaScript 文件 -->
+    <script src="js/tools-config.js"></script>
+    <script src="js/spa-router.js"></script>
+    <script src="components/header-sidebar.js"></script>
+
+    <!-- 初始化頂部欄和側邊欄 -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            initHeaderSidebar({
+                currentPage: 'vertigo',
+                pageTitle: '醫療工具百寶箱',
+                enableSPA: true
+            });
+        });
+    </script>
+</body>
+</html>

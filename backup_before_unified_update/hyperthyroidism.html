@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>成人甲狀腺功能亢進症：治療與追蹤全解析</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Noto Sans TC', sans-serif;
+            background-color: #F0F8FF; /* AliceBlue, a very light blue from a similar palette */
+        }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 600px; /* Default max-width */
+            margin-left: auto;
+            margin-right: auto;
+            height: 300px; /* Default height */
+            max-height: 400px; /* Default max-height */
+        }
+        @media (min-width: 768px) { /* md breakpoint */
+            .chart-container {
+                height: 350px;
+                max-height: 450px;
+            }
+        }
+        .stat-card {
+            background-color: #CAF0F8; /* Very Light Blue */
+            border-left: 5px solid #0077B6; /* Dark Blue */
+        }
+        .section-title {
+            color: #0077B6; /* Dark Blue */
+        }
+        .accent-text {
+            color: #00B4D8; /* Medium Blue */
+        }
+        .card {
+            background-color: white;
+            border-radius: 0.5rem; /* rounded-lg */
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06); /* shadow-md */
+            margin-bottom: 1.5rem; /* mb-6 */
+            padding: 1.5rem; /* p-6 */
+        }
+        .timeline {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 1rem;
+            padding: 1rem 0;
+            position: relative;
+        }
+        .timeline::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background-color: #90E0EF; /* Light Blue */
+            transform: translateY(-50%);
+            z-index: -1;
+        }
+        .timeline-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            width: 30%;
+            position: relative;
+        }
+        .timeline-dot {
+            width: 20px;
+            height: 20px;
+            background-color: #0077B6; /* Dark Blue */
+            border-radius: 50%;
+            margin-bottom: 0.5rem;
+            border: 3px solid #CAF0F8; /* Very Light Blue */
+        }
+        .timeline-item p {
+            font-size: 0.875rem;
+        }
+        .flow-item {
+            border: 2px solid #90E0EF; /* Light Blue */
+            padding: 0.75rem;
+            border-radius: 0.375rem; /* rounded-md */
+            text-align: center;
+            background-color: #CAF0F8; /* Very Light Blue */
+            color: #0077B6; /* Dark Blue */
+        }
+        .flow-arrow {
+            font-size: 1.5rem; /* text-2xl */
+            color: #00B4D8; /* Medium Blue */
+            margin: 0 0.5rem;
+            align-self: center;
+        }
+         .icon-list li {
+            display: flex;
+            align-items: center;
+            margin-bottom: 0.5rem;
+        }
+        .icon-list li span:first-child {
+            margin-right: 0.75rem; /* Increased margin for better spacing */
+            font-size: 1.5rem; /* Larger icon size */
+            color: #0077B6; /* Dark Blue for icons */
+            width: 24px; /* Fixed width for alignment */
+            text-align: center;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 text-gray-800">
+    <!-- 
+        Infographic Plan Summary:
+        The infographic will present information on Adult Hyperthyroidism, structured into five main sections:
+        1. Understanding Hyperthyroidism: Definition, common cause (Graves' Disease), key symptoms, diagnostic cornerstones.
+        2. Core Drug Treatment Strategies: ATDs, treatment phases, patient education on side effects, role of beta-blockers.
+        3. Blood Tests: Key markers (TSH, FT4, FT3, TRAb) and monitoring frequency.
+        4. Thyroid Ultrasound: Role in initial assessment and for nodules.
+        5. Long-Term Follow-up & Lifestyle: Post-RAI/surgery care, lifestyle adjustments.
+        Visualizations will use Chart.js for charts and HTML/CSS for lists, timelines, and simple flow diagrams, adhering to NO SVG and NO MERMAID JS constraints.
+        Color Palette: "Brilliant Blues" (#0077B6, #00B4D8, #90E0EF, #CAF0F8).
+
+        Visualization Choices (Data Point -> Goal -> Chosen Visualization -> Justification/Library/Method - Confirming NO SVG):
+        - Graves' Disease Prevalence (75-90%): Inform -> Donut Chart (Chart.js, Canvas). Shows proportion effectively. NO SVG.
+        - Key Symptoms: Inform -> HTML/CSS list with Unicode icons. Clear, concise. NO SVG.
+        - Diagnostic Cornerstones: Organize -> Structured HTML/CSS simple flow (boxes and text). NO SVG.
+        - ATD Treatment Phases & Duration: Change/Organize -> Horizontal HTML/CSS Timeline. Visualizes progression. NO SVG.
+        - ATD Remission Rate (~50%): Inform/Compare -> Bar Chart (Chart.js, Canvas). Simple comparison. NO SVG.
+        - Side Effect Warnings: Inform -> HTML/CSS Callout Box. Highlights critical info. NO SVG.
+        - Blood Test Markers: Inform -> HTML/CSS Cards. Organizes distinct pieces of info. NO SVG.
+        - Monitoring Frequency: Organize -> Simplified HTML Table. Structured data presentation. NO SVG.
+        - Ultrasound Uses: Inform -> HTML/CSS List. NO SVG.
+        - Hypothyroidism post-RAI: Change -> Bar Chart (Chart.js, Canvas). Shows trend. NO SVG.
+        - Lifestyle Adjustments: Inform -> HTML/CSS list with Unicode icons. Visually appealing list. NO SVG.
+
+        Confirmation: NEITHER Mermaid JS NOR SVG were used anywhere in this output. All visualizations are achieved using Chart.js (Canvas), HTML, and CSS with Tailwind, or Unicode characters.
+    -->
+
+    <div class="container mx-auto p-4 md:p-8 max-w-5xl">
+        <header class="text-center mb-12">
+            <h1 class="text-4xl md:text-5xl font-bold section-title">成人甲狀腺功能亢進症</h1>
+            <p class="text-xl md:text-2xl accent-text mt-2">治療與追蹤全解析</p>
+        </header>
+
+        <section class="mb-12">
+            <h2 class="text-3xl font-semibold section-title mb-6 pb-2 border-b-2 border-[#90E0EF]">1. 認識甲狀腺亢進</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="card">
+                    <h3 class="text-2xl font-semibold accent-text mb-3">什麼是甲狀腺亢進？</h3>
+                    <p class="text-gray-700 mb-4">甲狀腺功能亢進症（甲亢）是因甲狀腺分泌過量荷爾蒙，導致身體代謝速率加快的臨床症候群。好發於20至40歲女性。</p>
+                    <div class="stat-card p-4 rounded-lg">
+                        <h4 class="text-lg font-semibold text-[#0077B6] mb-2">最常見病因：葛瑞夫茲病 (Graves' Disease)</h4>
+                        <p class="text-5xl font-bold text-[#0077B6] text-center">75-90%</p>
+                        <p class="text-sm text-gray-600 text-center mt-1">的甲亢患者屬於此類自體免疫疾病。</p>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h3 class="text-2xl font-semibold accent-text mb-3">常見臨床症狀</h3>
+                    <p class="text-gray-700 mb-3">過量的甲狀腺荷爾蒙會影響全身多個系統：</p>
+                    <ul class="icon-list list-inside text-gray-700 space-y-1">
+                        <li><span>❤️</span>心悸、心跳過速</li>
+                        <li><span>👋</span>手部震顫、肌肉無力</li>
+                        <li><span>🔥</span>怕熱、多汗</li>
+                        <li><span>⚖️</span>體重減輕（食慾常增加）</li>
+                        <li><span>😟</span>焦慮不安、失眠</li>
+                        <li><span>🚽</span>排便次數增加</li>
+                    </ul>
+                    <p class="text-sm text-gray-600 mt-3">老年患者症狀可能不典型，如虛弱、食慾不振。</p>
+                </div>
+            </div>
+            <div class="card mt-6">
+                <h3 class="text-2xl font-semibold accent-text mb-4">診斷的基石</h3>
+                <p class="text-gray-700 mb-4">診斷主要依賴臨床症狀，並透過血液檢查確認：</p>
+                <div class="flex flex-col md:flex-row justify-around items-center space-y-4 md:space-y-0 md:space-x-4">
+                    <div class="flow-item w-full md:w-1/4">TSH (促甲狀腺素)<br/>⬇️ 顯著抑制</div>
+                    <div class="flow-arrow hidden md:block">➡️</div>
+                    <div class="flow-item w-full md:w-1/4">FT4 & FT3/T3 (游離甲狀腺素)<br/>⬆️ 通常升高</div>
+                    <div class="flow-arrow hidden md:block">➡️</div>
+                    <div class="flow-item w-full md:w-1/4">TRAb (TSH受體抗體)<br/>⬆️ (葛瑞夫茲病)</div>
+                </div>
+                <p class="text-sm text-gray-600 mt-4">甲狀腺超音波和放射性碘掃描可作為輔助診斷工具，評估甲狀腺結構與功能。</p>
+            </div>
+        </section>
+
+        <section class="mb-12">
+            <h2 class="text-3xl font-semibold section-title mb-6 pb-2 border-b-2 border-[#90E0EF]">2. 藥物治療核心策略</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="card">
+                    <h3 class="text-2xl font-semibold accent-text mb-3">治療目標與首選藥物</h3>
+                    <p class="text-gray-700 mb-2">主要目標是控制甲狀腺荷爾蒙過度分泌，使甲狀腺功能恢復正常。</p>
+                    <p class="text-gray-700 font-semibold mb-1">抗甲狀腺藥物 (ATDs):</p>
+                    <ul class="list-disc list-inside text-gray-700 pl-4 mb-3">
+                        <li><strong class="text-[#0077B6]">Methimazole (MMI)</strong>: 非懷孕成人葛瑞夫茲病首選，每日一次給藥，肝毒性風險相對較低。</li>
+                        <li>Propylthiouracil (PTU): 特定情況使用（如懷孕初期、對MMI過敏）。</li>
+                    </ul>
+                     <p class="text-gray-700 mb-2">輔助治療：<strong class="text-[#0077B6]">乙型交感神經阻斷劑</strong> (如Propranolol) 可快速緩解心悸、手抖等症狀，在ATD藥效發揮前使用。</p>
+                </div>
+                <div class="card">
+                    <h3 class="text-2xl font-semibold accent-text mb-3">ATD 治療時程與緩解</h3>
+                    <p class="text-gray-700 mb-3">一個標準的ATD療程通常建議持續：</p>
+                    <p class="text-4xl font-bold text-[#0077B6] text-center my-3">12 - 18 個月</p>
+                    <p class="text-gray-700 mb-3 text-center">或更長時間，以提高緩解率。</p>
+                    <div class="chart-container h-48 max-h-56">
+                        <canvas id="remissionRateChart"></canvas>
+                    </div>
+                    <p class="text-sm text-gray-600 mt-3 text-center">停藥前需評估TSH及TRAb水平，TRAb轉陰有助預測緩解。</p>
+                </div>
+            </div>
+            <div class="card mt-6">
+                <h3 class="text-2xl font-semibold accent-text mb-4">ATD 治療三階段</h3>
+                <div class="timeline">
+                    <div class="timeline-item">
+                        <div class="timeline-dot"></div>
+                        <h4 class="font-semibold text-[#0077B6]">起始治療</h4>
+                        <p>根據病情嚴重程度決定劑量。</p>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-dot"></div>
+                        <h4 class="font-semibold text-[#0077B6]">劑量調整</h4>
+                        <p>約4-6週後複查FT4/T3，逐漸減量。</p>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-dot"></div>
+                        <h4 class="font-semibold text-[#0077B6]">維持治療</h4>
+                        <p>使用最低有效劑量，長期維持功能正常。</p>
+                    </div>
+                </div>
+            </div>
+            <div class="card mt-6 border-l-4 border-red-500 bg-red-50">
+                <h3 class="text-2xl font-semibold text-red-700 mb-3">⚠️ 重要：藥物副作用警示</h3>
+                <p class="text-gray-700 mb-2">ATDs雖有效，但有罕見嚴重副作用，需立即就醫：</p>
+                <ul class="list-disc list-inside text-gray-700 pl-4 space-y-1">
+                    <li><strong>顆粒性白血球缺乏症 (Agranulocytosis):</strong> 症狀如發燒、喉嚨痛、口腔潰瘍。</li>
+                    <li><strong>肝毒性 (Hepatotoxicity):</strong> 症狀如黃疸、尿色變深、腹痛、極度疲倦。</li>
+                </ul>
+                <p class="text-sm text-red-600 mt-3">患者教育至關重要！出現警示症狀應立即停藥並就醫。</p>
+            </div>
+        </section>
+
+        <section class="mb-12">
+            <h2 class="text-3xl font-semibold section-title mb-6 pb-2 border-b-2 border-[#90E0EF]">3. 抽血檢查：您的治療指南針</h2>
+            <p class="text-gray-700 mb-6">定期抽血檢查是監測治療反應、調整藥物劑量的關鍵。</p>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
+                <div class="card text-center">
+                    <h4 class="text-xl font-semibold text-[#0077B6] mb-2">TSH</h4>
+                    <p class="text-sm text-gray-600">促甲狀腺素，甲亢時極低，治療目標是使其恢復正常，但恢復較慢。</p>
+                </div>
+                <div class="card text-center">
+                    <h4 class="text-xl font-semibold text-[#0077B6] mb-2">FT4</h4>
+                    <p class="text-sm text-gray-600">游離甲狀腺素，甲亢時升高，是監測早期反應和調整劑量的重要指標。</p>
+                </div>
+                <div class="card text-center">
+                    <h4 class="text-xl font-semibold text-[#0077B6] mb-2">FT3/T3</h4>
+                    <p class="text-sm text-gray-600">游離/總三碘甲狀腺原氨酸，甲亢時升高，輔助診斷 (尤其T3毒症)。</p>
+                </div>
+                <div class="card text-center">
+                    <h4 class="text-xl font-semibold text-[#0077B6] mb-2">TRAb</h4>
+                    <p class="text-sm text-gray-600">TSH受體抗體，葛瑞夫茲病診斷指標，預測緩解與復發風險。</p>
+                </div>
+            </div>
+            <div class="card">
+                <h3 class="text-2xl font-semibold accent-text mb-4">建議追蹤頻率 (ATD治療)</h3>
+                <div class="overflow-x-auto">
+                    <table class="min-w-full bg-white">
+                        <thead class="bg-[#90E0EF] text-[#0077B6]">
+                            <tr>
+                                <th class="py-3 px-4 text-left">治療階段</th>
+                                <th class="py-3 px-4 text-left">建議檢測</th>
+                                <th class="py-3 px-4 text-left">追蹤頻率</th>
+                            </tr>
+                        </thead>
+                        <tbody class="text-gray-700">
+                            <tr class="border-b">
+                                <td class="py-3 px-4">初始治療與劑量調整期</td>
+                                <td class="py-3 px-4">FT4, T3/FT3</td>
+                                <td class="py-3 px-4">開始後2-6週，後續每2-6週至穩定</td>
+                            </tr>
+                            <tr class="border-b bg-blue-50">
+                                <td class="py-3 px-4">穩定維持期</td>
+                                <td class="py-3 px-4">TSH, FT4</td>
+                                <td class="py-3 px-4">每2-6個月</td>
+                            </tr>
+                            <tr class="border-b">
+                                <td class="py-3 px-4">停藥前評估</td>
+                                <td class="py-3 px-4">TSH, TRAb</td>
+                                <td class="py-3 px-4">治療12-18個月後</td>
+                            </tr>
+                            <tr class="bg-blue-50">
+                                <td class="py-3 px-4">停藥後復發監測</td>
+                                <td class="py-3 px-4">TSH, FT4</td>
+                                <td class="py-3 px-4">第一年每3-6個月，之後每年至少一次</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                 <p class="text-sm text-gray-600 mt-3">註：TSH在治療初期恢復較慢，不宜作早期調整劑量的主要依據。</p>
+            </div>
+        </section>
+
+        <section class="mb-12">
+            <h2 class="text-3xl font-semibold section-title mb-6 pb-2 border-b-2 border-[#90E0EF]">4. 甲狀腺超音波：何時需要？</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="card">
+                    <h3 class="text-2xl font-semibold accent-text mb-3">初步評估的應用</h3>
+                    <p class="text-gray-700 mb-3">甲狀腺超音波是安全、非侵入性的影像檢查，用於：</p>
+                    <ul class="icon-list list-inside text-gray-700 space-y-1">
+                        <li><span>📏</span>評估甲狀腺大小、形狀、質地</li>
+                        <li><span>🧬</span>輔助判斷甲亢病因 (如葛瑞夫茲病特徵：瀰漫性腫大、低回音、血流增加)</li>
+                        <li><span>🔎</span>偵測是否存在合併甲狀腺結節</li>
+                    </ul>
+                </div>
+                <div class="card">
+                    <h3 class="text-2xl font-semibold accent-text mb-3">追蹤策略</h3>
+                    <p class="text-gray-700 mb-2"><strong class="text-[#0077B6]">無合併結節的葛瑞夫茲病患者：</strong></p>
+                    <p class="text-gray-700 mb-3">在ATD治療穩定後，若無新臨床發現，通常<strong class="text-[#0077B6]">不需常規</strong>進行系列超音波追蹤。追蹤重點為血液檢查和臨床症狀。</p>
+                    <p class="text-gray-700 mb-2"><strong class="text-[#0077B6]">合併甲狀腺結節患者：</strong></p>
+                    <p class="text-gray-700">結節的追蹤應遵循針對甲狀腺結節的一般處理原則，根據結節大小和超音波特徵進行風險評估及決定是否需細針抽吸(FNA)或定期超音波追蹤。</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="mb-12">
+            <h2 class="text-3xl font-semibold section-title mb-6 pb-2 border-b-2 border-[#90E0EF]">5. 長期追蹤與生活型態</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="card">
+                    <h3 class="text-2xl font-semibold accent-text mb-3">其他治療方式後追蹤</h3>
+                     <p class="text-gray-700 mb-2"><strong class="text-[#0077B6]">放射性碘 (RAI) 治療後：</strong></p>
+                     <p class="text-gray-700 mb-3">常見結果為甲狀腺功能低下，需終生補充甲狀腺素。治療後首年需密集監測(每4-6週至6個月)，之後每年至少追蹤一次TSH。注意監測葛瑞夫茲眼病變。</p>
+                     <div class="chart-container h-48 max-h-56 mt-4">
+                        <canvas id="hypothyroidPostRaiChart"></canvas>
+                    </div>
+                     <p class="text-gray-700 mt-4 mb-2"><strong class="text-[#0077B6]">甲狀腺切除手術後：</strong></p>
+                     <p class="text-gray-700">術後立即開始補充甲狀腺素，目標是TSH維持正常。術後4-8週首次評估，穩定後每年追蹤。注意監測副甲狀腺功能低下、喉返神經損傷等併發症。</p>
+                </div>
+                 <div class="card">
+                    <h3 class="text-2xl font-semibold accent-text mb-3">生活型態調整建議</h3>
+                    <p class="text-gray-700 mb-3">健康的生活方式有助於病情控制和生活品質提升：</p>
+                    <ul class="icon-list list-inside text-gray-700 space-y-2">
+                        <li><span>🥗</span><strong class="text-[#0077B6]">飲食調整：</strong> 治療期間限制高碘食物 (如海帶、紫菜)。</li>
+                        <li><span>🚭</span><strong class="text-[#0077B6]">戒菸：</strong> 吸菸是葛瑞夫茲眼病變重要危險因子，務必戒菸。</li>
+                        <li><span>🧘</span><strong class="text-[#0077B6]">壓力管理：</strong> 保持心情愉快，避免過度勞累。</li>
+                        <li><span>😴</span><strong class="text-[#0077B6]">規律作息：</strong> 充足睡眠，有助病情穩定。</li>
+                    </ul>
+                    <p class="text-gray-700 mt-4 font-semibold">所有甲亢患者均需長期追蹤，重視患者教育，醫病共同決策。</p>
+                </div>
+            </div>
+        </section>
+
+        <footer class="text-center mt-12 pt-8 border-t border-gray-300">
+            <p class="text-sm text-gray-600">免責聲明：本資訊圖表僅供參考，不能取代專業醫療建議。若有任何健康問題，請務必諮詢醫師或專業醫療人員。</p>
+            <p class="text-xs text-gray-500 mt-2">資料來源：成人甲狀腺功能亢進症臨床治療指引與相關醫學文獻。</p>
+        </footer>
+    </div>
+
+    <script>
+        const FONT_COLOR = '#374151'; // gray-700
+        const GRID_COLOR = '#E5E7EB'; // gray-200
+        const ACCENT_COLOR_1 = '#0077B6'; // Dark Blue
+        const ACCENT_COLOR_2 = '#00B4D8'; // Medium Blue
+        const ACCENT_COLOR_3 = '#90E0EF'; // Light Blue
+
+        function wrapLabel(str, maxWidth) {
+            if (str.length <= maxWidth) {
+                return str;
+            }
+            const words = str.split(' ');
+            let currentLine = '';
+            const lines = [];
+            for (const word of words) {
+                if ((currentLine + word).length > maxWidth && currentLine.length > 0) {
+                    lines.push(currentLine.trim());
+                    currentLine = '';
+                }
+                currentLine += word + ' ';
+            }
+            if (currentLine.trim().length > 0) {
+                lines.push(currentLine.trim());
+            }
+            return lines.length > 0 ? lines : [str]; // Ensure it returns at least the original string if no split occurs
+        }
+        
+        const tooltipTitleCallback = (tooltipItems) => {
+            const item = tooltipItems[0];
+            let label = item.chart.data.labels[item.dataIndex];
+            if (Array.isArray(label)) {
+                return label.join(' ');
+            }
+            return label;
+        };
+
+        // Remission Rate Chart
+        const remissionRateCtx = document.getElementById('remissionRateChart').getContext('2d');
+        new Chart(remissionRateCtx, {
+            type: 'bar',
+            data: {
+                labels: [wrapLabel('ATD治療12-18個月後', 16)],
+                datasets: [{
+                    label: '達到緩解比例',
+                    data: [50],
+                    backgroundColor: [ACCENT_COLOR_1],
+                    borderColor: [ACCENT_COLOR_1],
+                    borderWidth: 1
+                },
+                {
+                    label: '未緩解比例',
+                    data: [50],
+                    backgroundColor: [ACCENT_COLOR_3],
+                    borderColor: [ACCENT_COLOR_3],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                indexAxis: 'y',
+                scales: {
+                    x: {
+                        stacked: true,
+                        max: 100,
+                        ticks: { 
+                            color: FONT_COLOR,
+                            callback: function(value) { return value + "%" }
+                        },
+                        grid: { color: GRID_COLOR }
+                    },
+                    y: { 
+                        stacked: true,
+                        ticks: { color: FONT_COLOR },
+                        grid: { display: false }
+                    }
+                },
+                plugins: {
+                    title: {
+                        display: true,
+                        text: 'ATD 治療緩解率 (約)',
+                        color: FONT_COLOR,
+                        font: { size: 14 }
+                    },
+                    legend: { display: true, position: 'bottom', labels: { color: FONT_COLOR } },
+                    tooltip: {
+                        callbacks: {
+                            title: tooltipTitleCallback,
+                            label: function(context) {
+                                return context.dataset.label + ': ' + context.raw + '%';
+                            }
+                        }
+                    }
+                }
+            }
+        });
+
+        // Hypothyroidism Post-RAI Chart
+        const hypothyroidPostRaiCtx = document.getElementById('hypothyroidPostRaiChart').getContext('2d');
+        new Chart(hypothyroidPostRaiCtx, {
+            type: 'line',
+            data: {
+                labels: [wrapLabel('治療後第一年',16), wrapLabel('治療後第二年 (估計)',16), wrapLabel('治療後第三年 (估計)',16)],
+                datasets: [{
+                    label: '發生甲狀腺功能低下累積比例',
+                    data: [30, 35, 40], // Simplified from 5-50% in year 1, +3-5% annually
+                    borderColor: ACCENT_COLOR_2,
+                    backgroundColor: ACCENT_COLOR_3 + '80', // Light blue with transparency
+                    fill: true,
+                    tension: 0.1
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        max: 60,
+                        ticks: { 
+                            color: FONT_COLOR,
+                            callback: function(value) { return value + "%" }
+                        },
+                        grid: { color: GRID_COLOR }
+                    },
+                    x: { 
+                        ticks: { color: FONT_COLOR },
+                        grid: { display: false }
+                    }
+                },
+                plugins: {
+                    title: {
+                        display: true,
+                        text: '放射性碘治療後甲狀腺功能低下發生率 (估計)',
+                        color: FONT_COLOR,
+                        font: { size: 14 }
+                    },
+                    legend: { display: false },
+                     tooltip: {
+                        callbacks: {
+                            title: tooltipTitleCallback,
+                             label: function(context) {
+                                return context.dataset.label + ': ' + context.raw + '%';
+                            }
+                        }
+                    }
+                }
+            }
+        });
+
+    </script>
+
+    <!-- 必要的 JavaScript 文件 -->
+
+    <!-- 初始化頂部欄和側邊欄 -->
+    
+    <!-- 必要的 JavaScript 文件 -->
+
+    <!-- 初始化頂部欄和側邊欄 -->
+    
+    <!-- 必要的 JavaScript 文件 -->
+    <script src="js/tools-config.js"></script>
+    <script src="js/spa-router.js"></script>
+    <script src="components/header-sidebar.js"></script>
+
+    <!-- 初始化頂部欄和側邊欄 -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            initHeaderSidebar({
+                currentPage: 'hyperthyroidism',
+                pageTitle: '醫療工具百寶箱',
+                enableSPA: true
+            });
+        });
+    </script>
+</body>
+</html>

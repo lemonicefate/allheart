@@ -64,7 +64,7 @@
             <section class="mb-12">
                 <div class="flex items-center justify-between mb-8">
                     <h3 class="text-2xl font-bold text-gray-900 dark:text-white">特色文章</h3>
-                    <a href="knowledge-base.html" class="text-primary-600 dark:text-primary-400 hover:text-primary-700 dark:hover:text-primary-300 font-medium transition-colors duration-200">
+                    <a href="knowledge-base.html" class="text-primary-600 dark:text-primary-400 hover:text-primary-700 dark:hover:text-primary-300 font-medium transition-colors duration-200 spa-link">
                         查看更多 <i class="fas fa-arrow-right ml-1"></i>
                     </a>
                 </div>
@@ -150,7 +150,7 @@
                             ${article.summary}
                         </p>
                         
-                        <a href="${article.href}" class="inline-flex items-center text-primary-600 dark:text-primary-400 hover:text-primary-700 dark:hover:text-primary-300 font-medium transition-colors duration-200">
+                        <a href="${article.href}" class="inline-flex items-center text-primary-600 dark:text-primary-400 hover:text-primary-700 dark:hover:text-primary-300 font-medium transition-colors duration-200 spa-link">
                             閱讀更多
                             <i class="fas fa-arrow-right ml-2 transform group-hover:translate-x-1 transition-transform duration-200"></i>
                         </a>
@@ -198,7 +198,7 @@
                         tools.forEach((tool, index) => {
                             const toolCard = document.createElement('a');
                             toolCard.href = tool.href;
-                            toolCard.className = 'group bg-gray-50 dark:bg-gray-700 rounded-lg p-4 hover:bg-white dark:hover:bg-gray-600 hover:shadow-lg hover:-translate-y-1 transition-all duration-300 border border-gray-100 dark:border-gray-600 hover:border-' + categoryInfo.color + '-200 dark:hover:border-' + categoryInfo.color + '-400';
+                            toolCard.className = 'group bg-gray-50 dark:bg-gray-700 rounded-lg p-4 hover:bg-white dark:hover:bg-gray-600 hover:shadow-lg hover:-translate-y-1 transition-all duration-300 border border-gray-100 dark:border-gray-600 hover:border-' + categoryInfo.color + '-200 dark:hover:border-' + categoryInfo.color + '-400 spa-link';
                             toolCard.style.animationDelay = `${index * 0.05}s`;
                             
                             toolCard.innerHTML = `
@@ -242,43 +242,12 @@
                 sessionStorage.removeItem('scrollToSection');
                 sessionStorage.removeItem('highlightColor');
                 
+                // 使用統一的滾動函數
                 setTimeout(() => {
-                    const targetSection = document.getElementById(`section-${scrollToSection}`);
-                    if (targetSection) {
-                        // 檢查是否使用框架結構
-                        const scrollContainer = document.getElementById('main-scroll-container');
-                        
-                        if (scrollContainer) {
-                            // 框架結構：計算在框架內的位置
-                            const containerRect = scrollContainer.getBoundingClientRect();
-                            const targetRect = targetSection.getBoundingClientRect();
-                            const scrollTop = scrollContainer.scrollTop;
-                            const targetPosition = targetRect.top - containerRect.top + scrollTop - 20;
-                            
-                            scrollContainer.scrollTo({
-                                top: Math.max(0, targetPosition),
-                                behavior: 'smooth'
-                            });
-                        } else {
-                            // 傳統結構：使用原有邏輯
-                            const navHeight = 64 + 20;
-                            const elementPosition = targetSection.offsetTop;
-                            const offsetPosition = elementPosition - navHeight;
-                            
-                            window.scrollTo({
-                                top: offsetPosition,
-                                behavior: 'smooth'
-                            });
-                        }
-                        
-                        if (highlightColor) {
-                            targetSection.classList.add('ring-2', `ring-${highlightColor}-500`, 'ring-opacity-50');
-                            setTimeout(() => {
-                                targetSection.classList.remove('ring-2', `ring-${highlightColor}-500`, 'ring-opacity-50');
-                            }, 2000);
-                        }
+                    if (typeof window.scrollToCategory === 'function') {
+                        window.scrollToCategory(scrollToSection);
                     }
-                }, 500);
+                }, 800); // 增加等待時間，確保頁面完全渲染
             }
         }
 
@@ -338,19 +307,18 @@
     <!-- 初始化頂部欄和側邊欄 -->
     
     <!-- 必要的 JavaScript 文件 -->
-    <script src="js/tools-config.js"></script>
-    <script src="js/spa-router.js"></script>
-    <script src="components/header-sidebar.js"></script>
+    <!-- 統一應用程式檔案 - 包含所有功能 -->
+    <script src="js/unified-app.js"></script>
 
-    <!-- 初始化頂部欄和側邊欄 -->
+    <!-- 統一檔案會自動初始化，無需額外設定 -->
+    <!-- 如需自訂配置，可設定 window.medicalToolsConfig -->
     <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            initHeaderSidebar({
-                currentPage: 'index',
-                pageTitle: '醫療工具百寶箱',
-                enableSPA: true  // 啟用單頁應用模式
-            });
-        });
+        // 可選：自訂配置
+        window.medicalToolsConfig = {
+            currentPage: 'index',
+            pageTitle: '醫療工具百寶箱',
+            enableSPA: true
+        };
     </script>
 </body>
 </html>

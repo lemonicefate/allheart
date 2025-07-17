@@ -243,166 +243,17 @@
 
     </div>
 
+    <!-- 統一應用程式檔案 - 包含所有功能 -->
+    <script src="js/unified-app.js"></script>
+
+    <!-- 統一檔案會自動初始化，如需自訂配置可設定 window.medicalToolsConfig -->
     <script>
-        const brilliantBlues = {
-            dark: '#03045E',
-            midDark: '#0077B6',
-            midLight: '#00B4D8',
-            light: '#90E0EF',
-            pale: '#CAF0F8'
+        // 可選：自訂配置
+        window.medicalToolsConfig = {
+            currentPage: 'hypertension',
+            pageTitle: document.title || '醫療工具百寶箱',
+            enableSPA: true
         };
-
-        const chartTooltipOptions = {
-            plugins: {
-                tooltip: {
-                    callbacks: {
-                        title: function(tooltipItems) {
-                            const item = tooltipItems[0];
-                            let label = item.chart.data.labels[item.dataIndex];
-                            if (Array.isArray(label)) {
-                                return label.join(' ');
-                            } else {
-                                return label;
-                            }
-                        }
-                    }
-                }
-            }
-        };
-
-        function wrapLabel(label, maxLength = 16) {
-            if (label.length <= maxLength) {
-                return label;
-            }
-            const words = label.split(' ');
-            const lines = [];
-            let currentLine = '';
-            words.forEach(word => {
-                if ((currentLine + ' ' + word).trim().length > maxLength) {
-                    lines.push(currentLine.trim());
-                    currentLine = word;
-                } else {
-                    currentLine = (currentLine + ' ' + word).trim();
-                }
-            });
-            if (currentLine) {
-                lines.push(currentLine.trim());
-            }
-            return lines;
-        }
-
-        const bpClassificationCtx = document.getElementById('bpClassificationChart').getContext('2d');
-        new Chart(bpClassificationCtx, {
-            type: 'doughnut',
-            data: {
-                labels: ['正常血壓 (<120/80)', '血壓偏高 (120-129/<80)', ['第一期高血壓', '(130-139/80-89)'], ['第二期高血壓', '(≥140/90)']],
-                datasets: [{
-                    label: '血壓分類',
-                    data: [35, 20, 30, 15], 
-                    backgroundColor: [
-                        brilliantBlues.midLight,
-                        brilliantBlues.light,
-                        '#ffc107',
-                        '#dc3545'
-                    ],
-                    borderColor: '#ffffff',
-                    borderWidth: 3
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                    legend: {
-                        position: 'bottom',
-                    },
-                    tooltip: chartTooltipOptions.plugins.tooltip
-                }
-            }
-        });
-        
-        const lifestyleImpactCtx = document.getElementById('lifestyleImpactChart').getContext('2d');
-        const lifestyleLabels = [
-            wrapLabel('飲食調整 (得舒飲食)'),
-            wrapLabel('限制鈉鹽攝取 (<6克/日)'),
-            wrapLabel('規律運動 (每週150分鐘)'),
-            wrapLabel('限制酒精攝取'),
-            wrapLabel('減輕體重 (每公斤)')
-        ];
-        new Chart(lifestyleImpactCtx, {
-            type: 'bar',
-            data: {
-                labels: lifestyleLabels,
-                datasets: [{
-                    label: '預期收縮壓降低幅度 (mmHg)',
-                    data: [12, 8, 7, 4, 1],
-                    backgroundColor: [
-                        brilliantBlues.midDark,
-                        brilliantBlues.midLight,
-                        brilliantBlues.light,
-                        brilliantBlues.pale,
-                        '#778DA9'
-                    ],
-                    borderRadius: 5,
-                    barThickness: 30,
-                }]
-            },
-            options: {
-                indexAxis: 'y',
-                responsive: true,
-                maintainAspectRatio: false,
-                scales: {
-                    x: {
-                        beginAtZero: true,
-                        title: {
-                            display: true,
-                            text: '收縮壓降低幅度 (mmHg)'
-                        }
-                    }
-                },
-                plugins: {
-                    legend: {
-                        display: false
-                    },
-                    tooltip: chartTooltipOptions.plugins.tooltip
-                }
-            }
-        });
-    </script>
-
-    <!-- 必要的 JavaScript 文件 -->
-
-    <!-- 初始化頂部欄和側邊欄 -->
-    
-    <!-- 必要的 JavaScript 文件 -->
-
-    <!-- 初始化頂部欄和側邊欄 -->
-    
-    <!-- 必要的 JavaScript 文件 -->
-    <script src="js/tools-config.js"></script>
-    <script src="js/spa-router.js"></script>
-    <script src="components/header-sidebar.js"></script>
-
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const existingNav = document.querySelector('nav');
-            const existingFrame = document.getElementById('main-frame');
-            
-            if (!existingNav && !existingFrame) {
-                initHeaderSidebar({
-                    currentPage: 'hypertension',
-                    pageTitle: '醫療工具百寶箱',
-                    enableSPA: true
-                });
-            } else {
-                if (typeof SPARouter !== 'undefined' && !window.spaRouter) {
-                    window.spaRouter = new SPARouter();
-                }
-                if (typeof updateSidebarHighlight === 'function') {
-                    updateSidebarHighlight('hypertension');
-                }
-            }
-        });
     </script>
 </body>
 </html>
